@@ -7,6 +7,17 @@
 
 {% block content %}
 <div class="w-full flex justify-center align-center p-4">
+
+    
+    <div class="toast toast-end toast-top">
+        {% for message in messages %}
+        <div class="alert alert-error alert-soft">
+            <span>{{message}}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+
     <form class="w-1/2 flex flex-col p-4 " method="post"
         style="width: 600px; border: 1px solid #ccc; border-radius: 8px; height: fit-content;">
         {% csrf_token %}
@@ -24,6 +35,7 @@
         {% endfor %}
 
         <button class="btn btn-primary" type="submit">Login</button>
+        <a href="{% url 'accounts:retail_admin_register' %}" class="mt-9 mb-5 text-sm text-blue-300">Don't have an account ? Register</a>
     </form>
 </div>
 <!-- Your page content here -->
