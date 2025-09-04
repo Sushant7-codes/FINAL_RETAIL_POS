@@ -10,54 +10,72 @@
     {% tailwind_css %}
 </head>
 
-<body class="flex min-h-screen bg-base-200">
+<body >
 
-    {% block sidebar %}
-    <!-- Sidebar -->
-    <aside class="w-64 bg-base-100 shadow-lg flex flex-col">
+{% block header %}
 
-        <div class="p-4 text-2xl font-bold border-b border-base-300">
-            MySite
+<!-- Top Navigation Bar -->
+<header class="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white shadow-2xl fixed top-0 left-0 z-50 backdrop-blur-lg bg-opacity-95">
+    <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+        <!-- Logo / Brand -->
+        <div class="flex items-center space-x-8">
+            <div class="font-bold text-2xl bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                MyStore POS
+            </div>
+            
+            <!-- Navigation Links -->
+            <nav class="flex space-x-1">
+                <a href="#" 
+                   data-page="dashboard"
+                   class="nav-link px-4 py-2 rounded-lg font-bold bg-white/10 text-white transition-all duration-200 hover:bg-white/20">
+                    Dashboard
+                </a>
+                <a href="#" 
+                   data-page="orders"
+                   class="nav-link px-4 py-2 rounded-lg font-normal text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white">
+                    Orders
+                </a>
+                <a href="#" 
+                   data-page="products"
+                   class="nav-link px-4 py-2 rounded-lg font-normal text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white">
+                    Products
+                </a>
+                <a href="#" 
+                   data-page="reports"
+                   class="nav-link px-4 py-2 rounded-lg font-normal text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white">
+                    Reports
+                </a>
+            </nav>
         </div>
 
-        <nav class="flex-grow p-4">
-            <ul class="menu menu-vertical space-y-2">
-                <li><a href="{% url 'app:dashboard' %}" class="rounded-md">Dashboard</a></li>
-                <li><a href="#" class="rounded-md">Students</a></li>
-                <li><a href="#" class="rounded-md">Reports</a></li>
-            </ul>
-        </nav>
-
-        <div class="p-4 border-t border-base-300">
-            <a class="btn btn-outline btn-sm w-full mb-3" href="{% url 'accounts:logout_view' %}" title="Toggle Light/Dark Mode">
-                Logout 
-            </a>
-            <button class="btn btn-outline btn-sm w-full" onclick="toggleTheme()" title="Toggle Light/Dark Mode">
-                🌓 Toggle Theme
+        <!-- Right Side Actions -->
+        <div class="flex items-center space-x-3">
+            <!-- Theme Toggle Button -->
+            <button id="themeToggle" 
+                    class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 flex items-center space-x-2" 
+                    title="Toggle Light/Dark Mode">
+                <span class="theme-icon-light">☀️</span>
+                <span class="theme-icon-dark hidden">🌙</span>
+                <span class="text-sm">Theme</span>
             </button>
+            
+            <!-- Logout Button -->
+            <a href="{% url 'accounts:logout_view' %}" 
+               class="px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 hover:text-red-200 border border-red-500/30 transition-all duration-200 flex items-center space-x-2">
+                <span>Logout</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+            </a>
         </div>
+    </div>
+</header>
+{% endblock header %}
 
-    </aside>
-
-    {% endblock %}
-
-
-    <!-- Main Content -->
     {% block content %}
-    <main class="flex-grow p-6 overflow-auto">
-        <h1 class="text-3xl font-bold mb-4">Welcome to Dashboard</h1>
-        <!-- Your page content here -->
-    </main>
     {% endblock %}
 
-    <script>
-        function toggleTheme() {
-            const html = document.documentElement;
-            const current = html.getAttribute("data-theme");
-            const newTheme = current === "light" ? "dark" : "light";
-            html.setAttribute("data-theme", newTheme);
-        }
-    </script>
+
 </body>
 
 </html>
