@@ -8,74 +8,315 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     {% tailwind_css %}
+    <style>
+        /* Custom animations */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-slide-down {
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        /* Glassmorphism effect */
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Custom gradient hover effect */
+        .nav-gradient {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-gradient:hover::before {
+            left: 100%;
+        }
+    </style>
+    <script>
+        // Initialize theme before page renders to prevent flash
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
 </head>
 
-<body >
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
 
 {% block header %}
-
-<!-- Top Navigation Bar -->
-<header class="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white shadow-2xl fixed top-0 left-0 z-50 backdrop-blur-lg bg-opacity-95">
-    <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-        <!-- Logo / Brand -->
-        <div class="flex items-center space-x-8">
-            <div class="font-bold text-2xl bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                MyStore POS
+<!-- Enhanced Top Navigation Bar -->
+<header class="w-full bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 text-white shadow-2xl fixed top-0 left-0 z-50 glass-morphism">
+    <div class="w-full px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- Left Section: Logo and Navigation -->
+            <div class="flex items-center flex-1">
+                <!-- Logo -->
+                <div class="flex-shrink-0 mr-8">
+                    <div class="font-bold text-xl sm:text-2xl bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent animate-pulse">
+                        MyStore POS
+                    </div>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center space-x-1">
+                    <a href="#" 
+                       data-page="dashboard"
+                       class="nav-link nav-gradient px-4 py-2 rounded-lg font-semibold bg-white/10 text-white transition-all duration-300 hover:bg-white/20 hover:scale-105 shadow-lg">
+                        <span class="flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </span>
+                    </a>
+                    <a href="#" 
+                       data-page="orders"
+                       class="nav-link nav-gradient px-4 py-2 rounded-lg font-normal text-gray-300 transition-all duration-300 hover:bg-white/10 hover:text-white hover:scale-105">
+                        <span class="flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                            </svg>
+                            <span>Orders</span>
+                        </span>
+                    </a>
+                    <a href="#" 
+                       data-page="products"
+                       class="nav-link nav-gradient px-4 py-2 rounded-lg font-normal text-gray-300 transition-all duration-300 hover:bg-white/10 hover:text-white hover:scale-105">
+                        <span class="flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                            </svg>
+                            <span>Products</span>
+                        </span>
+                    </a>
+                    <a href="#" 
+                       data-page="reports"
+                       class="nav-link nav-gradient px-4 py-2 rounded-lg font-normal text-gray-300 transition-all duration-300 hover:bg-white/10 hover:text-white hover:scale-105">
+                        <span class="flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <span>Reports</span>
+                        </span>
+                    </a>
+                </nav>
             </div>
-            
-            <!-- Navigation Links -->
-            <nav class="flex space-x-1">
-                <a href="#" 
-                   data-page="dashboard"
-                   class="nav-link px-4 py-2 rounded-lg font-bold bg-white/10 text-white transition-all duration-200 hover:bg-white/20">
-                    Dashboard
-                </a>
-                <a href="#" 
-                   data-page="orders"
-                   class="nav-link px-4 py-2 rounded-lg font-normal text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white">
-                    Orders
-                </a>
-                <a href="#" 
-                   data-page="products"
-                   class="nav-link px-4 py-2 rounded-lg font-normal text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white">
-                    Products
-                </a>
-                <a href="#" 
-                   data-page="reports"
-                   class="nav-link px-4 py-2 rounded-lg font-normal text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white">
-                    Reports
-                </a>
-            </nav>
-        </div>
 
-        <!-- Right Side Actions -->
-        <div class="flex items-center space-x-3">
-            <!-- Theme Toggle Button -->
-            <button id="themeToggle" 
-                    class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 flex items-center space-x-2" 
-                    title="Toggle Light/Dark Mode">
-                <span class="theme-icon-light">☀️</span>
-                <span class="theme-icon-dark hidden">🌙</span>
-                <span class="text-sm">Theme</span>
-            </button>
-            
-            <!-- Logout Button -->
-            <a href="{% url 'accounts:logout_view' %}" 
-               class="px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 hover:text-red-200 border border-red-500/30 transition-all duration-200 flex items-center space-x-2">
-                <span>Logout</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                </svg>
-            </a>
+            <!-- Right Section: Theme Toggle and Logout -->
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Theme Toggle Button -->
+                {% comment %} <button id="themeToggle" 
+                        class="px-3 sm:px-4 py-2 rounded-lg glass-morphism hover:bg-white/20 text-white transition-all duration-300 flex items-center space-x-2 hover:scale-105 shadow-lg" 
+                        title="Toggle Light/Dark Mode">
+                    <svg class="theme-icon-light w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    <svg class="theme-icon-dark hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                    <span class="hidden sm:inline text-sm">Theme</span>
+                </button>
+                 {% endcomment %}
+                <!-- Logout Button -->
+                <a href="{% url 'accounts:logout_view' %}" 
+                   class="px-3 sm:px-4 py-2 rounded-lg bg-gradient-to-r from-red-500/20 to-pink-500/20 hover:from-red-500/30 hover:to-pink-500/30 text-red-300 hover:text-red-200 border border-red-500/30 transition-all duration-300 flex items-center space-x-2 hover:scale-105 shadow-lg">
+                    <span class="hidden sm:inline">Logout</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                </a>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition-all duration-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path class="menu-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        <path class="menu-close hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
+    
+    <!-- Mobile Navigation Menu -->
+    <div id="mobileMenu" class="hidden md:hidden glass-morphism border-t border-white/10 animate-slide-down">
+        <nav class="px-4 py-3 space-y-2">
+            <a href="#" 
+               data-page="dashboard"
+               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg font-semibold bg-white/10 text-white transition-all duration-200 hover:bg-white/20">
+                <span class="flex items-center space-x-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <span>Dashboard</span>
+                </span>
+            </a>
+            <a href="#" 
+               data-page="orders"
+               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg font-normal text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white">
+                <span class="flex items-center space-x-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    <span>Orders</span>
+                </span>
+            </a>
+            <a href="#" 
+               data-page="products"
+               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg font-normal text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white">
+                <span class="flex items-center space-x-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                    <span>Products</span>
+                </span>
+            </a>
+            <a href="#" 
+               data-page="reports"
+               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg font-normal text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white">
+                <span class="flex items-center space-x-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <span>Reports</span>
+                </span>
+            </a>
+        </nav>
+    </div>
 </header>
+
+<!-- Global Scripts -->
+<script>
+    {% comment %} document.addEventListener('DOMContentLoaded', function() {
+        // Theme Toggle Implementation
+        const themeToggle = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+        const lightIcon = document.querySelector('.theme-icon-light');
+        const darkIcon = document.querySelector('.theme-icon-dark');
+        
+        // Initialize theme
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            
+            if (savedTheme === 'dark') {
+                htmlElement.classList.add('dark');
+                lightIcon.classList.add('hidden');
+                darkIcon.classList.remove('hidden');
+            } else {
+                htmlElement.classList.remove('dark');
+                lightIcon.classList.remove('hidden');
+                darkIcon.classList.add('hidden');
+            }
+        }
+        
+        // Call initialize on load
+        initializeTheme();
+        
+        // Theme toggle click handler
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                const isDark = htmlElement.classList.contains('dark');
+                
+                if (isDark) {
+                    htmlElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                    lightIcon.classList.remove('hidden');
+                    darkIcon.classList.add('hidden');
+                } else {
+                    htmlElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                    lightIcon.classList.add('hidden');
+                    darkIcon.classList.remove('hidden');
+                }
+                
+                // Dispatch custom event for theme change
+                window.dispatchEvent(new CustomEvent('themeChanged'));
+            });
+        } {% endcomment %}
+        
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuOpen = document.querySelector('.menu-open');
+        const menuClose = document.querySelector('.menu-close');
+        
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+                menuOpen.classList.toggle('hidden');
+                menuClose.classList.toggle('hidden');
+            });
+        }
+        
+        // Navigation Active State
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active state from all links
+                navLinks.forEach(l => {
+                    l.classList.remove('font-semibold', 'bg-white/10', 'text-white', 'shadow-lg');
+                    l.classList.add('font-normal', 'text-gray-300');
+                });
+                
+                // Add active state to clicked link
+                this.classList.remove('font-normal', 'text-gray-300');
+                this.classList.add('font-semibold', 'bg-white/10', 'text-white', 'shadow-lg');
+                
+                // Close mobile menu if open
+                if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    menuOpen.classList.remove('hidden');
+                    menuClose.classList.add('hidden');
+                }
+                
+                // Handle navigation
+                const page = this.getAttribute('data-page');
+                console.log('Navigating to:', page);
+            });
+        });
+        
+        // Set initial active page
+        function setActivePage(pageName) {
+            navLinks.forEach(link => {
+                if (link.getAttribute('data-page') === pageName) {
+                    link.classList.remove('font-normal', 'text-gray-300');
+                    link.classList.add('font-semibold', 'bg-white/10', 'text-white', 'shadow-lg');
+                }
+            });
+        }
+        
+        setActivePage('dashboard');
+    });
+</script>
 {% endblock header %}
 
-    {% block content %}
-    {% endblock %}
-
+{% block content %}
+{% endblock %}
 
 </body>
-
 </html>

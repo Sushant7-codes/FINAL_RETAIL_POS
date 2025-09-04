@@ -1,25 +1,23 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<main class="flex-grow p-4 sm:p-6 pt-20 sm:pt-24 overflow-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
 
-<main class="flex-grow p-6 pt-24 overflow-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-
-    <h1 class="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100">Dashboard</h1>
+    <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-800 dark:text-gray-100">Dashboard</h1>
 
     <!-- Summary Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10">
         <!-- Today's Sales -->
         <div class="card p-5 rounded-xl shadow-lg border-l-8 border-green-500 transition-transform transform hover:scale-105 hover:shadow-2xl bg-white dark:bg-gray-800">
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">Today's Sales</h2>
-                    <p class="text-3xl font-bold text-green-600">Rs. 45,250</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-green-600">Rs. 45,250</p>
                     <p class="text-sm text-green-500 mt-1">+12.5% from yesterday</p>
                 </div>
-                <div class="text-4xl text-green-400">📈</div>
+                <div class="text-3xl sm:text-4xl text-green-400">📈</div>
             </div>
         </div>
 
@@ -28,10 +26,10 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">Total Orders</h2>
-                    <p class="text-3xl font-bold text-blue-600">127</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-blue-600">127</p>
                     <p class="text-sm text-blue-500 mt-1">+8.3% from yesterday</p>
                 </div>
-                <div class="text-4xl text-blue-400">🛒</div>
+                <div class="text-3xl sm:text-4xl text-blue-400">🛒</div>
             </div>
         </div>
 
@@ -40,10 +38,10 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">Low Stock Items</h2>
-                    <p class="text-3xl font-bold text-orange-600">23</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-orange-600">23</p>
                     <p class="text-sm text-orange-500 mt-1">⚠️ Needs attention</p>
                 </div>
-                <div class="text-4xl text-orange-400">📦</div>
+                <div class="text-3xl sm:text-4xl text-orange-400">📦</div>
             </div>
         </div>
 
@@ -52,110 +50,116 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">Total Products</h2>
-                    <p class="text-3xl font-bold text-purple-600">1,847</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-purple-600">1,847</p>
                     <p class="text-sm text-gray-500 mt-1">📋 Active inventory</p>
                 </div>
-                <div class="text-4xl text-purple-400">🏪</div>
+                <div class="text-3xl sm:text-4xl text-purple-400">🏪</div>
             </div>
         </div>
     </div>
 
     <!-- Charts Section -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-10">
         <!-- Daily Sales Chart -->
         <div class="card p-5 rounded-xl shadow-lg bg-white dark:bg-gray-800">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-200">Daily Sales (Last 7 Days)</h2>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                <h2 class="text-lg sm:text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2 sm:mb-0">Daily Sales (Last 7 Days)</h2>
                 <select class="select select-bordered select-sm border-gray-300 dark:bg-gray-700 dark:text-gray-100">
                     <option>Last 7 Days</option>
                     <option>Last 30 Days</option>
                     <option>Last 3 Months</option>
                 </select>
             </div>
-            <canvas id="dailySalesChart" width="400" height="250"></canvas>
+            <div class="w-full overflow-x-auto">
+                <canvas id="dailySalesChart" width="400" height="250"></canvas>
+            </div>
         </div>
 
         <!-- Sales by Category Chart -->
         <div class="card p-5 rounded-xl shadow-lg bg-white dark:bg-gray-800">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">Sales by Category</h2>
-            <canvas id="categorySalesChart" width="400" height="250"></canvas>
+            <h2 class="text-lg sm:text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">Sales by Category</h2>
+            <div class="w-full overflow-x-auto">
+                <canvas id="categorySalesChart" width="400" height="250"></canvas>
+            </div>
         </div>
     </div>
 
     <!-- Additional Charts and Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         <!-- Payment Methods -->
         <div class="card p-5 rounded-xl shadow-lg bg-white dark:bg-gray-800">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">Payment Methods</h2>
-            <canvas id="paymentMethodsChart" width="400" height="200"></canvas>
+            <h2 class="text-lg sm:text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">Payment Methods</h2>
+            <div class="w-full overflow-x-auto">
+                <canvas id="paymentMethodsChart" width="400" height="200"></canvas>
+            </div>
         </div>
 
         <!-- Top Selling Products -->
-        <div class="card p-5 rounded-xl shadow-lg bg-white dark:bg-gray-800">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">Top Selling Products</h2>
-            <div class="space-y-3">
+        <div class="card p-5 rounded-xl shadow-lg bg-white dark:bg-gray-800 overflow-hidden">
+            <h2 class="text-lg sm:text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">Top Selling Products</h2>
+            <div class="space-y-3 max-h-64 overflow-y-auto">
                 <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors bg-gray-50 dark:bg-gray-900">
-                    <div>
-                        <p class="font-medium text-gray-700 dark:text-gray-200">Premium Coffee Beans</p>
+                    <div class="min-w-0 flex-1">
+                        <p class="font-medium text-gray-700 dark:text-gray-200 truncate">Premium Coffee Beans</p>
                         <p class="text-sm text-gray-500 dark:text-gray-400">45 units sold</p>
                     </div>
-                    <span class="text-green-600 font-bold">Rs. 6,750</span>
+                    <span class="text-green-600 font-bold ml-2">Rs. 6,750</span>
                 </div>
                 <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors bg-gray-50 dark:bg-gray-900">
-                    <div>
-                        <p class="font-medium text-gray-700 dark:text-gray-200">Organic Tea Blend</p>
+                    <div class="min-w-0 flex-1">
+                        <p class="font-medium text-gray-700 dark:text-gray-200 truncate">Organic Tea Blend</p>
                         <p class="text-sm text-gray-500 dark:text-gray-400">38 units sold</p>
                     </div>
-                    <span class="text-green-600 font-bold">Rs. 4,560</span>
+                    <span class="text-green-600 font-bold ml-2">Rs. 4,560</span>
                 </div>
                 <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors bg-gray-50 dark:bg-gray-900">
-                    <div>
-                        <p class="font-medium text-gray-700 dark:text-gray-200">Artisan Chocolates</p>
+                    <div class="min-w-0 flex-1">
+                        <p class="font-medium text-gray-700 dark:text-gray-200 truncate">Artisan Chocolates</p>
                         <p class="text-sm text-gray-500 dark:text-gray-400">32 units sold</p>
                     </div>
-                    <span class="text-green-600 font-bold">Rs. 3,840</span>
+                    <span class="text-green-600 font-bold ml-2">Rs. 3,840</span>
                 </div>
                 <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors bg-gray-50 dark:bg-gray-900">
-                    <div>
-                        <p class="font-medium text-gray-700 dark:text-gray-200">Fresh Pastries</p>
+                    <div class="min-w-0 flex-1">
+                        <p class="font-medium text-gray-700 dark:text-gray-200 truncate">Fresh Pastries</p>
                         <p class="text-sm text-gray-500 dark:text-gray-400">29 units sold</p>
                     </div>
-                    <span class="text-green-600 font-bold">Rs. 2,900</span>
+                    <span class="text-green-600 font-bold ml-2">Rs. 2,900</span>
                 </div>
             </div>
         </div>
 
         <!-- Recent Transactions -->
-        <div class="card p-5 rounded-xl shadow-lg bg-white dark:bg-gray-800">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">Recent Transactions</h2>
-            <div class="space-y-3">
+        <div class="card p-5 rounded-xl shadow-lg bg-white dark:bg-gray-800 overflow-hidden">
+            <h2 class="text-lg sm:text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">Recent Transactions</h2>
+            <div class="space-y-3 max-h-64 overflow-y-auto">
                 <div class="flex items-center justify-between p-3 border-l-4 border-green-500 rounded transition-colors bg-green-50 dark:bg-green-900 hover:bg-green-100 dark:hover:bg-green-800">
-                    <div>
-                        <p class="font-medium text-gray-700 dark:text-gray-200">#TXN-001234</p>
+                    <div class="min-w-0 flex-1">
+                        <p class="font-medium text-gray-700 dark:text-gray-200 truncate">#TXN-001234</p>
                         <p class="text-sm text-gray-600 dark:text-gray-400">2 items • Cash</p>
                     </div>
-                    <span class="text-green-600 font-bold">Rs. 850</span>
+                    <span class="text-green-600 font-bold ml-2">Rs. 850</span>
                 </div>
                 <div class="flex items-center justify-between p-3 border-l-4 border-blue-500 rounded transition-colors bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800">
-                    <div>
-                        <p class="font-medium text-gray-700 dark:text-gray-200">#TXN-001235</p>
+                    <div class="min-w-0 flex-1">
+                        <p class="font-medium text-gray-700 dark:text-gray-200 truncate">#TXN-001235</p>
                         <p class="text-sm text-gray-600 dark:text-gray-400">5 items • Card</p>
                     </div>
-                    <span class="text-blue-600 font-bold">Rs. 1,250</span>
+                    <span class="text-blue-600 font-bold ml-2">Rs. 1,250</span>
                 </div>
                 <div class="flex items-center justify-between p-3 border-l-4 border-purple-500 rounded transition-colors bg-purple-50 dark:bg-purple-900 hover:bg-purple-100 dark:hover:bg-purple-800">
-                    <div>
-                        <p class="font-medium text-gray-700 dark:text-gray-200">#TXN-001236</p>
+                    <div class="min-w-0 flex-1">
+                        <p class="font-medium text-gray-700 dark:text-gray-200 truncate">#TXN-001236</p>
                         <p class="text-sm text-gray-600 dark:text-gray-400">3 items • UPI</p>
                     </div>
-                    <span class="text-purple-600 font-bold">Rs. 675</span>
+                    <span class="text-purple-600 font-bold ml-2">Rs. 675</span>
                 </div>
                 <div class="flex items-center justify-between p-3 border-l-4 border-orange-500 rounded transition-colors bg-orange-50 dark:bg-orange-900 hover:bg-orange-100 dark:hover:bg-orange-800">
-                    <div>
-                        <p class="font-medium text-gray-700 dark:text-gray-200">#TXN-001237</p>
+                    <div class="min-w-0 flex-1">
+                        <p class="font-medium text-gray-700 dark:text-gray-200 truncate">#TXN-001237</p>
                         <p class="text-sm text-gray-600 dark:text-gray-400">1 item • Cash</p>
                     </div>
-                    <span class="text-orange-600 font-bold">Rs. 320</span>
+                    <span class="text-orange-600 font-bold ml-2">Rs. 320</span>
                 </div>
             </div>
         </div>
@@ -164,199 +168,166 @@
 
 <!-- Chart.js Script -->
 <script>
-    // Theme Toggle - Fixed Implementation
-    function initTheme() {
-        // Check for saved theme preference or default to 'light'
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        
-        if (savedTheme === 'dark') {
-            document.documentElement.classList.add('dark');
-            document.querySelector('.theme-icon-light').classList.add('hidden');
-            document.querySelector('.theme-icon-dark').classList.remove('hidden');
-        } else {
-            document.documentElement.classList.remove('dark');
-            document.querySelector('.theme-icon-light').classList.remove('hidden');
-            document.querySelector('.theme-icon-dark').classList.add('hidden');
-        }
-    }
+    // Store chart instances globally
+    let dailySalesChart = null;
+    let categorySalesChart = null;
+    let paymentMethodsChart = null;
     
-    // Initialize theme on page load
-    initTheme();
-    
-    // Theme Toggle Button Click Handler
-    document.getElementById('themeToggle').addEventListener('click', function() {
+    // Function to get chart colors based on theme
+    function getChartColors() {
         const isDark = document.documentElement.classList.contains('dark');
-        
-        if (isDark) {
-            // Switch to light mode
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-            document.querySelector('.theme-icon-light').classList.remove('hidden');
-            document.querySelector('.theme-icon-dark').classList.add('hidden');
-        } else {
-            // Switch to dark mode
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-            document.querySelector('.theme-icon-light').classList.add('hidden');
-            document.querySelector('.theme-icon-dark').classList.remove('hidden');
-        }
-        
-        // Update chart colors when theme changes
-        updateChartColors();
-    });
-    
-    // Navigation Active State Handler
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Remove active state from all links
-            navLinks.forEach(l => {
-                l.classList.remove('font-bold', 'bg-white/10', 'text-white');
-                l.classList.add('font-normal', 'text-gray-300');
-            });
-            
-            // Add active state to clicked link
-            this.classList.remove('font-normal', 'text-gray-300');
-            this.classList.add('font-bold', 'bg-white/10', 'text-white');
-            
-            // Here you can add navigation logic
-            const page = this.getAttribute('data-page');
-            console.log('Navigating to:', page);
-            // In a real application, you would handle routing here
-        });
-    });
-    
-    // Set current page as active (Dashboard by default)
-    function setActivePage(pageName) {
-        navLinks.forEach(link => {
-            if (link.getAttribute('data-page') === pageName) {
-                link.classList.remove('font-normal', 'text-gray-300');
-                link.classList.add('font-bold', 'bg-white/10', 'text-white');
-            } else {
-                link.classList.remove('font-bold', 'bg-white/10', 'text-white');
-                link.classList.add('font-normal', 'text-gray-300');
-            }
-        });
+        return {
+            textColor: isDark ? '#e5e7eb' : '#374151',
+            gridColor: isDark ? 'rgba(55, 65, 81, 0.3)' : 'rgba(209, 213, 219, 0.5)',
+            backgroundColor: isDark ? 'rgba(31, 41, 55, 0.5)' : 'rgba(249, 250, 251, 0.5)'
+        };
     }
     
-    // Set dashboard as active by default
-    setActivePage('dashboard');
-    
-    // Function to get chart text color based on theme
-    function getChartTextColor() {
-        return document.documentElement.classList.contains('dark') ? '#fff' : '#000';
-    }
-    
-    // Charts
-    const dailySalesCtx = document.getElementById('dailySalesChart').getContext('2d');
-    const dailySalesChart = new Chart(dailySalesCtx, {
-        type: 'line',
-        data: { 
-            labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], 
-            datasets:[{ 
-                label:'Daily Sales (Rs.)', 
-                data:[32000,28000,35000,42000,38000,45000,41000], 
-                borderColor:'#22c55e', 
-                backgroundColor:'rgba(34,197,94,0.1)', 
-                tension:0.4, 
-                fill:true 
-            }] 
-        },
-        options:{ 
-            responsive:true, 
-            scales:{ 
-                y:{ 
-                    beginAtZero:true,
-                    ticks: { color: getChartTextColor() },
-                    grid: { color: 'rgba(128,128,128,0.2)' }
+    // Initialize charts
+    function initializeCharts() {
+        const colors = getChartColors();
+        
+        // Daily Sales Chart
+        const dailySalesCtx = document.getElementById('dailySalesChart');
+        if (dailySalesCtx) {
+            dailySalesChart = new Chart(dailySalesCtx.getContext('2d'), {
+                type: 'line',
+                data: { 
+                    labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], 
+                    datasets:[{ 
+                        label:'Daily Sales (Rs.)', 
+                        data:[32000,28000,35000,42000,38000,45000,41000], 
+                        borderColor:'#22c55e', 
+                        backgroundColor:'rgba(34,197,94,0.1)', 
+                        tension:0.4, 
+                        fill:true 
+                    }] 
                 },
-                x: {
-                    ticks: { color: getChartTextColor() },
-                    grid: { color: 'rgba(128,128,128,0.2)' }
-                }
-            }, 
-            plugins:{ 
-                legend:{ 
-                    display:false 
-                } 
-            } 
-        }
-    });
-
-    const categorySalesCtx = document.getElementById('categorySalesChart').getContext('2d');
-    const categorySalesChart = new Chart(categorySalesCtx, {
-        type: 'doughnut',
-        data:{ 
-            labels:['Beverages','Snacks','Dairy','Bakery','Electronics','Others'], 
-            datasets:[{ 
-                data:[35,20,15,12,10,8], 
-                backgroundColor:['#3b82f6','#ef4444','#fbbf24','#8b5cf6','#10b981','#f97316'] 
-            }]
-        },
-        options:{ 
-            responsive:true, 
-            plugins:{ 
-                legend:{ 
-                    position:'bottom', 
-                    labels:{ 
-                        color: getChartTextColor() 
+                options:{ 
+                    responsive:true,
+                    maintainAspectRatio: false,
+                    scales:{ 
+                        y:{ 
+                            beginAtZero:true,
+                            ticks: { color: colors.textColor },
+                            grid: { color: colors.gridColor }
+                        },
+                        x: {
+                            ticks: { color: colors.textColor },
+                            grid: { color: colors.gridColor }
+                        }
+                    }, 
+                    plugins:{ 
+                        legend:{ 
+                            display:false 
+                        } 
                     } 
-                } 
-            } 
-        }
-    });
-
-    const paymentMethodsCtx = document.getElementById('paymentMethodsChart').getContext('2d');
-    const paymentMethodsChart = new Chart(paymentMethodsCtx, {
-        type:'bar',
-        data:{ 
-            labels:['Cash','Card','UPI','Wallet'], 
-            datasets:[{ 
-                data:[45,35,30,17], 
-                backgroundColor:['#22c55e','#3b82f6','#8b5cf6','#f59e0b'] 
-            }] 
-        },
-        options:{ 
-            responsive:true, 
-            scales:{ 
-                y:{ 
-                    beginAtZero:true,
-                    ticks: { color: getChartTextColor() },
-                    grid: { color: 'rgba(128,128,128,0.2)' }
-                },
-                x: {
-                    ticks: { color: getChartTextColor() },
-                    grid: { color: 'rgba(128,128,128,0.2)' }
                 }
-            }, 
-            plugins:{ 
-                legend:{ 
-                    display:false 
-                } 
-            } 
+            });
         }
-    });
+
+        // Sales by Category Chart
+        const categorySalesCtx = document.getElementById('categorySalesChart');
+        if (categorySalesCtx) {
+            categorySalesChart = new Chart(categorySalesCtx.getContext('2d'), {
+                type: 'doughnut',
+                data:{ 
+                    labels:['Beverages','Snacks','Dairy','Bakery','Electronics','Others'], 
+                    datasets:[{ 
+                        data:[35,20,15,12,10,8], 
+                        backgroundColor:['#3b82f6','#ef4444','#fbbf24','#8b5cf6','#10b981','#f97316'] 
+                    }]
+                },
+                options:{ 
+                    responsive:true,
+                    maintainAspectRatio: false,
+                    plugins:{ 
+                        legend:{ 
+                            position:'bottom', 
+                            labels:{ 
+                                color: colors.textColor,
+                                padding: 10,
+                                font: {
+                                    size: 12
+                                }
+                            } 
+                        } 
+                    } 
+                }
+            });
+        }
+
+        // Payment Methods Chart
+        const paymentMethodsCtx = document.getElementById('paymentMethodsChart');
+        if (paymentMethodsCtx) {
+            paymentMethodsChart = new Chart(paymentMethodsCtx.getContext('2d'), {
+                type:'bar',
+                data:{ 
+                    labels:['Cash','Card','UPI','Wallet'], 
+                    datasets:[{ 
+                        data:[45,35,30,17], 
+                        backgroundColor:['#22c55e','#3b82f6','#8b5cf6','#f59e0b'] 
+                    }] 
+                },
+                options:{ 
+                    responsive:true,
+                    maintainAspectRatio: false,
+                    scales:{ 
+                        y:{ 
+                            beginAtZero:true,
+                            ticks: { color: colors.textColor },
+                            grid: { color: colors.gridColor }
+                        },
+                        x: {
+                            ticks: { color: colors.textColor },
+                            grid: { color: colors.gridColor }
+                        }
+                    }, 
+                    plugins:{ 
+                        legend:{ 
+                            display:false 
+                        } 
+                    } 
+                }
+            });
+        }
+    }
     
     // Update chart colors when theme changes
     function updateChartColors() {
-        const textColor = getChartTextColor();
+        const colors = getChartColors();
         
         // Update daily sales chart
-        dailySalesChart.options.scales.y.ticks.color = textColor;
-        dailySalesChart.options.scales.x.ticks.color = textColor;
-        dailySalesChart.update();
+        if (dailySalesChart) {
+            dailySalesChart.options.scales.y.ticks.color = colors.textColor;
+            dailySalesChart.options.scales.x.ticks.color = colors.textColor;
+            dailySalesChart.options.scales.y.grid.color = colors.gridColor;
+            dailySalesChart.options.scales.x.grid.color = colors.gridColor;
+            dailySalesChart.update();
+        }
         
         // Update category sales chart
-        categorySalesChart.options.plugins.legend.labels.color = textColor;
-        categorySalesChart.update();
+        if (categorySalesChart) {
+            categorySalesChart.options.plugins.legend.labels.color = colors.textColor;
+            categorySalesChart.update();
+        }
         
         // Update payment methods chart
-        paymentMethodsChart.options.scales.y.ticks.color = textColor;
-        paymentMethodsChart.options.scales.x.ticks.color = textColor;
-        paymentMethodsChart.update();
+        if (paymentMethodsChart) {
+            paymentMethodsChart.options.scales.y.ticks.color = colors.textColor;
+            paymentMethodsChart.options.scales.x.ticks.color = colors.textColor;
+            paymentMethodsChart.options.scales.y.grid.color = colors.gridColor;
+            paymentMethodsChart.options.scales.x.grid.color = colors.gridColor;
+            paymentMethodsChart.update();
+        }
     }
+    
+    // Initialize charts when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeCharts();
+        
+        // Listen for theme changes
+        window.addEventListener('themeChanged', updateChartColors);
+    });
 </script>
 {% endblock content %}
