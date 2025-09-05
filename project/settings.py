@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'widget_tweaks',
-     
+
     'tailwind',
     'theme',
     'app',
@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     'reports',
     'inventory',
     'sales',
+    
+    'background_task',
+
 ]
 
 TAILWIND_APP_NAME = 'theme'

@@ -24,9 +24,12 @@ class OTP(models.Model):
         if user is None:
             raise Exception("User does not exist")
         
-        new_otp = OTP.objects.create(
-            user=user,otp=random.randint(100000,999999)
-            )
+        for _ in range(3):
+            otp=random.randint(100000,999999)
+            if not OTP.objects.filter(otp=otp).exists():
+                break 
+            
+        new_otp = OTP(user=user,otp=otp)
         new_otp.save()
         return new_otp.otp
 

@@ -128,7 +128,7 @@
             <!-- Right Section: Theme Toggle and Logout -->
             <div class="flex items-center space-x-2 sm:space-x-3">
                 <!-- Theme Toggle Button -->
-                {% comment %} <button id="themeToggle" 
+                <button id="themeToggle" 
                         class="px-3 sm:px-4 py-2 rounded-lg glass-morphism hover:bg-white/20 text-white transition-all duration-300 flex items-center space-x-2 hover:scale-105 shadow-lg" 
                         title="Toggle Light/Dark Mode">
                     <svg class="theme-icon-light w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -139,7 +139,7 @@
                     </svg>
                     <span class="hidden sm:inline text-sm">Theme</span>
                 </button>
-                 {% endcomment %}
+                 
                 <!-- Logout Button -->
                 <a href="{% url 'accounts:logout_view' %}" 
                    class="px-3 sm:px-4 py-2 rounded-lg bg-gradient-to-r from-red-500/20 to-pink-500/20 hover:from-red-500/30 hover:to-pink-500/30 text-red-300 hover:text-red-200 border border-red-500/30 transition-all duration-300 flex items-center space-x-2 hover:scale-105 shadow-lg">

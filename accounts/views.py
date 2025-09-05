@@ -60,7 +60,7 @@ def forgot_password(request):
             return redirect("accounts:forgot_password")
         
         print(email,"Email sent successfully")
-        
+        messages.success(request, "Email sent successfully, please wait for OTP ")
         return redirect("accounts:otp_confirmation")
         
     return render(request, "accounts/forgot-password.html")
@@ -87,14 +87,14 @@ def set_new_password(request, user_id=None):
         
         if password1 != password2:
             messages.error(request, "Passwords do not match")
-            return redirect("accounts:set_new_password")
+            return redirect("accounts:set_new_password",user_id=user_id)
         
         try:
             validate_password(password1)
         except Exception as e:
             for error in list(e):
                 messages.error(request, str(error))
-            return redirect("accounts:set_new_password")
+            return redirect("accounts:set_new_password",user_id=user_id)
         
         else:
             if user_id is not None:
@@ -102,7 +102,7 @@ def set_new_password(request, user_id=None):
                 
                 if user is None:
                     messages.error(request, "User does not exist")
-                    return redirect("accounts:set_new_password")
+                    return redirect("accounts:set_new_password", user_id=user_id)
                 
             user.set_password(password1)
             user.save()
