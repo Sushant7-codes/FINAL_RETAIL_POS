@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
+{% load form_extras %}
 
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <main class="flex-grow p-4 sm:p-6 pt-20 sm:pt-24 overflow-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
 
+    {% if request.user.shop %}
     <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-800 dark:text-gray-100">Dashboard</h1>
 
     <!-- Summary Cards -->
@@ -330,4 +332,16 @@
         window.addEventListener('themeChanged', updateChartColors);
     });
 </script>
+
+{% else %}
+<main class="h-screen flex flex-col">
+    <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-800 dark:text-gray-100">Welcome, Please kindly register your shop to get started ! </h1></h1>
+
+    <form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form}}
+    <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</main>
+{% endif %}
 {% endblock content %}

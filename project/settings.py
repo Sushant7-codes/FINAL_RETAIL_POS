@@ -47,8 +47,11 @@ INSTALLED_APPS = [
     'reports',
     'inventory',
     'sales',
+    'common',
+    'shop',
     
     'background_task',
+
 
 ]
 

@@ -1196,6 +1196,44 @@
   .z-50 {
     z-index: 50;
   }
+  .filter {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .filter input[type="radio"] {
+    width: auto;
+  }
+  .filter input {
+    overflow: hidden;
+    opacity: 100%;
+    scale: 1;
+    transition: margin 0.1s, opacity 0.3s, padding 0.3s, border-width 0.1s;
+  }
+  .filter input:not(:last-child) {
+    margin-inline-end: calc(0.25rem * 1);
+  }
+  .filter input.filter-reset {
+    aspect-ratio: 1 / 1;
+  }
+  .filter input.filter-reset::after {
+    content: "×";
+  }
+  .filter:not(:has(input:checked:not(.filter-reset))) .filter-reset, .filter:not(:has(input:checked:not(.filter-reset))) input[type="reset"] {
+    scale: 0;
+    border-width: 0;
+    margin-inline: calc(0.25rem * 0);
+    width: calc(0.25rem * 0);
+    padding-inline: calc(0.25rem * 0);
+    opacity: 0%;
+  }
+  .filter:has(input:checked:not(.filter-reset)) input:not(:checked, .filter-reset, input[type="reset"]) {
+    scale: 0;
+    border-width: 0;
+    margin-inline: calc(0.25rem * 0);
+    width: calc(0.25rem * 0);
+    padding-inline: calc(0.25rem * 0);
+    opacity: 0%;
+  }
   .label {
     display: inline-flex;
     align-items: center;
@@ -1248,6 +1286,15 @@
   .mt-6 {
     margin-top: calc(var(--spacing) * 6);
   }
+  .mt-10 {
+    margin-top: calc(var(--spacing) * 10);
+  }
+  .mt-20 {
+    margin-top: calc(var(--spacing) * 20);
+  }
+  .mt-200 {
+    margin-top: calc(var(--spacing) * 200);
+  }
   .mr-8 {
     margin-right: calc(var(--spacing) * 8);
   }
@@ -1266,6 +1313,9 @@
   }
   .mb-2 {
     margin-bottom: calc(var(--spacing) * 2);
+  }
+  .mb-3 {
+    margin-bottom: calc(var(--spacing) * 3);
   }
   .mb-4 {
     margin-bottom: calc(var(--spacing) * 4);
@@ -1411,6 +1461,9 @@
   }
   .h-16 {
     height: calc(var(--spacing) * 16);
+  }
+  .h-screen {
+    height: 100vh;
   }
   .max-h-64 {
     max-height: calc(var(--spacing) * 64);
@@ -1895,6 +1948,9 @@
   .shadow-lg {
     --tw-shadow: 0 10px 15px -3px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 4px 6px -4px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .filter {
+    filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
   }
   .backdrop-blur-xl {
     --tw-backdrop-blur: blur(var(--blur-xl));
@@ -2663,6 +2719,59 @@
   inherits: false;
   initial-value: 0 0 #0000;
 }
+@property --tw-blur {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-brightness {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-contrast {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-grayscale {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-hue-rotate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-invert {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-opacity {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-saturate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-sepia {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-drop-shadow-size {
+  syntax: "*";
+  inherits: false;
+}
 @property --tw-backdrop-blur {
   syntax: "*";
   inherits: false;
@@ -2759,6 +2868,19 @@
       --tw-ring-offset-width: 0px;
       --tw-ring-offset-color: #fff;
       --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-blur: initial;
+      --tw-brightness: initial;
+      --tw-contrast: initial;
+      --tw-grayscale: initial;
+      --tw-hue-rotate: initial;
+      --tw-invert: initial;
+      --tw-opacity: initial;
+      --tw-saturate: initial;
+      --tw-sepia: initial;
+      --tw-drop-shadow: initial;
+      --tw-drop-shadow-color: initial;
+      --tw-drop-shadow-alpha: 100%;
+      --tw-drop-shadow-size: initial;
       --tw-backdrop-blur: initial;
       --tw-backdrop-brightness: initial;
       --tw-backdrop-contrast: initial;
