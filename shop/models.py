@@ -21,4 +21,4 @@ class Shop(models.Model):
     
     
     def __str__(self):
-        return self.name
+        return self.name 

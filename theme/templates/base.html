@@ -209,7 +209,7 @@
 
 <!-- Global Scripts -->
 <script>
-    {% comment %} document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
         // Theme Toggle Implementation
         const themeToggle = document.getElementById('themeToggle');
         const htmlElement = document.documentElement;
@@ -254,7 +254,7 @@
                 // Dispatch custom event for theme change
                 window.dispatchEvent(new CustomEvent('themeChanged'));
             });
-        } {% endcomment %}
+        } 
         
         // Mobile Menu Toggle
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
