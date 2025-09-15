@@ -25,10 +25,15 @@
             animation: slideDown 0.3s ease-out;
         }
         
-        /* Glassmorphism effect */
+        /* Glassmorphism effect - Updated for better dark mode support */
         .glass-morphism {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .dark .glass-morphism {
+            background: rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
@@ -51,6 +56,72 @@
         
         .nav-gradient:hover::before {
             left: 100%;
+        }
+
+        /* Fix for ensuring proper dark mode card backgrounds */
+        .card {
+            background: white !important;
+            transition: all 0.3s ease;
+        }
+        
+        .dark .card {
+            background: rgb(31, 41, 55) !important; /* gray-800 */
+        }
+
+        /* Fix for product item backgrounds in dark mode */
+        .product-item {
+            background: rgb(249, 250, 251) !important; /* gray-50 */
+            transition: background-color 0.2s ease;
+        }
+        
+        .dark .product-item {
+            background: rgb(17, 24, 39) !important; /* gray-900 */
+        }
+        
+        .product-item:hover {
+            background: rgb(243, 244, 246) !important; /* gray-100 */
+        }
+        
+        .dark .product-item:hover {
+            background: rgb(55, 65, 81) !important; /* gray-700 */
+        }
+
+        /* Fix for transaction item backgrounds */
+        .transaction-item {
+            transition: background-color 0.2s ease;
+        }
+        
+        .dark .transaction-item.bg-green-50 {
+            background: rgb(6, 78, 59) !important; /* green-900 */
+        }
+        
+        .dark .transaction-item.bg-blue-50 {
+            background: rgb(30, 58, 138) !important; /* blue-900 */
+        }
+        
+        .dark .transaction-item.bg-purple-50 {
+            background: rgb(88, 28, 135) !important; /* purple-900 */
+        }
+        
+        .dark .transaction-item.bg-orange-50 {
+            background: rgb(154, 52, 18) !important; /* orange-900 */
+        }
+
+        /* Hover states for transaction items in dark mode */
+        .dark .transaction-item.bg-green-50:hover {
+            background: rgb(4, 120, 87) !important; /* green-800 */
+        }
+        
+        .dark .transaction-item.bg-blue-50:hover {
+            background: rgb(30, 64, 175) !important; /* blue-800 */
+        }
+        
+        .dark .transaction-item.bg-purple-50:hover {
+            background: rgb(107, 33, 168) !important; /* purple-800 */
+        }
+        
+        .dark .transaction-item.bg-orange-50:hover {
+            background: rgb(194, 65, 12) !important; /* orange-800 */
         }
     </style>
     <script>
