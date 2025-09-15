@@ -339,7 +339,17 @@
         Welcome, Please kindly register your shop to get started!
     </h1>
 
-    <form action="" method="post" enctype="multipart/form-data" 
+
+        <ul>
+            {% for error in form.non_field_errors %}
+            <li class="text-red-500 text-xs mt-1">
+                {{ error }}
+            </li>
+            {% endfor %}
+        </ul>
+
+
+    <form action=" {% url "shop:shop_register" %}" method="post" enctype="multipart/form-data" 
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-6xl justify-items-center lg:justify-items-start">
         {% csrf_token %}
 
@@ -351,6 +361,15 @@
             {{ field|add_class:"input p-2 border border-gray-300 rounded-md w-full" }}
         </div>
         {% endfor %}
+
+        <ul>
+            {% for error in field.errors %}
+            <li class="text-red-500 text-xs mt-1">
+                {{ error }}
+            </li>
+            {% endfor %}
+        </ul>
+        
 
         <div class="col-span-1 sm:col-span-2 lg:col-span-3 w-full max-w-xs sm:max-w-none mt-3">
             <button type="submit" 
