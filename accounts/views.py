@@ -6,19 +6,54 @@ from .utils import is_email_valid, forgot_password_email
 from .models import OTP, CustomUser
 from django.contrib.auth.password_validation import validate_password
 
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
 def retail_admin_register(request):
+    
     if request.method == "POST":
         form = RetailAdminRegisterForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect("accounts:retail_admin_login")
+            email = form.cleaned_data.get("email")
 
-        context = {"form": form}
-        return render(request, "accounts/register.html", context)
+            # Check if email already exists
+            if User.objects.filter(email=email).exists():
+                messages.error(request, "Email already registered. Please login.")
+                return redirect("accounts:retail_admin_login")
+
+            # Generate OTP for registration
+            try:
+                from .models import OTP
+                from .background_tasks import send_otp
+                import random
+
+                otp = random.randint(100000, 999999)
+
+                # Temporarily store form data in session
+                request.session["pending_user_data"] = form.cleaned_data
+                request.session["pending_user_password"] = form.cleaned_data.get("password1")
+
+                # Store OTP in session
+                request.session["register_otp"] = str(otp)
+
+                # Send OTP
+                send_otp(email, otp,purpose="register")
+
+                messages.success(request, f"OTP sent to {email}. Please verify to complete registration.")
+                return redirect("accounts:register_otp_confirmation")
+
+            except Exception as e:
+                messages.error(request, str(e))
+                return redirect("accounts:retail_admin_register")
+
+        else:
+            context = {"form": form}
+            return render(request, "accounts/register.html", context)
 
     form = RetailAdminRegisterForm()
     context = {"form": form}
     return render(request, "accounts/register.html", context)
+
 
 def retail_admin_login(request):
     
@@ -81,6 +116,7 @@ def otp_confirmation(request):
 
 def set_new_password(request, user_id=None):
     
+    
     if request.method == "POST":
         password1=request.POST.get("password1")
         password2=request.POST.get("password2")
@@ -110,3 +146,41 @@ def set_new_password(request, user_id=None):
             return redirect("accounts:retail_admin_login")
         
     return render(request, "accounts/new-password.html")
+
+
+def register_otp_confirmation(request):
+    if request.method == "POST":
+        entered_otp = request.POST.get("otp")
+        session_otp = request.session.get("register_otp")
+        user_data = request.session.get("pending_user_data")
+        user_password = request.session.get("pending_user_password")
+
+        if not (entered_otp and session_otp and user_data):
+            messages.error(request, "Session expired. Please register again.")
+            return redirect("accounts:retail_admin_register")
+
+        if entered_otp != session_otp:
+            messages.error(request, "Invalid OTP. Try again.")
+            return redirect("accounts:register_otp_confirmation")
+
+        # ✅ OTP is correct → create user
+        user = CustomUser.objects.create_user(
+            username=user_data.get("username"),
+            email=user_data.get("email"),
+            first_name=user_data.get("first_name"),
+            last_name=user_data.get("last_name"),
+            address=user_data.get("address"),
+            phone_number=user_data.get("phone_number"),
+            profile_pic=user_data.get("profile_pic"),
+            password=user_password,
+        )
+
+        # Clear session
+        request.session.pop("pending_user_data", None)
+        request.session.pop("pending_user_password", None)
+        request.session.pop("register_otp", None)
+
+        messages.success(request, "Account created successfully. You can now log in.")
+        return redirect("accounts:retail_admin_login")
+
+    return render(request, "accounts/otp-confirmation.html")
