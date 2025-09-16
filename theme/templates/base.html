@@ -25,15 +25,10 @@
             animation: slideDown 0.3s ease-out;
         }
         
-        /* Glassmorphism effect - Updated for better dark mode support */
+        /* Glassmorphism effect */
         .glass-morphism {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .dark .glass-morphism {
-            background: rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
@@ -56,72 +51,6 @@
         
         .nav-gradient:hover::before {
             left: 100%;
-        }
-
-        /* Fix for ensuring proper dark mode card backgrounds */
-        .card {
-            background: white !important;
-            transition: all 0.3s ease;
-        }
-        
-        .dark .card {
-            background: rgb(31, 41, 55) !important; /* gray-800 */
-        }
-
-        /* Fix for product item backgrounds in dark mode */
-        .product-item {
-            background: rgb(249, 250, 251) !important; /* gray-50 */
-            transition: background-color 0.2s ease;
-        }
-        
-        .dark .product-item {
-            background: rgb(17, 24, 39) !important; /* gray-900 */
-        }
-        
-        .product-item:hover {
-            background: rgb(243, 244, 246) !important; /* gray-100 */
-        }
-        
-        .dark .product-item:hover {
-            background: rgb(55, 65, 81) !important; /* gray-700 */
-        }
-
-        /* Fix for transaction item backgrounds */
-        .transaction-item {
-            transition: background-color 0.2s ease;
-        }
-        
-        .dark .transaction-item.bg-green-50 {
-            background: rgb(6, 78, 59) !important; /* green-900 */
-        }
-        
-        .dark .transaction-item.bg-blue-50 {
-            background: rgb(30, 58, 138) !important; /* blue-900 */
-        }
-        
-        .dark .transaction-item.bg-purple-50 {
-            background: rgb(88, 28, 135) !important; /* purple-900 */
-        }
-        
-        .dark .transaction-item.bg-orange-50 {
-            background: rgb(154, 52, 18) !important; /* orange-900 */
-        }
-
-        /* Hover states for transaction items in dark mode */
-        .dark .transaction-item.bg-green-50:hover {
-            background: rgb(4, 120, 87) !important; /* green-800 */
-        }
-        
-        .dark .transaction-item.bg-blue-50:hover {
-            background: rgb(30, 64, 175) !important; /* blue-800 */
-        }
-        
-        .dark .transaction-item.bg-purple-50:hover {
-            background: rgb(107, 33, 168) !important; /* purple-800 */
-        }
-        
-        .dark .transaction-item.bg-orange-50:hover {
-            background: rgb(194, 65, 12) !important; /* orange-800 */
         }
     </style>
     <script>
@@ -152,7 +81,7 @@
                 </div>
                 
                 <!-- Desktop Navigation -->
-                <nav class="hidden md:flex items-center space-x-1">
+                <nav class="hidden [@media(min-width:850px)]:flex items-center space-x-1">
                     <a href="#" 
                        data-page="dashboard"
                        class="nav-link nav-gradient px-4 py-2 rounded-lg font-semibold bg-white/10 text-white transition-all duration-300 hover:bg-white/20 hover:scale-105 shadow-lg">
@@ -198,18 +127,6 @@
 
             <!-- Right Section: Theme Toggle and Logout -->
             <div class="flex items-center space-x-2 sm:space-x-3">
-                <!-- Theme Toggle Button -->
-                <button id="themeToggle" 
-                        class="px-3 sm:px-4 py-2 rounded-lg glass-morphism hover:bg-white/20 text-white transition-all duration-300 flex items-center space-x-2 hover:scale-105 shadow-lg" 
-                        title="Toggle Light/Dark Mode">
-                    <svg class="theme-icon-light w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                    <svg class="theme-icon-dark hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                    </svg>
-                    <span class="hidden sm:inline text-sm">Theme</span>
-                </button>
                  
                 <!-- Logout Button -->
                 <a href="{% url 'accounts:logout_view' %}" 
@@ -221,7 +138,7 @@
                 </a>
 
                 <!-- Mobile Menu Button -->
-                <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition-all duration-200">
+                <button id="mobileMenuBtn" class="[@media(min-width:850px)]:hidden p-2 rounded-lg hover:bg-white/10 transition-all duration-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path class="menu-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         <path class="menu-close hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -232,7 +149,7 @@
     </div>
     
     <!-- Mobile Navigation Menu -->
-    <div id="mobileMenu" class="hidden md:hidden glass-morphism border-t border-white/10 animate-slide-down">
+    <div id="mobileMenu" class="hidden [@media(min-width:850px)]:hidden glass-morphism border-t border-white/10 animate-slide-down">
         <nav class="px-4 py-3 space-y-2">
             <a href="#" 
                data-page="dashboard"
@@ -280,52 +197,6 @@
 
 <!-- Global Scripts -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Theme Toggle Implementation
-        const themeToggle = document.getElementById('themeToggle');
-        const htmlElement = document.documentElement;
-        const lightIcon = document.querySelector('.theme-icon-light');
-        const darkIcon = document.querySelector('.theme-icon-dark');
-        
-        // Initialize theme
-        function initializeTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            
-            if (savedTheme === 'dark') {
-                htmlElement.classList.add('dark');
-                lightIcon.classList.add('hidden');
-                darkIcon.classList.remove('hidden');
-            } else {
-                htmlElement.classList.remove('dark');
-                lightIcon.classList.remove('hidden');
-                darkIcon.classList.add('hidden');
-            }
-        }
-        
-        // Call initialize on load
-        initializeTheme();
-        
-        // Theme toggle click handler
-        if (themeToggle) {
-            themeToggle.addEventListener('click', function() {
-                const isDark = htmlElement.classList.contains('dark');
-                
-                if (isDark) {
-                    htmlElement.classList.remove('dark');
-                    localStorage.setItem('theme', 'light');
-                    lightIcon.classList.remove('hidden');
-                    darkIcon.classList.add('hidden');
-                } else {
-                    htmlElement.classList.add('dark');
-                    localStorage.setItem('theme', 'dark');
-                    lightIcon.classList.add('hidden');
-                    darkIcon.classList.remove('hidden');
-                }
-                
-                // Dispatch custom event for theme change
-                window.dispatchEvent(new CustomEvent('themeChanged'));
-            });
-        } 
         
         // Mobile Menu Toggle
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -382,7 +253,6 @@
         }
         
         setActivePage('dashboard');
-    });
 </script>
 {% endblock header %}
 
