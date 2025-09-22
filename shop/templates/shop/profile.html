@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Profile
+{% endblock title %}
+
+{% block header %}{% endblock header %}
+
+
+{% block content %}
+
+<main class=" min-h-screen flex  justify-center gap-5 p-6 w-full">
+
+    <div class="w-full max-w-5xl shadow-light shadow-lg rounded-xl overflow-hidden ">
+        <!-- Banner -->
+        <div class="relative h-48 ">
+            <img src="{{shop.banner.url}}" alt="Banner" class="w-full h-full object-cover">
+            <div class="absolute bottom-4 left-4">
+                <img src="{{shop.logo.url}}" alt="Logo" class="w-20 h-20 rounded-full border-2 border-white shadow-lg">
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-8 pt-20">
+
+            <!-- shop Information -->
+            <div class="mb-8">
+                <h2 class="text-xl font-bold text-base-500 mb-4 border-b pb-2">shop Information</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-gray-500 text-sm">Name</label>
+                        <p class="font-semibold">{{shop.name}}</p>
+                    </div>
+                    <div>
+                        <label class="block text-gray-500 text-sm">Established Date</label>
+                        <p class="font-semibold">{{shop.established_date}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="mb-8">
+                <h2 class="text-xl font-bold text-base-500 mb-4 border-b pb-2">Contact Information</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-gray-500 text-sm">Email</label>
+                        <p class="font-semibold">{{shop.email}}</p>
+                    </div>
+                    <div></div>       
+                    <div>
+                        <label class="block text-gray-500 text-sm">Phone</label>
+                        <p class="font-semibold">{{shop.phone_number}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Address Information -->
+            <div>
+                <h2 class="text-xl font-bold text-base-500 mb-4 border-b pb-2">Address Information</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-gray-500 text-sm">Address Line 1</label>
+                        <p class="font-semibold">{{shop.address_line1}}</p>
+                    </div>
+                    <div>
+                        <label class="block text-gray-500 text-sm">Address Line 2</label>
+                        <p class="font-semibold">{{shop.address_line2}}</p>
+                    </div>
+                    <div>
+                        <label class="block text-gray-500 text-sm">City</label>
+                        <p class="font-semibold">{{shop.city}}</p>
+                    </div>
+                    <div>
+                        <label class="block text-gray-500 text-sm">State</label>
+                        <p class="font-semibold">{{shop.state}}</p>
+                    </div>
+                    <div>
+                        <label class="block text-gray-500 text-sm">Country</label>
+                        <p class="font-semibold">{{shop.country}}</p>
+                    </div>
+                    <div>
+                        <label class="block text-gray-500 text-sm">Postal Code</label>
+                        <p class="font-semibold">{{shop.postal_code}}</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-500 text-sm">Owner's Name</label>
+                        <p class="font-semibold">{{shop.owner_name}}</p>
+                    </div>
+                    <div>
+                        <label class="block text-gray-500 text-sm">Registration Number</label>
+                        <p class="font-semibold">{{shop.registration_number}}</p>
+                    </div>
+                    <div>
+                        <label class="block text-gray-500 text-sm">Map Location</label>
+
+                        <a target="_blank" href="{{shop.map_location_url}}" class="font-semibold">Click
+                            here
+                            to open the map</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <a class="btn btn-primary w-full" href="#">Update shop Information</a>
+
+    </div>
+    <div class="max-w-sm h-fit rounded-xl shadow-lg overflow-hidden">
+        <div class="flex items-center p-4">
+            <img src="{{admin.profile_pic.url}}" alt="User Profile"
+                class="w-16 h-16 rounded-full object-cover border-2 border-blue-500">
+            <div class="ml-4">
+                <h3 class="text-lg font-bold text-base-500">{{admin.get_full_name}}</h3>
+                <p class="text-sm text-gray-500">Administrator</p>
+                <p class="text-sm text-gray-600 mt-1">{{admin.email}}</p>
+            </div>
+        </div>
+        <div class="px-4 pb-4">
+            <a class="btn btn-outline btn-sm w-full mb-3" href="{% url 'accounts:logout_view' %}">
+                Logout
+            </a>
+        </div>
+    </div>
+
+</main>
+{% endblock content %}
