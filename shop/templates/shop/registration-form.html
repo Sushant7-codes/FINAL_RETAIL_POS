@@ -178,7 +178,7 @@
 
 
     <!-- registration form  -->
-    <form action="{{form_submission_url}}" method="post" enctype="multipart/form-data"
+    <form action="{% url 'shop:shop_register' %}" method="post" enctype="multipart/form-data"
         class="flex flex-col w-[70vw] p-6">
         {% csrf_token %}
         <div class="flex justify-between gap-20">
@@ -194,7 +194,19 @@
                         <li class="text-red-500 text-sm">{{ error }}</li>
                         {% endfor %}
                     </ul>
+                    
+                </fieldset>
 
+                <fieldset class="fieldset mb-1">
+                    <label class="label text-xl" for="{{ form.owner_name.id_for_label }}">{{form.owner_name.label}}</label>
+                    {{ form.owner_name|add_class:"input p-3 mb-1 min-w-[400px] w-full" }}
+
+                    <ul>
+                        {% for error in form.owner_name.errors %}
+                        <li class="text-red-500 text-sm">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    
                 </fieldset>
                 <div class="flex justify-between gap-6">
                     <fieldset class="fieldset mb-1 flex-grow">
@@ -204,18 +216,6 @@
 
                         <ul>
                             {% for error in form.established_date.errors %}
-                            <li class="text-red-500 text-sm">{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-
-                    </fieldset>
-                    <fieldset class="fieldset mb-1 flex-grow">
-                        <label class="label text-xl"
-                            for="{{ form.theme_color.id_for_label }}">{{form.theme_color.label}}</label>
-                        {{ form.theme_color|add_class:"input " }}
-
-                        <ul>
-                            {% for error in form.theme_color.errors %}
                             <li class="text-red-500 text-sm">{{ error }}</li>
                             {% endfor %}
                         </ul>
@@ -236,11 +236,11 @@
                 </fieldset>
                 <fieldset class="fieldset mb-1">
                     <label class="label text-xl"
-                        for="{{ form.banner_image.id_for_label }}">{{form.banner_image.label}}</label>
-                    {{ form.banner_image|add_class:"file-input mb-1 min-w-[300px] w-full" }}
+                        for="{{ form.banner.id_for_label }}">{{form.banner.label}}</label>
+                    {{ form.banner|add_class:"file-input mb-1 min-w-[300px] w-full" }}
 
                     <ul>
-                        {% for error in form.banner_image.errors %}
+                        {% for error in form.banner.errors %}
                         <li class="text-red-500 text-sm">{{ error }}</li>
                         {% endfor %}
                     </ul>
@@ -260,22 +260,11 @@
 
                 </fieldset>
                 <fieldset class="fieldset mb-1">
-                    <label class="label text-xl" for="{{ form.phone.id_for_label }}">{{form.phone.label}}</label>
-                    {{ form.phone|add_class:"input p-3 mb-1 min-w-[400px] w-full" }}
+                    <label class="label text-xl" for="{{ form.phone_number.id_for_label }}">{{form.phone_number.label}}</label>
+                    {{ form.phone_number|add_class:"input p-3 mb-1 min-w-[400px] w-full" }}
 
                     <ul>
-                        {% for error in form.phone.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-
-                </fieldset>
-                <fieldset class="fieldset mb-1">
-                    <label class="label text-xl" for="{{ form.website.id_for_label }}">{{form.website.label}}</label>
-                    {{ form.website|add_class:"input p-3 mb-1 min-w-[400px] w-full" }}
-
-                    <ul>
-                        {% for error in form.website.errors %}
+                        {% for error in form.phone_number.errors %}
                         <li class="text-red-500 text-sm">{{ error }}</li>
                         {% endfor %}
                     </ul>
@@ -288,11 +277,11 @@
                 <div class="flex justify-between">
                     <fieldset class="fieldset mb-1">
                         <label class="label text-xl"
-                            for="{{ form.address_line1.id_for_label }}">{{form.address_line1.label}}</label>
-                        {{ form.address_line1|add_class:"input p-3 mb-1 min-w-[300px]" }}
+                            for="{{ form.address_line_1.id_for_label }}">{{form.address_line_1.label}}</label>
+                        {{ form.address_line_1|add_class:"input p-3 mb-1 min-w-[300px]" }}
 
                         <ul>
-                            {% for error in form.address_line1.errors %}
+                            {% for error in form.address_line_1.errors %}
                             <li class="text-red-500 text-sm">{{ error }}</li>
                             {% endfor %}
                         </ul>
@@ -300,11 +289,11 @@
                     </fieldset>
                     <fieldset class="fieldset mb-1">
                         <label class="label text-xl"
-                            for="{{ form.address_line2.id_for_label }}">{{form.address_line2.label}}</label>
-                        {{ form.address_line2|add_class:"input p-3 mb-1 min-w-[300px]" }}
+                            for="{{ form.address_line_2.id_for_label }}">{{form.address_line_2.label}}</label>
+                        {{ form.address_line_2|add_class:"input p-3 mb-1 min-w-[300px]" }}
 
                         <ul>
-                            {% for error in form.address_line2.errors %}
+                            {% for error in form.address_line_2.errors %}
                             <li class="text-red-500 text-sm">{{ error }}</li>
                             {% endfor %}
                         </ul>
@@ -373,18 +362,6 @@
 
                 </fieldset>
                 <!-- <div class="flex justify-between"> -->
-                <fieldset class="fieldset mb-1">
-                    <label class="label text-xl"
-                        for="{{ form.principal_name.id_for_label }}">{{form.principal_name.label}}</label>
-                    {{ form.principal_name|add_class:"input p-3 mb-1 min-w-[300px] w-full" />
-
-                    <ul>
-                        {% for error in form.principal_name.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-
-                </fieldset>
                 <fieldset class="fieldset mb-1">
                     <label class="label text-xl"
                         for="{{ form.registration_number.id_for_label }}">{{form.registration_number.label}}</label>

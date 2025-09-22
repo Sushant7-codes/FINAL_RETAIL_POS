@@ -4,7 +4,7 @@ from django.db import models
 class Shop(models.Model):
     admin_user = models.OneToOneField("accounts.CustomUser", on_delete=models.CASCADE, related_name='shop')
     name = models.CharField(max_length=255)
-    code=models.CharField(max_length=10, unique=True)
+    code=models.CharField(max_length=10, unique=True, blank=True, null=True)
     slug = models.SlugField(unique=True,blank=True, null=True)
     owner_name = models.CharField(max_length=255)
     email = models.EmailField(blank=True, null=True)
@@ -23,7 +23,6 @@ class Shop(models.Model):
     banner = models.ImageField(upload_to="shop_banners/", blank=True, null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
     
     
     updated_at = models.DateTimeField(auto_now=True)
