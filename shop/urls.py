@@ -7,4 +7,5 @@ app_name = "shop"
 urlpatterns = [
     path("register/", views.shop_register, name="shop_register"),
     path("profile/", views.shop_profile, name="shop_profile"),
+    path("update/", views.shop_update, name="shop_update"),
 ]

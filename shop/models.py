@@ -16,6 +16,7 @@ class Shop(models.Model):
     state=models.CharField(max_length=50)
     country=models.CharField(max_length=50)
     postal_code=models.CharField(max_length=50)
+    map_location_url=models.URLField(blank=True, null=True)
     
     registration_number = models.CharField(max_length=100, blank=True, null=True)
     logo = models.ImageField(upload_to="shop_logos/", blank=True, null=True)

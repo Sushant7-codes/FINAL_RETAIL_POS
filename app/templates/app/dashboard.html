@@ -333,7 +333,7 @@
     });
 </script>
 
-{% else %}
+{% comment %} {% else %}
 <main class="h-screen flex flex-col items-center px-4">
     <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-800 dark:text-gray-100 text-center">
         Welcome, Please kindly register your shop to get started!
@@ -378,8 +378,11 @@
             </button>
         </div>
     </form>
-</main>
+</main> {% endcomment %}
 
 
+
+{% else %}
+{% include 'shop/registration-form.html' with form=form %}
 {% endif %}
 {% endblock content %}

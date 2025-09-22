@@ -35,3 +35,19 @@ def shop_profile(request):
     }
     
     return render(request, "shop/profile.html",context)
+
+
+@login_required
+def shop_update(request):
+    
+    if request.method == "POST":
+        form_data=request.POST
+        form=ShopForm(form_data, request.FILES)
+        
+        if form.is_valid():
+            form.save(request=request)
+            return redirect("shop:shop_profile")
+        
+    form = ShopForm(instance=request.user.shop)
+    
+    return render(request, "shop/update-shop-info.html", {"form":form})
