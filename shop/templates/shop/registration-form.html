@@ -1,10 +1,5 @@
-{% extends "base.html" %}
-
-{% block header %}{% endblock header %}
-
 {% load form_extras %}
 
-{% block content %}
 <style>
     body {
         background-color: #1e293b;
@@ -21,7 +16,7 @@
     .toast {
         position: fixed !important;
         top: 10px !important;
-        right: 20px !important;
+        right: 250px !important;
         z-index: 1000;
         max-width: 400px;
     }
@@ -41,8 +36,9 @@
         border-radius: 12px !important;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
         max-width: 1200px !important;
-        width: 90% !important;
+        width: 95% !important;
         margin: 20px auto !important;
+        padding: 24px !important;
     }
 
     h1 {
@@ -99,47 +95,21 @@
         margin-bottom: 16px !important;
     }
 
-    /* Responsive adjustments */
+    /* Responsive fixes */
     @media (max-width: 1024px) {
-        .flex.justify-between {
-            flex-direction: column !important;
-            gap: 20px !important;
-        }
-        
         form {
             width: 95% !important;
-            padding: 24px !important;
+            padding: 20px !important;
         }
     }
 
     @media (max-width: 768px) {
-        .toast {
-            top: 10px !important;
-            right: 10px !important;
-            left: 10px !important;
-            max-width: none;
-        }
-        
         form {
             width: 98% !important;
-            padding: 20px !important;
+            padding: 16px !important;
         }
-        
-        .flex.justify-between.gap-6 {
-            flex-direction: column !important;
-            gap: 0 !important;
-        }
-        
-        .flex.justify-between:not(.gap-6):not([class*="gap-20"]) {
-            flex-direction: column !important;
-        }
-        
         h1 {
-            font-size: 24px !important;
-        }
-        
-        .input, .file-input {
-            min-width: auto !important;
+            font-size: 22px !important;
         }
     }
 
@@ -147,247 +117,176 @@
         main {
             padding: 12px !important;
         }
-        
-        form {
-            padding: 16px !important;
-        }
-        
         h1 {
             font-size: 20px !important;
         }
     }
 </style>
 
-<main class="flex p-6 w-full flex-col  items-center overflow-auto">
+<main class="flex flex-col items-center justify-center min-h-screen w-full p-4">
 
     {% if not request.user.shop %}
-
-    <div class="toast toast-end toast-top">
-
-        <div class="alert alert-success alert-soft">
-            <span>Welcome to the dashboard! Please register your shop to get started.</span>
+    <div class="fixed top-1/8 left-1/2 -translate-x-1/2 -translate-y-1/3 w-full max-w-lg z-50">
+        <div class="alert alert-success text-center shadow-lg">
+            <span class="block">Welcome to the dashboard! Please register your shop to get started.</span>
             <ul>
                 {% for error in form.non_field_errors %}
                 <span class="text-red-500 text-sm">{{ error }}</span>
                 {% endfor %}
             </ul>
         </div>
-
     </div>
     {% endif %}
 
 
     <!-- registration form  -->
-    <form action="{% url 'shop:shop_register' %}" method="post" enctype="multipart/form-data"
-        class="flex flex-col w-[70vw] p-6">
+    <form action="{% url 'shop:shop_register' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="flex justify-between gap-20">
-            <div class="flex flex-grow flex-col justify-center">
+        
+        <!-- 2-column responsive grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
 
-                <h1 class="text-3xl font-bold mb-2">Shop Information</h1>
-                <fieldset class="fieldset mb-1">
-                    <label class="label text-xl" for="{{ form.name.id_for_label }}">{{form.name.label}}</label>
-                    {{ form.name|add_class:"input p-3 mb-1 min-w-[400px] w-full" }}
-
-                    <ul>
-                        {% for error in form.name.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                    
+            <!-- Left Column -->
+            <div>
+                <h1 class="text-2xl font-bold mb-2">Shop Information</h1>
+                <fieldset class="fieldset">
+                    <label class="label text-lg" for="{{ form.name.id_for_label }}">{{form.name.label}}</label>
+                    {{ form.name|add_class:"input" }}
+                    {% for error in form.name.errors %}
+                        <p class="text-red-500">{{ error }}</p>
+                    {% endfor %}
                 </fieldset>
 
-                <fieldset class="fieldset mb-1">
-                    <label class="label text-xl" for="{{ form.owner_name.id_for_label }}">{{form.owner_name.label}}</label>
-                    {{ form.owner_name|add_class:"input p-3 mb-1 min-w-[400px] w-full" }}
-
-                    <ul>
-                        {% for error in form.owner_name.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                    
+                <fieldset class="fieldset">
+                    <label class="label text-lg" for="{{ form.owner_name.id_for_label }}">{{form.owner_name.label}}</label>
+                    {{ form.owner_name|add_class:"input" }}
+                    {% for error in form.owner_name.errors %}
+                        <p class="text-red-500">{{ error }}</p>
+                    {% endfor %}
                 </fieldset>
-                <div class="flex justify-between gap-6">
-                    <fieldset class="fieldset mb-1 flex-grow">
-                        <label class="label text-xl"
-                            for="{{ form.established_date.id_for_label }}">{{form.established_date.label}}</label>
-                        {{ form.established_date|add_class:"input p-3 mb-1 w-full" }}
 
-                        <ul>
-                            {% for error in form.established_date.errors %}
-                            <li class="text-red-500 text-sm">{{ error }}</li>
-                            {% endfor %}
-                        </ul>
+                <fieldset class="fieldset">
+                    <label class="label text-lg" for="{{ form.established_date.id_for_label }}">{{form.established_date.label}}</label>
+                    {{ form.established_date|add_class:"input" }}
+                    {% for error in form.established_date.errors %}
+                        <p class="text-red-500">{{ error }}</p>
+                    {% endfor %}
+                </fieldset>
 
+                <fieldset class="fieldset">
+                    <label class="label text-lg" for="{{ form.logo.id_for_label }}">{{form.logo.label}}</label>
+                    {{ form.logo|add_class:"file-input" }}
+                    {% for error in form.logo.errors %}
+                        <p class="text-red-500">{{ error }}</p>
+                    {% endfor %}
+                </fieldset>
+
+                <fieldset class="fieldset">
+                    <label class="label text-lg" for="{{ form.banner.id_for_label }}">{{form.banner.label}}</label>
+                    {{ form.banner|add_class:"file-input" }}
+                    {% for error in form.banner.errors %}
+                        <p class="text-red-500">{{ error }}</p>
+                    {% endfor %}
+                </fieldset>
+
+                <h1 class="text-2xl font-bold mb-2 mt-6">Contact Information</h1>
+                <fieldset class="fieldset">
+                    <label class="label text-lg" for="{{ form.email.id_for_label }}">{{form.email.label}}</label>
+                    {{ form.email|add_class:"input" }}
+                    {% for error in form.email.errors %}
+                        <p class="text-red-500">{{ error }}</p>
+                    {% endfor %}
+                </fieldset>
+
+                <fieldset class="fieldset">
+                    <label class="label text-lg" for="{{ form.phone_number.id_for_label }}">{{form.phone_number.label}}</label>
+                    {{ form.phone_number|add_class:"input" }}
+                    {% for error in form.phone_number.errors %}
+                        <p class="text-red-500">{{ error }}</p>
+                    {% endfor %}
+                </fieldset>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <h1 class="text-2xl font-bold mb-2">Address Information</h1>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <fieldset class="fieldset">
+                        <label class="label text-lg" for="{{ form.address_line_1.id_for_label }}">{{form.address_line_1.label}}</label>
+                        {{ form.address_line_1|add_class:"input" }}
+                        {% for error in form.address_line_1.errors %}
+                            <p class="text-red-500">{{ error }}</p>
+                        {% endfor %}
+                    </fieldset>
+
+                    <fieldset class="fieldset">
+                        <label class="label text-lg" for="{{ form.address_line_2.id_for_label }}">{{form.address_line_2.label}}</label>
+                        {{ form.address_line_2|add_class:"input" }}
+                        {% for error in form.address_line_2.errors %}
+                            <p class="text-red-500">{{ error }}</p>
+                        {% endfor %}
                     </fieldset>
                 </div>
 
-                <fieldset class="fieldset mb-1">
-                    <label class="label text-xl" for="{{ form.logo.id_for_label }}">{{form.logo.label}}</label>
-                    {{ form.logo|add_class:"file-input mb-1 min-w-[300px] w-full" }}
-
-                    <ul>
-                        {% for error in form.logo.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-
-                </fieldset>
-                <fieldset class="fieldset mb-1">
-                    <label class="label text-xl"
-                        for="{{ form.banner.id_for_label }}">{{form.banner.label}}</label>
-                    {{ form.banner|add_class:"file-input mb-1 min-w-[300px] w-full" }}
-
-                    <ul>
-                        {% for error in form.banner.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-
+                <fieldset class="fieldset">
+                    <label class="label text-lg" for="{{ form.city.id_for_label }}">{{form.city.label}}</label>
+                    {{ form.city|add_class:"input" }}
                 </fieldset>
 
-                <h1 class="text-3xl font-bold mb-2 mt-6">Contact Information</h1>
-                <fieldset class="fieldset mb-1">
-                    <label class="label text-xl" for="{{ form.email.id_for_label }}">{{form.email.label}}</label>
-                    {{ form.email|add_class:"input p-3 mb-1 min-w-[400px] w-full" }}
-
-                    <ul>
-                        {% for error in form.email.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-
-                </fieldset>
-                <fieldset class="fieldset mb-1">
-                    <label class="label text-xl" for="{{ form.phone_number.id_for_label }}">{{form.phone_number.label}}</label>
-                    {{ form.phone_number|add_class:"input p-3 mb-1 min-w-[400px] w-full" }}
-
-                    <ul>
-                        {% for error in form.phone_number.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-
+                <fieldset class="fieldset">
+                    <label class="label text-lg" for="{{ form.state.id_for_label }}">{{form.state.label}}</label>
+                    {{ form.state|add_class:"input" }}
                 </fieldset>
 
+                <fieldset class="fieldset">
+                    <label class="label text-lg" for="{{ form.country.id_for_label }}">{{form.country.label}}</label>
+                    {{ form.country|add_class:"input" }}
+                </fieldset>
+
+                <fieldset class="fieldset">
+                    <label class="label text-lg" for="{{ form.postal_code.id_for_label }}">{{form.postal_code.label}}</label>
+                    {{ form.postal_code|add_class:"input" }}
+                </fieldset>
+
+                <fieldset class="fieldset">
+                    <label class="label text-lg" for="{{ form.map_location_url.id_for_label }}">{{form.map_location_url.label}}</label>
+                    {{ form.map_location_url|add_class:"input" }}
+                </fieldset>
+
+                <fieldset class="fieldset">
+                    <label class="label text-lg" for="{{ form.registration_number.id_for_label }}">{{form.registration_number.label}}</label>
+                    {{ form.registration_number|add_class:"input" }}
+                </fieldset>
             </div>
-            <div class="flex flex-grow flex-col ">
-                <h1 class="text-3xl font-bold mb-2">Address Information</h1>
-                <div class="flex justify-between">
-                    <fieldset class="fieldset mb-1">
-                        <label class="label text-xl"
-                            for="{{ form.address_line_1.id_for_label }}">{{form.address_line_1.label}}</label>
-                        {{ form.address_line_1|add_class:"input p-3 mb-1 min-w-[300px]" }}
-
-                        <ul>
-                            {% for error in form.address_line_1.errors %}
-                            <li class="text-red-500 text-sm">{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-
-                    </fieldset>
-                    <fieldset class="fieldset mb-1">
-                        <label class="label text-xl"
-                            for="{{ form.address_line_2.id_for_label }}">{{form.address_line_2.label}}</label>
-                        {{ form.address_line_2|add_class:"input p-3 mb-1 min-w-[300px]" }}
-
-                        <ul>
-                            {% for error in form.address_line_2.errors %}
-                            <li class="text-red-500 text-sm">{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-
-                    </fieldset>
-                </div>
-                <!-- <div class="flex justify-between"> -->
-                <fieldset class="fieldset mb-1">
-                    <label class="label text-xl" for="{{ form.city.id_for_label }}">{{form.city.label}}</label>
-                    {{ form.city|add_class:"input p-3 mb-1 min-w-[300px] w-full" }}
-
-                    <ul>
-                        {% for error in form.city.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-
-                </fieldset>
-                <fieldset class="fieldset mb-1">
-                    <label class="label text-xl" for="{{ form.state.id_for_label }}">{{form.state.label}}</label>
-                    {{ form.state|add_class:"input p-3 mb-1 min-w-[300px] w-full" }}
-
-                    <ul>
-                        {% for error in form.state.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-
-                </fieldset>
-                <!-- </div> -->
-                <!-- <div class="flex justify-between"> -->
-                <fieldset class="fieldset mb-1">
-                    <label class="label text-xl" for="{{ form.country.id_for_label }}">{{form.country.label}}</label>
-                    {{ form.country|add_class:"input p-3 mb-1 min-w-[300px] w-full" }}
-
-                    <ul>
-                        {% for error in form.country.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-
-                </fieldset>
-                <fieldset class="fieldset mb-1">
-                    <label class="label text-xl"
-                        for="{{ form.postal_code.id_for_label }}">{{form.postal_code.label}}</label>
-                    {{ form.postal_code|add_class:"input p-3 mb-1 min-w-[300px] w-full" }}
-
-                    <ul>
-                        {% for error in form.postal_code.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-
-                </fieldset>
-                <!-- </div> -->
-                <fieldset class="fieldset mb-1">
-                    <label class="label text-xl"
-                        for="{{ form.map_location_url.id_for_label }}">{{form.map_location_url.label}}</label>
-                    {{ form.map_location_url|add_class:"input p-3 mb-1 min-w-[300px] w-full" }}
-
-                    <ul>
-                        {% for error in form.map_location_url.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-
-                </fieldset>
-                <!-- <div class="flex justify-between"> -->
-                <fieldset class="fieldset mb-1">
-                    <label class="label text-xl"
-                        for="{{ form.registration_number.id_for_label }}">{{form.registration_number.label}}</label>
-                    {{ form.registration_number|add_class:"input p-3 mb-1 min-w-[300px] w-full" }}
-
-                    <ul>
-                        {% for error in form.registration_number.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-
-                </fieldset>
-                <!-- </div> -->
-
-            </div>
-
-
         </div>
-        <button type="submit" class="btn btn-primary w-full mt-12">
+
+        <button type="submit" class="btn btn-primary w-full mt-10">
             {% if 'update' in form_submission_url %}
-            Update
+                Update
             {% else %}
-            Register
+                Register
             {% endif %}
         </button>
     </form>
 </main>
+<script>
+    // Wait for page to load
+    document.addEventListener("DOMContentLoaded", function () {
+        // Target the alert div
+        const alertBox = document.querySelector(".alert");
 
-{% endblock content %}
+        if (alertBox) {
+            // Remove after 5 seconds (5000 ms)
+            setTimeout(() => {
+                alertBox.style.transition = "opacity 0.5s ease"; 
+                alertBox.style.opacity = "0";  
+
+                // Completely remove from DOM after fade-out
+                setTimeout(() => {
+                    alertBox.remove();
+                }, 500); 
+            }, 5000); 
+        }
+    });
+</script>

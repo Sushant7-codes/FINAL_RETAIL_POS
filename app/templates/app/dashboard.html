@@ -4,7 +4,28 @@
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<main class="flex-grow p-4 sm:p-6 pt-20 sm:pt-24 overflow-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+<!-- Add CSS to prevent content from going over header -->
+<style>
+    body {
+        padding-top: 80px; /* Account for fixed header height */
+    }
+    
+    /* Ensure header stays above everything */
+    header {
+        z-index: 9999 !important;
+        background: rgba(15, 23, 42, 0.95) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+    }
+    
+    /* Prevent content from going over header */
+    main {
+        position: relative;
+        z-index: 1;
+    }
+</style>
+
+<main class="flex-grow p-4 sm:p-6 overflow-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
 
     {% if request.user.shop %}
     <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-800 dark:text-gray-100">Dashboard</h1>

@@ -1,13 +1,33 @@
 {% extends 'base.html' %}
 
 {% block title %}Profile{% endblock title %}
-{% block header %}{% endblock header %}
 
 {% block content %}
+<!-- Add padding to body to account for fixed header -->
+<style>
+    body {
+        padding-top: 80px; /* Account for fixed header height */
+    }
+    
+    /* Ensure header stays above everything */
+    header {
+        z-index: 9999 !important;
+        background: rgba(15, 23, 42, 0.95) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+    }
+    
+    /* Prevent content from going over header */
+    main {
+        position: relative;
+        z-index: 1;
+    }
+</style>
+
 <main class="min-h-screen flex justify-center p-6 w-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 relative lg:pr-80">
 
     <!-- ===== Desktop Admin Card ===== -->
-    <div class="hidden lg:block fixed top-6 right-6 w-72 rounded-2xl shadow-2xl bg-white dark:bg-gray-800 overflow-hidden z-50 border border-gray-200 dark:border-gray-700">
+    <div class="hidden lg:block fixed top-24 right-6 w-72 rounded-2xl shadow-2xl bg-white dark:bg-gray-800 overflow-hidden z-30 border border-gray-200 dark:border-gray-700">
         <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-20"></div>
         <div class="relative -mt-10 flex flex-col items-center px-4 pb-6">
             <img src="{{admin.profile_pic.url}}" alt="User Profile"
@@ -21,7 +41,7 @@
 
     <!-- ===== Mobile Hamburger ===== -->
     <button id="admin-toggle-btn" aria-expanded="false"
-            class="lg:hidden fixed top-4 right-4 z-50 flex items-center justify-center w-12 h-12 rounded-xl bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700">
+            class="lg:hidden fixed top-20 right-4 z-30 flex items-center justify-center w-12 h-12 rounded-xl bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700">
         <span class="sr-only">Open admin menu</span>
         <div class="space-y-1.5">
             <span class="block w-6 h-0.5 bg-gray-700 dark:bg-gray-200"></span>
@@ -32,7 +52,7 @@
 
     <!-- ===== Mobile Admin Panel ===== -->
     <div id="mobile-admin-panel"
-         class="hidden fixed top-16 right-4 w-72 rounded-xl shadow-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 z-50 p-5 transform transition-all duration-300 scale-95 opacity-0">
+         class="hidden fixed top-32 right-4 w-72 rounded-xl shadow-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 z-30 p-5 transform transition-all duration-300 scale-95 opacity-0">
         <div class="flex flex-col items-center">
             <img src="{{admin.profile_pic.url}}" alt="User Profile"
                  class="w-16 h-16 rounded-full object-cover border-2 border-blue-500 shadow-md">
