@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST, require_GET
 from shop.forms import ShopForm
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
+
 # Create your views here.
 
 
@@ -49,12 +51,18 @@ def shop_update(request):
     
     if request.method == "POST":
         form_data=request.POST
-        form=ShopForm(form_data, request.FILES)
+        form=ShopForm(form_data, request.FILES,instance=request.user.shop,request=request)
         
         if form.is_valid():
-            form.save(request=request)
+            form.save()
             return redirect("shop:shop_profile")
         
-    form = ShopForm(instance=request.user.shop)
+    form = ShopForm(instance=request.user.shop, request=request)
+    from_submission_url=reverse_lazy("shop:shop_update")
     
-    return render(request, "shop/update-shop-info.html", {"form":form})
+    context={
+        "form":form,
+        "form_submission_url":from_submission_url
+    }
+    
+    return render(request, "shop/update-shop-info.html",context)

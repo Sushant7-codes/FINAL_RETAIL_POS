@@ -11,17 +11,26 @@ class ShopForm(forms.ModelForm):
             "established_date":forms.DateInput(attrs={"type":"date"}),
         }
         
-    def save(self,commit=True,request=None,*args,**kwargs):
+        
+    def __init__(self,*args,**kwargs):
+        self.request=kwargs.pop("request") if "request" in kwargs else None
+        super().__init__(*args, **kwargs)
+    
+    
+    def save(self,commit=True,*args,**kwargs):
         shop = super(ShopForm, self).save(commit=False, *args, **kwargs)
         
-        shop.admin_user = request.user
-        shop_name=self.cleaned_data.get("name")
-        shop_name_words=shop_name.split(" ")
-        estd_year=self.cleaned_data.get("established_date").year
-        code="".join([word[0] for word in shop_name_words])+f"-{estd_year}"
         
-        shop.code=code
-        shop.slug= slugify(shop_name)
+        if self.request:
+            shop.admin_user =self.request.user
+            
+        if not shop.code:
+            shop_name=self.cleaned_data.get("name")
+            shop_name_words=shop_name.split(" ")
+            estd_year=self.cleaned_data.get("established_date").year
+            code="".join([word[0] for word in shop_name_words])+f"-{estd_year}"
+            shop.code=code
+            shop.slug= slugify(shop_name)
         
         if commit:
             shop.save()

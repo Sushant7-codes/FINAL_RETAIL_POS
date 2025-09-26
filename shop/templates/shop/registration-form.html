@@ -1,22 +1,34 @@
 {% load form_extras %}
 
 <style>
+    /* Prevent content from going over fixed header */
     body {
         background-color: #1e293b;
         color: #e2e8f0;
         font-family: system-ui, -apple-system, sans-serif;
+        padding-top: 80px; /* Account for fixed header height */
+    }
+
+    /* Ensure header stays above everything */
+    header {
+        z-index: 9999 !important;
+        background: rgba(15, 23, 42, 0.95) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
     }
 
     main {
         min-height: 100vh;
         background-color: #1e293b;
+        position: relative;
+        z-index: 1;
     }
 
     /* Toast positioning - top right */
     .toast {
         position: fixed !important;
-        top: 10px !important;
-        right: 250px !important;
+        top: 90px !important; /* Adjusted to be below header */
+        right: 20px !important;
         z-index: 1000;
         max-width: 400px;
     }
@@ -101,6 +113,11 @@
             width: 95% !important;
             padding: 20px !important;
         }
+        
+        .toast {
+            right: 10px !important;
+            max-width: 350px;
+        }
     }
 
     @media (max-width: 768px) {
@@ -111,6 +128,12 @@
         h1 {
             font-size: 22px !important;
         }
+        
+        .toast {
+            right: 8px !important;
+            top: 85px !important;
+            max-width: 300px;
+        }
     }
 
     @media (max-width: 480px) {
@@ -120,13 +143,19 @@
         h1 {
             font-size: 20px !important;
         }
+        
+        .toast {
+            right: 5px !important;
+            top: 82px !important;
+            max-width: 280px;
+        }
     }
 </style>
 
 <main class="flex flex-col items-center justify-center min-h-screen w-full p-4">
 
     {% if not request.user.shop %}
-    <div class="fixed top-1/8 left-1/2 -translate-x-1/2 -translate-y-1/3 w-full max-w-lg z-50">
+    <div class="toast">
         <div class="alert alert-success text-center shadow-lg">
             <span class="block">Welcome to the dashboard! Please register your shop to get started.</span>
             <ul>
@@ -140,7 +169,7 @@
 
 
     <!-- registration form  -->
-    <form action="{% url 'shop:shop_register' %}" method="post" enctype="multipart/form-data">
+    <form action="{{form_submission_url}}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         
         <!-- 2-column responsive grid -->

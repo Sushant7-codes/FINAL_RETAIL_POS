@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     
     'widget_tweaks',
 
+    'common',
     'tailwind',
     'theme',
     'app',
@@ -47,7 +48,6 @@ INSTALLED_APPS = [
     'reports',
     'inventory',
     'sales',
-    'common',
     'shop',
     
     'background_task',
