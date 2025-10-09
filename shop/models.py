@@ -32,4 +32,26 @@ class Shop(models.Model):
     def __str__(self):
         return self.name 
     
+class Item(models.Model):
+    name=models.CharField(max_length=100)
+    shop=models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='items')
     
+    
+    class Meta:
+        unique_together = ('name', 'shop')
+        
+        
+    def __str__(self):
+        return f"{self.name} | {self.shop}" 
+        
+        
+class Price(models.Model):
+    name=models.CharField(max_length=100)
+    amount=models.DecimalField(max_digits=10, decimal_places=2)
+    item=models.ForeignKey(Item, on_delete=models.CASCADE, related_name='prices')
+    
+    class Meta:
+        unique_together = ('name', 'item')
+        
+    def __str__(self):
+        return f"{self.name} | {self.item}" 
