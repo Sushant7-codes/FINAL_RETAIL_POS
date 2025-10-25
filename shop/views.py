@@ -4,9 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.http import JsonResponse
-
+from django.db import IntegrityError
 from shop.forms import ShopForm,ItemForm
-
+from django.core import serializers
 
 @require_http_methods(["GET", "POST"])
 @login_required
@@ -66,11 +66,28 @@ def shop_update(request):
 def item_list(request):
     form=ItemForm(request.POST,request=request)
     if form.is_valid():
-        form.save()
+        
+        try:
+            saved_item=form.save()
+        except IntegrityError as e:
+            return JsonResponse(
+                {"success":False,"message":"Item already exists !"}
+            )
 
-    return JsonResponse(
-        {"success":True,"message":"Item added successfully!"}
-        )
+        else:
+            saved_item_dict={
+                "id":saved_item.id,
+                "name":saved_item.name,
+            }
+            return JsonResponse(
+                {"success":True,
+                 "message":"Item added successfully !",
+                 "data":saved_item_dict,
+                 }
+            )
     
     form=ItemForm()
-    return render(request, "shop/item-form.html",{"form":form})
+    item_list=request.user.shop.items.all()
+    
+    context={"form":form,"item_list":item_list}
+    return render(request, "shop/item-form.html", context)

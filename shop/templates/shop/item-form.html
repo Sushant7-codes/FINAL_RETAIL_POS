@@ -8,7 +8,7 @@ Item
 
 {% block content %}
 
-<main class=" min-h-screen flex flex-col  gap-5 p-6 w-full mt-17">
+<main class=" min-h-screen flex flex-col  gap-5 p-6 w-full mt-17" id="main">
     <h1 class="text-3xl font-bold mb-4">Add Items</h1>
     <div class="flex  gap-12">
         <form id="add-item-form" action="" method="post" class="flex-grow max-w-[500px]">
@@ -25,13 +25,34 @@ Item
 
             </fieldset>
             <button type="submit" class="btn btn-primary">Add Item</button>
+        
         </form>
-        <div>
-            <h1 class="text-2xl font-bold mb-4">Item Category</h1>
-            <hr>
-            <div class="flex flex-col">
-                <p>Clothing</p>
+         <div class="flex-grow">
+            <h1 class="text-2xl font-bold mb-4">Grades List</h1>
+            <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+                <table class="table">
+                    <!-- head -->
+                    <thead>
+                        <tr>
+                            <th>SN</th>
+                            <th>Item Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="item-list">
 
+                        {% for item in item_list %}
+                        <!-- row -->
+                        <tr>
+                            <th>{{ forloop.counter }}</th>
+                            <td>{{ item.name }}</td>
+                            <td>Update | Delete</td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
             </div>
 
         </div>
@@ -39,6 +60,35 @@ Item
 </main>
 
 <script>
+
+    function show_toast_message(message,success=true) {
+        const mainDiv=document.getElementById("main")
+        const toastDiv = document.getElementById("toast-message")
+
+        toastDiv?.remove()
+
+        mainDiv.insertAdjacentHTML(
+            "afterbegin",`
+            <div class="toast toast-end toast-top z-50" id="toast-message">
+                <div class="alert alert-${success===true?'success':'error'} shadow-lg">
+                    <span class="font-semibold">${message}</span>
+                </div>
+            </div>
+            `
+        )
+    }
+
+    function add_item_to_table(item) {
+        const table_body = document.getElementById("item-list");
+        const rows_count=table_body.children.length
+        const table_row = document.createElement("tr");
+        table_row.innerHTML = `
+            <th>${rows_count+1}</th>
+            <td>${item.name}</td>
+            <td>Update | Delete</td>
+        `
+        table_body.appendChild(table_row)
+    }
 
     document
         .getElementById("add-item-form")
@@ -58,9 +108,10 @@ Item
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success) {
-                        alert(data.message);
+                        show_toast_message(data.message,success=true)
+                        add_item_to_table(data.data);
                     } else {
-                        alert("Error: " + JSON.stringify(data.errors));
+                        show_toast_message("Error: " + data.message,success=false)
                     }
                 })
                 .catch((err) => console.error(err));
