@@ -43,10 +43,18 @@ Item
 
                         {% for item in item_list %}
                         <!-- row -->
-                        <tr>
+                        <tr id="item-{{ item.id }}">
                             <th>{{ forloop.counter }}</th>
                             <td>{{ item.name }}</td>
-                            <td>Update | Delete</td>
+                            <td>
+                                <div class="flex gap-2">
+                                    <button class="btn btn-sm btn-primary">Update</button>
+                                    <button data-item-id="{{ item.id }}" 
+                                    class="btn btn-sm btn-error" 
+                                    onclick="delete_item(this)">Delete</button>
+                                </div>
+                            </td>
+
                         </tr>
 
                         {% endfor %}
@@ -60,6 +68,29 @@ Item
 </main>
 
 <script>
+
+    function remove_item_from_table(item_id) {
+        const row_id_to_be_deleted=`item-${item_id}`
+        const row_to_be_deleted = document.getElementById(row_id_to_be_deleted)
+        row_to_be_deleted.remove()
+
+    }
+
+    function delete_item(btnElement) {
+        const item_id = btnElement.dataset.itemId;
+
+        fetch("{% url 'shop:item_list_delete' 'dummy' %}".replace('dummy',item_id))
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    show_toast_message(data.message,success=true)
+                    remove_item_from_table(item_id)
+                } else {
+                     show_toast_message("Error: " + data.message,success=false)
+                }
+            })
+            .catch((err) => console.error(err));
+    }
 
     function show_toast_message(message,success=true) {
         const mainDiv=document.getElementById("main")
@@ -82,10 +113,19 @@ Item
         const table_body = document.getElementById("item-list");
         const rows_count=table_body.children.length
         const table_row = document.createElement("tr");
+        table_row.id = `item-${item.id}`
+
         table_row.innerHTML = `
             <th>${rows_count+1}</th>
             <td>${item.name}</td>
-            <td>Update | Delete</td>
+            <td>
+                <div class="flex gap-2">
+                    <button class="btn btn-sm btn-primary">Update</button>
+                    <button data-item-id="${{ item.id }}" 
+                    class="btn btn-sm btn-error" 
+                    onclick="delete_item(this)">Delete</button>
+                </div>
+            </td>
         `
         table_body.appendChild(table_row)
     }

@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.db import IntegrityError
 from shop.forms import ShopForm,ItemForm
 from django.core import serializers
+from shop.models import Item
 
 @require_http_methods(["GET", "POST"])
 @login_required
@@ -85,9 +86,24 @@ def item_list(request):
                  "data":saved_item_dict,
                  }
             )
+
     
     form=ItemForm()
     item_list=request.user.shop.items.all()
     
     context={"form":form,"item_list":item_list}
     return render(request, "shop/item-form.html", context)
+
+def item_list_delete(request,pk):
+    
+    try:
+        Item.objects.get(id=pk).delete()
+    
+    except Grade.DoesNotExist:
+        return JsonResponse(
+            {"success":False,"message":"Item does not exist !"}
+        )
+    else:
+        return JsonResponse(
+            {"success":True,"message":"Item deleted successfully !"}
+        )
