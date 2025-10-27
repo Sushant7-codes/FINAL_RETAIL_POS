@@ -40,7 +40,7 @@ Price
             </fieldset>
             <fieldset class="fieldset mb-1">
                 <label class="label text-xl" for="{{ form.amount.id_for_label }}">{{form.amount.label}}</label>
-                {{ form.name|add_class:"input p-3 mb-1 min-w-[300px] w-full" }}
+                {{ form.amount|add_class:"input p-3 mb-1 min-w-[300px] w-full" }}
 
                 <ul>
                     {% for error in form.name.errors %}
@@ -48,10 +48,10 @@ Price
                     {% endfor %}
                 </ul>
 
-            </fieldset>
+            </fieldset> 
             <button type="submit" class="btn btn-primary">Add Price</button>
-        
         </form>
+
          <div class="flex-grow">
             <h1 class="text-2xl font-bold mb-4">Items List</h1>
             <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
@@ -67,24 +67,27 @@ Price
                     </thead>
                     <tbody id="price-list">
 
-                        {% comment %} {% for item in item_list %}
-                        <!-- row -->
-                        <tr id="price-{{ item.id }}">
-                            <th>{{ forloop.counter }}</th>
-                            <td>{{ item.name }}</td>
-                            <td>
-                                <div class="flex gap-2">
-                                    <button class="btn btn-sm btn-primary">Update</button>
-                                    <button data-price-id="{{ item.id }}" 
-                                    class="btn btn-sm btn-error" 
-                                    onclick="delete_price(this)">Delete</button>
-                                </div>
-                            </td>
+                        {% for price in prices %}
+                            <tr id="price-{{price.id}}">
+                                <th>{{ forloop.counter }}</th>
+                                <td>{{ price.name }}</td>
+                                <td>{{ price.amount }}</td>
+                                <td>
+                                    <div class="flex gap-2">
+                                        {% comment %}
+                                        <a href="{% url 'school:price_update' price.id %}"
+                                            class="btn btn-sm btn-primary">Update</a>
 
-                        </tr>
+                                        <button data-price-id="{{price.id}}" class="btn btn-sm btn-error"
+                                            onclick="delete_price(this)">Delete</button>
 
-                        {% endfor %} {% endcomment %}
+                                        {% endcomment %}
+                                    </div>
 
+                                </td>
+                            </tr>
+
+                            {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -135,19 +138,20 @@ Price
         )
     }
 
-    function add_price_to_table(item) {
+    function add_price_to_table(price) {
         const table_body = document.getElementById("price-list");
         const rows_count=table_body.children.length
         const table_row = document.createElement("tr");
-        table_row.id = `price-${item.id}`
+        table_row.id = `price-${price.id}`
 
         table_row.innerHTML = `
             <th>${rows_count+1}</th>
-            <td>${item.name}</td>
+            <td>${price.name}</td>
+            <td>${price.amount}</td>
             <td>
                 <div class="flex gap-2">
                     <button class="btn btn-sm btn-primary">Update</button>
-                    <button data-price-id="${{ item.id }}" 
+                    <button data-price-id="${{ price.id }}" 
                     class="btn btn-sm btn-error" 
                     onclick="delete_price(this)">Delete</button>
                 </div>

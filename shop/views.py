@@ -132,15 +132,46 @@ def item_update(request,pk):
         return render(request, "shop/item-update-form.html", context)
     
 def price(request):
+    
+    if request.method == "POST":
+        item_id=request.POST.get("item_id")
+        try:
+            item=Item.objects.get(id=item_id)
+        except Item.DoesNotExist:
+            return JsonResponse({"success":False,"message":"Item does not exist !"})
+        
+        form = PriceForm(request.POST)
+        if form.is_valid():
+            try:
+                saved_price=form.save(item=item)
+            except IntegrityError:
+                return JsonResponse(
+                    {"success":False,"message":"Price already exists !"}
+                )
+                
+            reponse={
+                "success":True,
+                "message":"Price added successfully !",
+                "data":{
+                    "id":saved_price.id,
+                    "name":saved_price.name,
+                    "amount":saved_price.amount,
+                },
+            }
+            return JsonResponse(reponse)
+    
+    
     item_id=request.GET.get("item_id")
     try:
         item=Item.objects.get(id=item_id)
+        prices=item.prices.all()
     except Item.DoesNotExist:
         messages.error(request, "Item does not exist")
         return redirect("shop:item_list")
     
     form=PriceForm()
-    context={"form":form,"item":item}
+    context={"form":form,"item":item,"prices":prices}
     
     
     return render(request, "shop/price-create.html",context)
+
