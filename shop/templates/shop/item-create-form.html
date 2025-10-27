@@ -118,6 +118,30 @@ Item
                                                 </svg>
                                                 Update
                                             </a>
+
+
+                                            <form action="{% url 'shop:price' %}">
+                                                <input type="hidden" name="item_id" value="{{item.id}}">
+                                                <button class="btn btn-sm bg-emerald-600 hover:bg-emerald-700 text-white border-0 gap-1 shadow hover:shadow-md transition-all duration-200">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    Config Price
+                                                </button>
+                                            </form>
+                                            {% comment %}
+                                            <form action="{% url 'shop:price' %}">
+                                                <input type="hidden" name="item_id" value="{{item.id}}">
+                                                <button class="btn btn-primary btn-sm">Config Price</button>
+                                            </form>
+                                            
+                                            <a class="btn btn-sm bg-emerald-600 hover:bg-emerald-700 text-white border-0 gap-1 shadow hover:shadow-md transition-all duration-200" href="{% url 'shop:price' item.id %}">
+                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                 </svg>
+                                                 Config Price
+                                             </a> {% endcomment %}
+
                                             <button data-item-id="{{ item.id }}" 
                                                 class="btn btn-sm bg-red-600 hover:bg-red-700 text-white border-0 gap-1 shadow hover:shadow-md transition-all duration-200" 
                                                 onclick="delete_item(this)">
@@ -254,6 +278,7 @@ Item
                         </svg>
                         Update
                     </button>
+
                     <button data-item-id="${item.id}" 
                         class="btn btn-sm bg-red-600 hover:bg-red-700 text-white border-0 gap-1 shadow hover:shadow-md transition-all duration-200" 
                         onclick="delete_item(this)">

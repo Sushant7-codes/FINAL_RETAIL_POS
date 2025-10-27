@@ -1,5 +1,5 @@
 from django import forms
-from shop.models import Shop,Item
+from shop.models import Shop,Item,Price
 from django.utils.text import slugify
 
 class ShopForm(forms.ModelForm):
@@ -76,3 +76,9 @@ class ItemForm(forms.ModelForm):
             item.save()
             
         return item
+    
+class PriceForm(forms.ModelForm):
+    class Meta:
+        model = Price
+        fields = ['name','amount']
+        

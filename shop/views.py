@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.http import JsonResponse
 from django.db import IntegrityError
-from shop.forms import ShopForm,ItemForm
+from shop.forms import ShopForm,ItemForm,PriceForm
 from shop.models import Item
 
 @require_http_methods(["GET", "POST"])
@@ -130,3 +130,17 @@ def item_update(request,pk):
         form=ItemForm(instance=item, request=request)
         context={"form":form,"item":item}
         return render(request, "shop/item-update-form.html", context)
+    
+def price(request):
+    item_id=request.GET.get("item_id")
+    try:
+        item=Item.objects.get(id=item_id)
+    except Item.DoesNotExist:
+        messages.error(request, "Item does not exist")
+        return redirect("shop:item_list")
+    
+    form=PriceForm()
+    context={"form":form,"item":item}
+    
+    
+    return render(request, "shop/price-create.html",context)
