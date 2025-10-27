@@ -10,15 +10,19 @@ Item
 
 <main class="min-h-screen flex flex-col gap-8 p-4 md:p-6 lg:p-8 w-full mt-16 bg-gray-50 dark:bg-gray-900" id="main">
 
-    <div class="toast toast-end toast-top fixed z-50 mt-15">
+    <!-- Single Toast Container for All Messages -->
+    <div class="toast toast-end toast-top fixed z-50 mt-15" id="toast-container">
         {% for message in messages %}
-            {% if message.tags == 'error' %}
-            <div class="alert alert-error shadow-lg alert-soft">
-            {% else %}
-            <div class="alert alert-success shadow-lg alert-soft">
-            {% endif %}
-                <span class="font-semibold">{{ message }}</span>
-            </div>
+        <div class="alert {{ message.tags|default:'alert-success' }} {% if message.tags == 'error' %}bg-red-600{% else %}bg-green-600{% endif %} text-white shadow-xl">
+            <span class="font-semibold flex items-center gap-2">
+                {% if message.tags == 'error' %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                {% else %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                {% endif %}
+                {{ message }}
+            </span>
+        </div>
         {% endfor %}
     </div>
     
@@ -147,9 +151,19 @@ Item
 </main>
 
 <script>
+    // Auto-hide Django messages after 3 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const toastContainer = document.getElementById('toast-container');
+        if (toastContainer && toastContainer.children.length > 0) {
+            setTimeout(() => {
+                toastContainer.innerHTML = '';
+            }, 3000);
+        }
+    });
+
     function remove_item_from_table(item_id) {
-        const row_id_to_be_deleted=`item-${item_id}`
-        const row_to_be_deleted = document.getElementById(row_id_to_be_deleted)
+        const row_id_to_be_deleted = `item-${item_id}`;
+        const row_to_be_deleted = document.getElementById(row_id_to_be_deleted);
         if (row_to_be_deleted) {
             row_to_be_deleted.style.opacity = '0';
             row_to_be_deleted.style.transform = 'translateX(100px)';
@@ -173,50 +187,44 @@ Item
     function delete_item(btnElement) {
         const item_id = btnElement.dataset.itemId;
 
-        fetch("{% url 'shop:item_list_delete' 'dummy' %}".replace('dummy',item_id))
+        fetch("{% url 'shop:item_list_delete' 'dummy' %}".replace('dummy', item_id))
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
-                    show_toast_message(data.message,success=true)
-                    remove_item_from_table(item_id)
+                    show_toast_message(data.message, true);
+                    remove_item_from_table(item_id);
                 } else {
-                     show_toast_message("Error: " + data.message,success=false)
+                    show_toast_message("Error: " + data.message, false);
                 }
             })
             .catch((err) => console.error(err));
     }
 
-    function show_toast_message(message,success=true) {
-        const mainDiv=document.getElementById("main")
-        const toastDiv = document.getElementById("toast-message")
+    function show_toast_message(message, success = true) {
+        const toastContainer = document.getElementById("toast-container");
+        
+        // Clear existing toasts
+        toastContainer.innerHTML = '';
 
-        if (toastDiv) {
-            toastDiv.remove();
-        }
-
-        mainDiv.insertAdjacentHTML(
-            "afterbegin",`
-            <div class="toast toast-end toast-top z-50" id="toast-message">
-                <div class="alert ${success ? 'bg-green-600' : 'bg-red-600'} text-white shadow-xl">
-                    <span class="font-semibold flex items-center gap-2">
-                        ${success ? 
-                            '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>' : 
-                            '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'
-                        }
-                        ${message}
-                    </span>
-                </div>
+        // Create new toast
+        const toastHTML = `
+            <div class="alert ${success ? 'bg-green-600' : 'bg-red-600'} text-white shadow-xl">
+                <span class="font-semibold flex items-center gap-2">
+                    ${success ? 
+                        '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>' : 
+                        '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'
+                    }
+                    ${message}
+                </span>
             </div>
-            `
-        )
+        `;
+        
+        toastContainer.innerHTML = toastHTML;
         
         // Auto-remove toast after 3 seconds
         setTimeout(() => {
-            const toastElement = document.getElementById("toast-message");
-            if (toastElement) {
-                toastElement.remove();
-            }
-        }, 3000)
+            toastContainer.innerHTML = '';
+        }, 3000);
     }
 
     function add_item_to_table(item) {
@@ -236,7 +244,7 @@ Item
         table_row.style.transform = 'translateY(-20px)';
 
         table_row.innerHTML = `
-            <th class="font-semibold text-gray-800 dark:text-gray-200">${rows_count+1}</th>
+            <th class="font-semibold text-gray-800 dark:text-gray-200">${rows_count + 1}</th>
             <td class="font-medium text-gray-700 dark:text-gray-300">${item.name}</td>
             <td>
                 <div class="flex gap-2 justify-center flex-wrap">
@@ -283,16 +291,15 @@ Item
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success) {
-                        show_toast_message(data.message,success=true)
+                        show_toast_message(data.message, true);
                         add_item_to_table(data.data);
                         this.reset(); // Clear the form after successful submission
                     } else {
-                        show_toast_message("Error: " + data.message,success=false)
+                        show_toast_message("Error: " + data.message, false);
                     }
                 })
                 .catch((err) => console.error(err));
         });
-
 </script>
 
 <style>
