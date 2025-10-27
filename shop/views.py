@@ -69,7 +69,7 @@ def item_list(request):
         
         try:
             saved_item=form.save()
-        except IntegrityError as e:
+        except IntegrityError:
             return JsonResponse(
                 {"success":False,"message":"Item already exists !"}
             )
@@ -98,7 +98,7 @@ def item_list_delete(request,pk):
     try:
         Item.objects.get(id=pk).delete()
     
-    except Grade.DoesNotExist:
+    except Item.DoesNotExist:
         return JsonResponse(
             {"success":False,"message":"Item does not exist !"}
         )
