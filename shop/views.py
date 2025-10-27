@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.db import IntegrityError
 from shop.forms import ShopForm,ItemForm
-from django.core import serializers
 from shop.models import Item
 
 @require_http_methods(["GET", "POST"])
@@ -92,7 +91,7 @@ def item_list(request):
     item_list=request.user.shop.items.all()
     
     context={"form":form,"item_list":item_list}
-    return render(request, "shop/item-form.html", context)
+    return render(request, "shop/item-create-form.html", context)
 
 def item_list_delete(request,pk):
     
@@ -107,3 +106,27 @@ def item_list_delete(request,pk):
         return JsonResponse(
             {"success":True,"message":"Item deleted successfully !"}
         )
+        
+def item_update(request,pk):
+    
+    try:
+        item=Item.objects.get(id=pk)
+    except Item.DoesNotExist:
+        messages.error(request, "Item does not exist")
+        return redirect("shop:item_list")
+    
+    if request.method == "POST":
+        form = ItemForm(request.POST, instance=item, request=request)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Item updated successfully!")
+            return redirect("shop:item_list")
+        
+        messages.error(request, "Please correct the errors below.")
+        return redirect("shop:item_list")
+        
+    else:
+        form=ItemForm(instance=item, request=request)
+        context={"form":form,"item":item}
+        return render(request, "shop/item-update-form.html", context)
