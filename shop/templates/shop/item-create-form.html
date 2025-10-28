@@ -267,29 +267,76 @@ Item
         table_row.style.opacity = '0';
         table_row.style.transform = 'translateY(-20px)';
 
+        // table_row.innerHTML = `
+        //     <th class="font-semibold text-gray-800 dark:text-gray-200">${rows_count + 1}</th>
+        //     <td class="font-medium text-gray-700 dark:text-gray-300">${item.name}</td>
+        //     <td>
+        //         <div class="flex gap-2 justify-center flex-wrap">
+        //             <button class="btn btn-sm bg-blue-600 hover:bg-blue-700 text-white border-0 gap-1 shadow hover:shadow-md transition-all duration-200">
+        //                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        //                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        //                 </svg>
+        //                 Update
+        //             </button>
+// 
+        //             <button data-item-id="${item.id}" 
+        //                 class="btn btn-sm bg-red-600 hover:bg-red-700 text-white border-0 gap-1 shadow hover:shadow-md transition-all duration-200" 
+        //                 onclick="delete_item(this)">
+        //                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        //                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        //                 </svg>
+        
+        //                 Delete
+        //             </button>
+        //         </div>
+        //     </td>
+        // `;
         table_row.innerHTML = `
             <th class="font-semibold text-gray-800 dark:text-gray-200">${rows_count + 1}</th>
             <td class="font-medium text-gray-700 dark:text-gray-300">${item.name}</td>
             <td>
                 <div class="flex gap-2 justify-center flex-wrap">
-                    <button class="btn btn-sm bg-blue-600 hover:bg-blue-700 text-white border-0 gap-1 shadow hover:shadow-md transition-all duration-200">
+
+                    <a class="btn btn-sm bg-blue-600 hover:bg-blue-700 text-white border-0 gap-1 shadow hover:shadow-md transition-all duration-200"
+                       href="/shop/item_list/${item.id}/update/">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414
+                                a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                         Update
-                    </button>
+                    </a>
 
-                    <button data-item-id="${item.id}" 
-                        class="btn btn-sm bg-red-600 hover:bg-red-700 text-white border-0 gap-1 shadow hover:shadow-md transition-all duration-200" 
+                    <form action="/shop/price/">
+                        <input type="hidden" name="item_id" value="${item.id}">
+                        <button class="btn btn-sm bg-emerald-600 hover:bg-emerald-700 text-white border-0 gap-1 shadow hover:shadow-md transition-all duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2
+                                    3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0
+                                    1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21
+                                    12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Config Price
+                        </button>
+                    </form>
+
+                    <button data-item-id="${item.id}"
+                        class="btn btn-sm bg-red-600 hover:bg-red-700 text-white border-0 gap-1 shadow hover:shadow-md transition-all duration-200"
                         onclick="delete_item(this)">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138
+                                21H7.862a2 2 0 01-1.995-1.858L5
+                                7m5 4v6m4-6v6m1-10V4a1 1 0
+                                00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                         Delete
                     </button>
                 </div>
             </td>
         `;
+
         table_body.appendChild(table_row);
         
         // Animate in
