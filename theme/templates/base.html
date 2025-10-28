@@ -21,6 +21,15 @@
             }
         }
         
+        @keyframes shimmer {
+            0% {
+                background-position: -100% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+        
         .animate-slide-down {
             animation: slideDown 0.3s ease-out;
         }
@@ -30,6 +39,27 @@
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Enhanced active state with glow effect */
+        .nav-link.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(147, 51, 234, 0.3)) !important;
+            border: 1px solid rgba(96, 165, 250, 0.5);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(147, 51, 234, 0.2);
+            font-weight: 600 !important;
+            color: white !important;
+            position: relative;
+        }
+        
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.8), transparent);
+            border-radius: 2px;
         }
         
         /* Custom gradient hover effect */
@@ -51,6 +81,14 @@
         
         .nav-gradient:hover::before {
             left: 100%;
+        }
+        
+        /* Prevent multiple active states */
+        .nav-link:not(.active) {
+            background: transparent !important;
+            font-weight: 400 !important;
+            color: rgb(209, 213, 219) !important;
+            box-shadow: none !important;
         }
     </style>
     <script>
@@ -82,9 +120,9 @@
                 
                 <!-- Desktop Navigation -->
                 <nav class="hidden [@media(min-width:1100px)]:flex items-center space-x-1">
-                    <a href="#" 
+                    <a href="{% url "app:dashboard"%}" 
                        data-page="dashboard"
-                       class="nav-link nav-gradient px-4 py-2 rounded-lg font-semibold bg-white/10 text-white transition-all duration-300 hover:bg-white/20 hover:scale-105 shadow-lg">
+                       class="nav-link nav-gradient px-4 py-2 rounded-lg transition-all duration-300 hover:bg-white/10 hover:scale-105">
                         <span class="flex items-center space-x-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
@@ -92,29 +130,29 @@
                             <span>Dashboard</span>
                         </span>
                     </a>
-                    <a href="#" 
-                       data-page="orders"
-                       class="nav-link nav-gradient px-4 py-2 rounded-lg font-normal text-gray-300 transition-all duration-300 hover:bg-white/10 hover:text-white hover:scale-105">
+                    <a href="{% url "shop:item_list"%}" 
+                       data-page="items"
+                       class="nav-link nav-gradient px-4 py-2 rounded-lg transition-all duration-300 hover:bg-white/10 hover:scale-105">
                         <span class="flex items-center space-x-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
                             </svg>
-                            <span>Orders</span>
+                            <span>Items</span>
                         </span>
                     </a>
                     <a href="#" 
-                       data-page="products"
-                       class="nav-link nav-gradient px-4 py-2 rounded-lg font-normal text-gray-300 transition-all duration-300 hover:bg-white/10 hover:text-white hover:scale-105">
+                       data-page="staffs"
+                       class="nav-link nav-gradient px-4 py-2 rounded-lg transition-all duration-300 hover:bg-white/10 hover:scale-105">
                         <span class="flex items-center space-x-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                             </svg>
-                            <span>Products</span>
+                            <span>Staffs</span>
                         </span>
                     </a>
                     <a href="#" 
                        data-page="reports"
-                       class="nav-link nav-gradient px-4 py-2 rounded-lg font-normal text-gray-300 transition-all duration-300 hover:bg-white/10 hover:text-white hover:scale-105">
+                       class="nav-link nav-gradient px-4 py-2 rounded-lg transition-all duration-300 hover:bg-white/10 hover:scale-105">
                         <span class="flex items-center space-x-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
@@ -125,12 +163,13 @@
                 </nav>
             </div>
 
-            <!-- Right Section: Theme Toggle and Logout -->
+            <!-- Right Section: Profile and Logout -->
             <div class="flex items-center space-x-2 sm:space-x-3">
                  
                 <!-- Profile Button -->
                 <a href="{% url 'shop:shop_profile' %}"
-                   class="px-3 sm:px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500/20 to-indigo-500/20 hover:from-blue-500/30 hover:to-indigo-500/30 text-blue-300 hover:text-blue-200 border border-blue-500/30 transition-all duration-300 flex items-center space-x-2 hover:scale-105 shadow-lg">
+                   data-page="profile"
+                   class="action-link px-3 sm:px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500/20 to-indigo-500/20 hover:from-blue-500/30 hover:to-indigo-500/30 text-blue-300 hover:text-blue-200 border border-blue-500/30 transition-all duration-300 flex items-center space-x-2 hover:scale-105 shadow-lg">
                     <span class="hidden sm:inline">Profile</span>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -138,17 +177,14 @@
                     </svg>
                 </a>
 
-
                 <!-- Logout Button -->
                 <a href="{% url 'accounts:logout_view' %}" 
-                   class="px-3 sm:px-4 py-2 rounded-lg bg-gradient-to-r from-red-500/20 to-pink-500/20 hover:from-red-500/30 hover:to-pink-500/30 text-red-300 hover:text-red-200 border border-red-500/30 transition-all duration-300 flex items-center space-x-2 hover:scale-105 shadow-lg">
+                   class="action-link px-3 sm:px-4 py-2 rounded-lg bg-gradient-to-r from-red-500/20 to-pink-500/20 hover:from-red-500/30 hover:to-pink-500/30 text-red-300 hover:text-red-200 border border-red-500/30 transition-all duration-300 flex items-center space-x-2 hover:scale-105 shadow-lg">
                     <span class="hidden sm:inline">Logout</span>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                     </svg>
                 </a>
-
-
 
                 <!-- Mobile Menu Button -->
                 <button id="mobileMenuBtn" class="[@media(min-width:1100px)]:hidden p-2 rounded-lg hover:bg-white/10 transition-all duration-200">
@@ -164,9 +200,9 @@
     <!-- Mobile Navigation Menu -->
     <div id="mobileMenu" class="hidden [@media(min-width:1100px)]:hidden glass-morphism border-t border-white/10 animate-slide-down">
         <nav class="px-4 py-3 space-y-2">
-            <a href="#" 
+            <a href="{% url "app:dashboard"%}"  
                data-page="dashboard"
-               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg font-semibold bg-white/10 text-white transition-all duration-200 hover:bg-white/20">
+               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/20">
                 <span class="flex items-center space-x-3">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
@@ -174,29 +210,29 @@
                     <span>Dashboard</span>
                 </span>
             </a>
-            <a href="#" 
-               data-page="orders"
-               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg font-normal text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white">
+            <a href="{% url "shop:item_list"%}"  
+               data-page="items"
+               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/20">
                 <span class="flex items-center space-x-3">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
                     </svg>
-                    <span>Orders</span>
+                    <span>Items</span>
                 </span>
             </a>
             <a href="#" 
-               data-page="products"
-               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg font-normal text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white">
+               data-page="staffs"
+               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/20">
                 <span class="flex items-center space-x-3">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
-                    <span>Products</span>
+                    <span>Staffs</span>
                 </span>
             </a>
             <a href="#" 
                data-page="reports"
-               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg font-normal text-gray-300 transition-all duration-200 hover:bg-white/10 hover:text-white">
+               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/20">
                 <span class="flex items-center space-x-3">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
@@ -225,47 +261,101 @@
             });
         }
         
-        // Navigation Active State
+        // Get all navigation links (excluding action buttons like Profile/Logout)
         const navLinks = document.querySelectorAll('.nav-link');
         
-        navLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Remove active state from all links
-                navLinks.forEach(l => {
-                    l.classList.remove('font-semibold', 'bg-white/10', 'text-white', 'shadow-lg');
-                    l.classList.add('font-normal', 'text-gray-300');
-                });
-                
-                // Add active state to clicked link
-                this.classList.remove('font-normal', 'text-gray-300');
-                this.classList.add('font-semibold', 'bg-white/10', 'text-white', 'shadow-lg');
-                
-                // Close mobile menu if open
-                if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                    mobileMenu.classList.add('hidden');
-                    menuOpen.classList.remove('hidden');
-                    menuClose.classList.add('hidden');
-                }
-                
-                // Handle navigation
-                const page = this.getAttribute('data-page');
-                console.log('Navigating to:', page);
-            });
-        });
-        
-        // Set initial active page
-        function setActivePage(pageName) {
+        // Function to remove active state from all nav links
+        function clearAllActiveStates() {
             navLinks.forEach(link => {
-                if (link.getAttribute('data-page') === pageName) {
-                    link.classList.remove('font-normal', 'text-gray-300');
-                    link.classList.add('font-semibold', 'bg-white/10', 'text-white', 'shadow-lg');
-                }
+                link.classList.remove('active');
             });
         }
         
-        setActivePage('dashboard');
+        // Navigation Click Handler
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                // Only handle navigation links, not action buttons
+                const isNavigationLink = this.hasAttribute('data-page') && 
+                                        !this.classList.contains('action-link');
+                
+                if (isNavigationLink) {
+                    // Clear all active states first
+                    clearAllActiveStates();
+                    
+                    // Add active state to clicked link
+                    this.classList.add('active');
+                    
+                    // Close mobile menu if open
+                    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                        menuOpen.classList.remove('hidden');
+                        menuClose.classList.add('hidden');
+                    }
+                }
+            });
+        });
+        
+        // Profile button click handler - clear all nav highlights
+        const profileButton = document.querySelector('[data-page="profile"].action-link');
+        if (profileButton) {
+            profileButton.addEventListener('click', function() {
+                clearAllActiveStates();
+            });
+        }
+        
+        // Set initial active page based on current URL
+        function setActivePageFromURL() {
+            const currentPath = window.location.pathname.toLowerCase();
+            let matchFound = false;
+            
+            // Clear all active states first
+            clearAllActiveStates();
+            
+            // Check each nav link for URL match
+            navLinks.forEach(link => {
+                const linkHref = link.getAttribute('href');
+                const linkPage = link.getAttribute('data-page');
+                
+                // Skip if it's an action link (profile, logout)
+                if (link.classList.contains('action-link')) {
+                    return;
+                }
+                
+                // If we're on profile page, don't highlight any nav items
+                if (currentPath.includes('profile')) {
+                    matchFound = true;
+                    return;
+                }
+                
+                // Check for exact or partial URL match
+                if (linkHref && linkHref !== '#') {
+                    // For items page
+                    if (linkPage === 'items' && (currentPath.includes('item') || currentPath.includes('shop'))) {
+                        link.classList.add('active');
+                        matchFound = true;
+                    }
+                    // For dashboard page
+                    else if (linkPage === 'dashboard' && (currentPath.includes('dashboard') || currentPath === '/' || currentPath === '')) {
+                        link.classList.add('active');
+                        matchFound = true;
+                    }
+                }
+            });
+            
+            // If no match found and we're on root/home, activate dashboard
+            if (!matchFound && (currentPath === '/' || currentPath === '' || currentPath.includes('dashboard'))) {
+                const dashboardLink = document.querySelector('[data-page="dashboard"]:not(.action-link)');
+                if (dashboardLink) {
+                    dashboardLink.classList.add('active');
+                }
+            }
+        }
+        
+        // Initialize active state on page load
+        setActivePageFromURL();
+        
+        // Update active state when navigating with browser back/forward
+        window.addEventListener('popstate', setActivePageFromURL);
 </script>
 {% endblock header %}
 
