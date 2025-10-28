@@ -6,7 +6,9 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.db import IntegrityError
 from shop.forms import ShopForm,ItemForm,PriceForm
-from shop.models import Item
+from shop.models import Item,Price
+from django.urls import reverse
+from urllib.parse import urlencode
 
 @require_http_methods(["GET", "POST"])
 @login_required
@@ -175,3 +177,45 @@ def price(request):
     
     return render(request, "shop/price-create.html",context)
 
+
+def price_delete(request,pk):
+    
+    try:
+        Price.objects.get(id=pk).delete()
+    
+    except Price.DoesNotExist:
+        return JsonResponse(
+            {"success":False,"message":"Price does not exist !"}
+        )
+    else:
+        return JsonResponse(
+            {"success":True,"message":"Price deleted successfully !"}
+        )
+
+
+def price_update(request,pk):
+    
+    try:
+        price=Price.objects.get(id=pk)
+        base_url=reverse("shop:price")
+        query_string=urlencode({"item_id":price.item.id})
+        url=f"{base_url}?{query_string}"
+    except Price.DoesNotExist:
+        messages.error(request, "Price does not exist")
+        return redirect(url)
+    
+    if request.method == "POST":
+        form = PriceForm(request.POST, instance=price)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Price updated successfully!")
+            return redirect(url)
+        
+        messages.error(request, "Please correct the errors below.")
+        return redirect(url)
+        
+    else:
+        form=PriceForm(instance=price)
+        context={"form":form,}
+        return render(request, "shop/price-update.html", context)

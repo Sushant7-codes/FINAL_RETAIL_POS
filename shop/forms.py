@@ -83,10 +83,10 @@ class PriceForm(forms.ModelForm):
         fields = ['name','amount']
         
     def save(self,commit=True,*args, **kwargs):
-        item=kwargs.pop("item")
+        item=kwargs.pop("item",None) 
         price=super(PriceForm, self).save(commit=False,*args, **kwargs)
-        
-        price.item=item
+        if item is not None:        
+            price.item=item
         
         if commit:
             price.save()
