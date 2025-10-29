@@ -16,4 +16,5 @@ urlpatterns = [
     path("price/<pk>/delete/", views.price_delete, name="price_delete"),
     path("price/<pk>/update/", views.price_update, name="price_update"),
 
-]
+    path("staffs/", views.staffs, name="staffs"),
+]   
