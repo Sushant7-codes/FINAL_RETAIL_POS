@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'shop',
     
     'background_task',
+    'django_filters',
 
 
 ]
