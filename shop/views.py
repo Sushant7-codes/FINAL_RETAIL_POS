@@ -21,7 +21,7 @@ from shop.forms import(
 # from shop.background_tasks import bulk_create_students_from_csv
 # from shop.filters import StudentFilter
 
-# from django.core.paginator import Paginator
+from django.core.paginator import Paginator
 
 
 @require_http_methods(["GET", "POST"])
@@ -233,93 +233,50 @@ def price_update(request,pk):
         form=PriceForm(instance=price)
         context={"form":form,}
         return render(request, "shop/price-update.html", context)
-    
-# def staffs(request):
-#     if request.method == "POST":
-#         form = StaffRegistrationForm(request.POST, request.FILES, request=request)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, "St registered successfully!")
-#             return redirect("staff_register")
-#     else:
-#         form = StaffRegistrationForm(request=request)
-#         # csv_form = StudentBulkRegisterForm(request=request)
-
-#     # all_staffs = CustomUser.objects.filter(
-#     #     role=CustomUser.Roles.STUDENT,
-#     #     grade__isnull=False,
-#     #     grade__school=request.user.school,
-#     # )
-#     # # filtered_students = StaffFilter(request.GET, queryset=all_students)
-
-#     # paginator = Paginator(
-#     #     filtered_students.qs, 10
-#     # )
-#     # Show 10 students records per page.
-#     # page_number = request.GET.get("page")
-#     # page_obj = paginator.get_page(page_number)
-
-    # context = {
-    #     "form": form,
-    #     "students": filtered_students.qs,
-    #     "csv_form": csv_form,
-    #     "filter_form": filtered_students.form,
-    #     "page_obj": page_obj,
-    # }
-
-    # return render(request, "shop/staffs.html")
-
-# def staffs(request):
-#     return render(request, "shop/staffs.html")
-
 
 # def staffs(request):
 #     if request.method == "POST":
 #         form = StaffRegistrationForm(request.POST, request.FILES, request=request)
 #         if form.is_valid():
-#             form.save()
-#             # You can add a success message here if you use messages framework
-#             return redirect("shop:staffs")  # redirect to the same page after saving
+#             staff = form.save(commit=False)  # don't save yet
+
+#             # --- Generate username automatically ---
+#             first = staff.first_name[:3].lower() if staff.first_name else "usr"
+#             last = staff.last_name[-3:].lower() if staff.last_name else str(random.randint(100, 999))
+#             base_username = f"{first}{last}"
+
+#             # ensure it's unique
+#             username = base_username
+#             counter = 1
+#             while CustomUser.objects.filter(username=username).exists():
+#                 username = f"{base_username}{counter}"
+#                 counter += 1
+
+#             staff.username = username
+#             # ----------------------------------------
+
+#             staff.save()
+#             messages.success(request, f"Staff registered successfully! Username: {staff.username}")
+#             return redirect(request.path)
 #     else:
 #         form = StaffRegistrationForm(request=request)
 
-#     context = {
-#         "form": form,
-        
-#     }
-#     return render(request, "shop/staffs.html", context)
-
-
-# def staffs(request):
-#     if request.method == "POST":
-#         form = StaffRegistrationForm(request.POST, request.FILES, request=request)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, "Staff registered successfully!")
-#             return redirect("staff_register")
-#     else:
-#         form = StaffRegistrationForm(request=request)
-
-#     context = {
-#         "form": form,
-
-#     }
-
+#     context = {"form": form}
 #     return render(request, "shop/staffs.html", context)
 
 
 def staffs(request):
+    # --- Handle Staff Registration ---
     if request.method == "POST":
         form = StaffRegistrationForm(request.POST, request.FILES, request=request)
         if form.is_valid():
-            staff = form.save(commit=False)  # don't save yet
+            staff = form.save(commit=False)
 
-            # --- Generate username automatically ---
+            # --- Generate unique username automatically ---
             first = staff.first_name[:3].lower() if staff.first_name else "usr"
             last = staff.last_name[-3:].lower() if staff.last_name else str(random.randint(100, 999))
             base_username = f"{first}{last}"
 
-            # ensure it's unique
             username = base_username
             counter = 1
             while CustomUser.objects.filter(username=username).exists():
@@ -327,13 +284,32 @@ def staffs(request):
                 counter += 1
 
             staff.username = username
-            # ----------------------------------------
-
+            staff.is_staff = True  # ✅ ensure they’re marked as staff
             staff.save()
+
             messages.success(request, f"Staff registered successfully! Username: {staff.username}")
             return redirect(request.path)
     else:
         form = StaffRegistrationForm(request=request)
 
-    context = {"form": form}
+    # --- Staff List and Pagination ---
+    # staff_queryset = CustomUser.objects.filter(is_staff=True).order_by("-id")
+    staff_queryset = CustomUser.objects.filter(role=CustomUser.Roles.STAFF).order_by("-id")
+
+    paginator = Paginator(staff_queryset, 8)  # Show 8 staff per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    # (Optional) if you plan to add a filter form later
+    filter_form = None  
+
+    context = {
+        "form": form,
+        "staffs": page_obj,
+        "page_obj": page_obj,
+        "filter_form": filter_form,
+    }
+
     return render(request, "shop/staffs.html", context)
+
+

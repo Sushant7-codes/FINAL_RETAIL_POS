@@ -328,18 +328,30 @@
                 }
                 
                 // Check for exact or partial URL match
+                // Check for exact or partial URL match
                 if (linkHref && linkHref !== '#') {
-                    // For items page
-                    if (linkPage === 'items' && (currentPath.includes('item') || currentPath.includes('shop'))) {
+                    // Dashboard page
+                    if (linkPage === 'dashboard' && (currentPath.includes('dashboard') || currentPath === '/' || currentPath === '')) {
                         link.classList.add('active');
                         matchFound = true;
                     }
-                    // For dashboard page
-                    else if (linkPage === 'dashboard' && (currentPath.includes('dashboard') || currentPath === '/' || currentPath === '')) {
+                    // Items page
+                    else if (linkPage === 'items' && (currentPath.includes('item') || currentPath.includes('items'))) {
+                        link.classList.add('active');
+                        matchFound = true;
+                    }
+                    // Staffs page
+                    else if (linkPage === 'staffs' && (currentPath.includes('staff') || currentPath.includes('staffs'))) {
+                        link.classList.add('active');
+                        matchFound = true;
+                    }
+                    // Reports page
+                    else if (linkPage === 'reports' && (currentPath.includes('report') || currentPath.includes('reports'))) {
                         link.classList.add('active');
                         matchFound = true;
                     }
                 }
+            
             });
             
             // If no match found and we're on root/home, activate dashboard
