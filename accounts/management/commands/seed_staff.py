@@ -9,7 +9,7 @@ class Command(BaseCommand):
         
         self.stdout.write(self.style.SUCCESS("Seed staff"))
         
-        for i in range(10):
+        for i in range(100):
             CustomUser.objects.create_user(
                 username=f"staff{i}",
                 first_name=f"staff{i}",
