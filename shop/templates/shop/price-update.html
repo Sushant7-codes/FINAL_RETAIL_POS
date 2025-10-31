@@ -49,6 +49,18 @@ Price Update
                 </ul>
 
             </fieldset> 
+
+            <fieldset class="fieldset mb-1">
+                <label class="label text-xl" for="{{ form.amount.id_for_label }}">{{form.stock.label}}</label>
+                {{ form.stock|add_class:"input p-3 mb-1 min-w-[300px] w-full" }}
+
+                <ul>
+                    {% for error in form.name.errors %}
+                    <li class="text-red-500 text-sm">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+
+            </fieldset> 
             <button type="submit" class="btn btn-primary">Update Price</button>
         </form
     </div>

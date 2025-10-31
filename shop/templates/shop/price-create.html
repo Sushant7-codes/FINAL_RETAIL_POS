@@ -22,13 +22,13 @@ Price
         {% endfor %}
     </div>
     
-    <h1 class="text-3xl font-bold mb-4">Add Price ({{item.name}})</h1>
+    <h1 class="text-3xl font-bold mb-4">Add Item ({{item.name}})</h1>
     <div class="flex  gap-12">
         <form id="add-price-form" action="" method="post" class="flex-grow max-w-[500px]">
             {% csrf_token %}
             <input type="hidden" name="item_id" value="{{item.id}}">
             <fieldset class="fieldset mb-1">
-                <label class="label text-xl" for="{{ form.name.id_for_label }}">Price {{form.name.label}}</label>
+                <label class="label text-xl" for="{{ form.name.id_for_label }}">Item {{form.name.label}}</label>
                 {{ form.name|add_class:"input p-3 mb-1 min-w-[300px] w-full" }}
 
                 <ul>
@@ -47,12 +47,34 @@ Price
                     <li class="text-red-500 text-sm">{{ error }}</li>
                     {% endfor %}
                 </ul>
-
             </fieldset> 
-            <button type="submit" class="btn btn-primary">Add Price</button>
+
+            <!-- Add this fieldset after the amount field -->
+            <fieldset class="fieldset mb-1">
+                <label class="label text-xl" for="{{ form.stock.id_for_label }}">{{ form.stock.label }}</label>
+                {{ form.stock|add_class:"input p-3 mb-1 min-w-[300px] w-full" }}
+            
+                <ul>
+                    {% for error in form.stock.errors %}
+                    <li class="text-red-500 text-sm">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </fieldset>
+            <button type="submit" class="btn btn-primary">Add Item</button><br><br><br>
+            <!-- Add this after the table div -->
+            <a href="{% url 'shop:item_list' %}" class="btn btn-outline btn-secondary gap-2 mt-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Go back to category
+            </a><br>
         </form>
 
-         <div class="flex-grow">
+        
+
+
+
+        <div class="flex-grow">
             <h1 class="text-2xl font-bold mb-4">Items List</h1>
             <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
                 <table class="table">
@@ -60,9 +82,11 @@ Price
                     <thead>
                         <tr>
                             <th>SN</th>
-                            <th>Price Name</th>
+                            <th>Item Name</th>
                             <th>Amount</th>
+                            <th>Stock</th>
                             <th>Actions</th>
+                            
                         </tr>
                     </thead>
                     <tbody id="price-list">
@@ -72,6 +96,7 @@ Price
                                 <th>{{ forloop.counter }}</th>
                                 <td>{{ price.name }}</td>
                                 <td>{{ price.amount }}</td>
+                                <td>{{ price.stock }}</td>
                                 <td>
                                     <div class="flex gap-2">
                                         
@@ -93,6 +118,8 @@ Price
             </div>
 
         </div>
+
+        
     </div>
 </main>
 
@@ -138,28 +165,6 @@ Price
         )
     }
 
-    {% comment %} function add_price_to_table(price) {
-        const table_body = document.getElementById("price-list");
-        const rows_count=table_body.children.length
-        const table_row = document.createElement("tr");
-        table_row.id = `price-${price.id}`
-
-        table_row.innerHTML = `
-            <th>${rows_count+1}</th>
-            <td>${price.name}</td>
-            <td>${price.amount}</td>
-            <td>
-                <div class="flex gap-2">
-                 <a href="${dummy_url.replace('dummy', fee.id)}"
-                    class="btn btn-sm btn-primary">Update
-                <button data-fee-id="${fee.id}" class="btn btn-sm btn-error"
-                    onclick="delete_fee(this)">Delete</button>
-                </div>
-            </td>
-        `
-        table_body.appendChild(table_row)
-    } {% endcomment %}
-
 function add_price_to_table(price) {
     const table_body = document.getElementById("price-list");
     const rows_count = table_body.children.length;
@@ -175,6 +180,7 @@ function add_price_to_table(price) {
         <th>${rows_count + 1}</th>
         <td>${price.name}</td>
         <td>${price.amount}</td>
+        <td>${price.stock}</td>
         <td>
             <div class="flex gap-2">
                 <a href="${update_url}" class="btn btn-sm btn-primary">Update</a>

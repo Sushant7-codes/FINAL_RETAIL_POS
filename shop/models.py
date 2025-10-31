@@ -48,6 +48,7 @@ class Price(models.Model):
     name=models.CharField(max_length=100)
     amount=models.DecimalField(max_digits=10, decimal_places=2)
     item=models.ForeignKey(Item, on_delete=models.CASCADE, related_name='prices')
+    stock=models.PositiveIntegerField(default=1)
     
     class Meta:
         unique_together = ('name', 'item')

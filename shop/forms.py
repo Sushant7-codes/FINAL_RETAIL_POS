@@ -83,11 +83,12 @@ class ItemForm(forms.ModelForm):
 class PriceForm(forms.ModelForm):
     class Meta:
         model = Price
-        fields = ['name','amount']
+        fields = ['name','amount','stock']
         
     def save(self,commit=True,*args, **kwargs):
         item=kwargs.pop("item",None) 
         price=super(PriceForm, self).save(commit=False,*args, **kwargs)
+        
         if item is not None:        
             price.item=item
         
@@ -95,40 +96,6 @@ class PriceForm(forms.ModelForm):
             price.save()
             
         return price
-
-# class StaffRegistrationForm(forms.ModelForm):
-#     password = forms.CharField(
-#         widget=forms.PasswordInput,
-#         required=True,
-#         help_text="Set an initial password for the staff.",
-#     )
-#     item = forms.ModelChoiceField(queryset=Item.objects.none())
-
-#     class Meta:
-#         model = CustomUser
-#         fields = [
-#             "first_name",
-#             "last_name",
-#             "email",
-#             "phone_number",
-#             "address",
-#             "password",
-#         ]
-
-#     def __init__(self, *args, **kwargs):
-#         self.request = kwargs.pop("request") if "request" in kwargs else None
-#         super().__init__(*args, **kwargs)
-#         self.fields["item"].queryset = Item.objects.filter(
-#             shop=self.request.user.shop
-#         )
-
-#     def save(self, commit=True):
-#         user = super().save(commit=False)
-#         user.role = CustomUser.Roles.STAFF  # enforce role
-#         user.set_password(self.cleaned_data["password"])  # hash password
-#         if commit:
-#             user.save()
-#         return user
 
 
 class StaffRegistrationForm(forms.ModelForm):
