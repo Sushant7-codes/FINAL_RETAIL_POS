@@ -169,16 +169,25 @@
                                     {{ staff.get_full_name }}
                                 </div>
                             </td>
-                            <td class="text-base-content/80">{{ staff.address }}</td>
+                            <td class="text-base-content/80">{{ staff.address|default:"-" }}</td>
                             <td class="text-base-content/80">
-                                <a href="mailto:{{ staff.email }}" class="link link-hover link-primary">{{ staff.email }}</a>
+                                <a href="mailto:{{ staff.email }}" class="link link-hover link-primary">{{ staff.email|default:"-" }}</a>
                             </td>
                             <td class="text-base-content/80">{{ staff.phone_number|default:"-" }}</td>
                             <td>
                                 <div class="flex gap-2 justify-center">
-                                    <button class="btn btn-xs btn-info btn-outline hover:btn-info transition-all shadow-sm hover:shadow-md">View</button>
-                                    <button class="btn btn-xs btn-warning btn-outline hover:btn-warning transition-all shadow-sm hover:shadow-md">Edit</button>
-                                    <button class="btn btn-xs btn-error btn-outline hover:btn-error transition-all shadow-sm hover:shadow-md">Delete</button>
+                                    <a href="{% url 'shop:staff_detail' staff.id %}" 
+                                       class="btn btn-xs btn-info btn-outline hover:btn-info transition-all shadow-sm hover:shadow-md">
+                                        View
+                                    </a>
+                                    <a href="{% url 'shop:staff_update' staff.id %}" 
+                                       class="btn btn-xs btn-warning btn-outline hover:btn-warning transition-all shadow-sm hover:shadow-md">
+                                        Edit
+                                    </a>
+                                    <button onclick="document.getElementById('delete_modal_{{ staff.id }}').showModal()" 
+                                            class="btn btn-xs btn-error btn-outline hover:btn-error transition-all shadow-sm hover:shadow-md">
+                                        Delete
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -208,6 +217,26 @@
         </div>
     </div>
 </main>
+
+<!-- Delete Modals for each staff member -->
+{% for staff in staffs %}
+<dialog id="delete_modal_{{ staff.id }}" class="modal">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg text-error">Delete Staff Member</h3>
+        <p class="py-4">Are you sure you want to delete <strong>{{ staff.get_full_name }}</strong>? This action cannot be undone.</p>
+        <div class="modal-action">
+            <form method="POST" action="{% url 'shop:staff_delete' staff.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-error">Yes, Delete</button>
+            </form>
+            <button onclick="document.getElementById('delete_modal_{{ staff.id }}').close()" class="btn btn-ghost">Cancel</button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+{% endfor %}
 
 <script>
     // Save scroll position before navigating

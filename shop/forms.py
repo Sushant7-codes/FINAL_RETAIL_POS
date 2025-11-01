@@ -99,21 +99,17 @@ class PriceForm(forms.ModelForm):
 
 
 class StaffRegistrationForm(forms.ModelForm):
-    password = forms.CharField(
-        widget=forms.PasswordInput,
-        required=True,
-        help_text="Set an initial password for the staff.",
-    )
+    # NO password field here
 
     class Meta:
         model = CustomUser
         fields = [
             "first_name",
-            "last_name",
+            "last_name", 
             "email",
             "phone_number",
             "address",
-            "password",
+            # NO password in fields list
         ]
 
     def __init__(self, *args, **kwargs):
@@ -123,7 +119,32 @@ class StaffRegistrationForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.role = CustomUser.Roles.STAFF  # enforce staff role
-        user.set_password(self.cleaned_data["password"])
+        # NO password setting here - it's done in the view
+        if commit:
+            user.save()
+        return user
+    
+
+class StaffUpdateForm(forms.ModelForm):
+    """Form for updating existing staff members"""
+    
+    class Meta:
+        model = CustomUser
+        fields = [
+            "first_name",
+            "last_name", 
+            "email",
+            "phone_number",
+            "address",
+        ]
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request", None)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.role = CustomUser.Roles.STAFF  # maintain staff role
         if commit:
             user.save()
         return user

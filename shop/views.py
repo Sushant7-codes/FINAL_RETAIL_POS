@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
@@ -9,6 +9,8 @@ from shop.models import Item,Price
 from django.urls import reverse
 from urllib.parse import urlencode
 import random
+import secrets
+import string
 
 from accounts.models import CustomUser
 from shop.forms import(
@@ -16,12 +18,14 @@ from shop.forms import(
     ItemForm,
     PriceForm,
     StaffRegistrationForm,
+    StaffUpdateForm,
 )
 # from shop.models import Fee, Grade, TempCSVFile
 # from shop.background_tasks import bulk_create_students_from_csv
 from shop.filters import StaffFilter
 
-
+from django.core.mail import send_mail
+from django.conf import settings
 from django.core.paginator import Paginator
 
 
@@ -257,11 +261,62 @@ def staffs(request):
                 username = f"{base_username}{counter}"
                 counter += 1
 
+            # --- Generate secure random password ---
+            alphabet = string.ascii_letters + string.digits
+            password = ''.join(secrets.choice(alphabet) for i in range(8))
+            
             staff.username = username
             staff.is_staff = True
+            staff.set_password(password)  # Set the random password
             staff.save()
 
-            messages.success(request, f"Staff registered successfully! Username: {staff.username}")
+            # --- Send email with credentials ---
+            try:
+                # Get shop name for the email
+                shop_name = request.user.shop.name if hasattr(request.user, 'shop') else "Our Shop"
+                
+                send_mail(
+                    f'Welcome to {shop_name} - Your POS System Credentials',
+                    f'''
+Dear {staff.first_name} {staff.last_name},
+
+Your account has been created for the {shop_name} POS system.
+
+Here are your login credentials:
+
+🔐 Username: {username}
+🔑 Password: {password}
+🌐 Login URL: {request.build_absolute_uri('/accounts/login/')}
+
+Important Security Notes:
+• Keep your credentials secure
+• Do not share your password with anyone
+
+If you have any issues, please contact your administrator.
+
+Best regards,
+{shop_name} Management
+                    ''',
+                    settings.DEFAULT_FROM_EMAIL,
+                    [staff.email],
+                    fail_silently=False,
+                )
+                
+                messages.success(
+                    request, 
+                    f"✅ Staff registered successfully! Login credentials have been sent to {staff.email}"
+                )
+                
+            except Exception as e:
+                # If email fails, show credentials to admin
+                messages.success(
+                    request, 
+                    f"✅ Staff registered successfully!<br>"
+                    f"<strong>Username:</strong> {username}<br>"
+                    f"<strong>Password:</strong> {password}<br>"
+                    f"<em>Email sending failed. Please share these credentials securely with the staff member.</em>"
+                )
+
             return redirect(request.path)
     else:
         form = StaffRegistrationForm(request=request)
@@ -286,3 +341,54 @@ def staffs(request):
     }
 
     return render(request, "shop/staffs.html", context)
+
+
+
+@login_required
+def staff_detail(request, pk):
+    """View staff details (read-only)"""
+    staff = get_object_or_404(CustomUser, id=pk, role=CustomUser.Roles.STAFF)
+    
+    context = {
+        'staff': staff,
+    }
+    return render(request, 'shop/staffs-detail.html', context)
+
+
+@login_required
+def staff_update(request, pk):
+    """Update staff information"""
+    staff = get_object_or_404(CustomUser, id=pk, role=CustomUser.Roles.STAFF)
+    
+    if request.method == "POST":
+        form = StaffUpdateForm(request.POST, request.FILES, instance=staff, request=request)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Staff information updated successfully!")
+            return redirect('shop:staffs')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = StaffUpdateForm(instance=staff, request=request)
+
+    context = {
+        "form": form,
+        "staff": staff,
+    }
+    return render(request, "shop/staffs-update.html", context)
+
+
+@login_required
+def staff_delete(request, pk):
+    """Delete staff member"""
+    staff = get_object_or_404(CustomUser, id=pk, role=CustomUser.Roles.STAFF)
+    
+    if request.method == "POST":
+        staff_name = staff.get_full_name()
+        staff.delete()
+        messages.success(request, f"Staff member {staff_name} has been deleted successfully!")
+        return redirect('shop:staffs')
+    
+    # If not POST, return error
+    messages.error(request, "Invalid request method.")
+    return redirect('shop:staffs')
