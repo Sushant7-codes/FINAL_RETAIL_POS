@@ -1,6 +1,17 @@
 from django.db import models
+import random
+import string
 
 # Create your models here.
+
+def generate_unique_barcode():
+    """Generate a unique 10-digit barcode"""
+    while True:
+        code = ''.join(random.choices(string.digits, k=10))
+        # Check if this barcode already exists in Item or Price model
+        if not Item.objects.filter(barcode=code).exists() and not Price.objects.filter(barcode=code).exists():
+            return code
+
 class Shop(models.Model):
     admin_user = models.OneToOneField("accounts.CustomUser", on_delete=models.CASCADE, related_name='shop')
     name = models.CharField(max_length=255)
@@ -35,11 +46,16 @@ class Shop(models.Model):
 class Item(models.Model):
     name=models.CharField(max_length=100)
     shop=models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='items')
+    barcode = models.CharField(max_length=50, unique=True, blank=True, null=True)
     
     
     class Meta:
         unique_together = ('name', 'shop')
         
+    def save(self, *args, **kwargs):
+        if not self.barcode:
+            self.barcode = generate_unique_barcode()
+        super().save(*args, **kwargs)
         
     def __str__(self):
         return f"{self.name} | {self.shop}" 
@@ -49,10 +65,15 @@ class Price(models.Model):
     amount=models.DecimalField(max_digits=10, decimal_places=2)
     item=models.ForeignKey(Item, on_delete=models.CASCADE, related_name='prices')
     stock=models.PositiveIntegerField(default=1)
+    barcode = models.CharField(max_length=50, unique=True, blank=True, null=True)
     
     class Meta:
         unique_together = ('name', 'item')
         
+    def save(self, *args, **kwargs):
+        if not self.barcode:
+            self.barcode = generate_unique_barcode()
+        super().save(*args, **kwargs)
+        
     def __str__(self):
         return f"{self.name} | {self.item}" 
-    

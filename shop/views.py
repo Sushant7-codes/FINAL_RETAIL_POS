@@ -95,6 +95,7 @@ def item_list(request):
             saved_item_dict={
                 "id":saved_item.id,
                 "name":saved_item.name,
+                "barcode": saved_item.barcode,  # Add barcode to response
             }
             return JsonResponse(
                 {"success":True,
@@ -166,7 +167,7 @@ def price(request):
                     {"success":False,"message":"Price already exists !"}
                 )
                 
-            reponse={
+            response={
                 "success":True,
                 "message":"Price added successfully !",
                 "data":{
@@ -174,9 +175,10 @@ def price(request):
                     "name":saved_price.name,
                     "amount":saved_price.amount,
                     "stock":saved_price.stock,
+                    "barcode": saved_price.barcode,  # Add barcode to response
                 },
             }
-            return JsonResponse(reponse)
+            return JsonResponse(response)
     
     
     item_id=request.GET.get("item_id")
@@ -284,6 +286,3 @@ def staffs(request):
     }
 
     return render(request, "shop/staffs.html", context)
-
-
-
