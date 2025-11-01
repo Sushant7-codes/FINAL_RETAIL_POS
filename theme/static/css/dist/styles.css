@@ -1485,9 +1485,6 @@
   .mt-17 {
     margin-top: calc(var(--spacing) * 17);
   }
-  .mt-1000 {
-    margin-top: calc(var(--spacing) * 1000);
-  }
   .mr-8 {
     margin-right: calc(var(--spacing) * 8);
   }
@@ -1733,9 +1730,6 @@
   .hidden {
     display: none;
   }
-  .inline-flex {
-    display: inline-flex;
-  }
   .table {
     display: table;
   }
@@ -1922,12 +1916,6 @@
   }
   .justify-center {
     justify-content: center;
-  }
-  .justify-end {
-    justify-content: flex-end;
-  }
-  .justify-start {
-    justify-content: flex-start;
   }
   .gap-1 {
     gap: calc(var(--spacing) * 1);
