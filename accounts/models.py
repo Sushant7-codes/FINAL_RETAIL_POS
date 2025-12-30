@@ -11,16 +11,24 @@ class CustomUser(AbstractUser):
     address = models.CharField(max_length=255, null=True, blank=True)
     phone_number = models.CharField(max_length=10, null=True, blank=True)
     profile_pic = models.ImageField(upload_to="profile_pics", null=True, blank=True)
-
     
     role=models.CharField(
         max_length=20,
         choices=Roles.choices,
         default=Roles.SHOP_ADMIN,
     )
+    
+    # Link staff to their shop (with different related_name to avoid clash)
+    workplace = models.ForeignKey(
+        'shop.Shop', 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True,
+        related_name='staff_members'  # This is fine
+    )
+    
     def __str__(self):
         return self.username
-    
 
 class OTP(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

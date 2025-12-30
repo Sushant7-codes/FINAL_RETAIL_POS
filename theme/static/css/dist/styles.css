@@ -1209,9 +1209,6 @@
   .static {
     position: static;
   }
-  .sticky {
-    position: sticky;
-  }
   .top-0 {
     top: calc(var(--spacing) * 0);
   }
@@ -1226,9 +1223,6 @@
   }
   .top-32 {
     top: calc(var(--spacing) * 32);
-  }
-  .right-0 {
-    right: calc(var(--spacing) * 0);
   }
   .right-4 {
     right: calc(var(--spacing) * 4);
@@ -1409,9 +1403,6 @@
   }
   .modal-backdrop button {
     cursor: pointer;
-  }
-  .z-10 {
-    z-index: 10;
   }
   .z-30 {
     z-index: 30;
@@ -1869,9 +1860,6 @@
   .max-h-64 {
     max-height: calc(var(--spacing) * 64);
   }
-  .max-h-\[500px\] {
-    max-height: 500px;
-  }
   .min-h-screen {
     min-height: 100vh;
   }
@@ -2126,12 +2114,6 @@
   .rounded-3xl {
     border-radius: var(--radius-3xl);
   }
-  .rounded-box {
-    border-radius: var(--radius-box);
-  }
-  .rounded-box {
-    border-radius: var(--radius-box);
-  }
   .rounded-full {
     border-radius: calc(infinity * 1px);
   }
@@ -2209,14 +2191,6 @@
   @supports (color: color-mix(in lab, red, red)) {
     .border-base-300\/50 {
       border-color: color-mix(in oklab, var(--color-base-300) 50%, transparent);
-    }
-  }
-  .border-base-content\/5 {
-    border-color: var(--color-base-content);
-  }
-  @supports (color: color-mix(in lab, red, red)) {
-    .border-base-content\/5 {
-      border-color: color-mix(in oklab, var(--color-base-content) 5%, transparent);
     }
   }
   .border-blue-500 {
@@ -3331,18 +3305,8 @@
     }
   }
   @media (width >= 40rem) {
-    .sm\:hidden {
-      display: none;
-    }
-  }
-  @media (width >= 40rem) {
     .sm\:inline {
       display: inline;
-    }
-  }
-  @media (width >= 40rem) {
-    .sm\:table-cell {
-      display: table-cell;
     }
   }
   @media (width >= 40rem) {
@@ -3363,11 +3327,6 @@
   @media (width >= 40rem) {
     .sm\:justify-between {
       justify-content: space-between;
-    }
-  }
-  @media (width >= 40rem) {
-    .sm\:gap-2 {
-      gap: calc(var(--spacing) * 2);
     }
   }
   @media (width >= 40rem) {
@@ -3426,21 +3385,9 @@
       line-height: var(--tw-leading, var(--text-xl--line-height));
     }
   }
-  @media (width >= 40rem) {
-    .sm\:btn-sm {
-      --fontsize: 0.75rem;
-      --btn-p: 0.75rem;
-      --size: calc(var(--size-field, 0.25rem) * 8);
-    }
-  }
   @media (width >= 48rem) {
     .md\:col-span-2 {
       grid-column: span 2 / span 2;
-    }
-  }
-  @media (width >= 48rem) {
-    .md\:table-cell {
-      display: table-cell;
     }
   }
   @media (width >= 48rem) {
@@ -3507,11 +3454,6 @@
     }
   }
   @media (width >= 64rem) {
-    .lg\:table-cell {
-      display: table-cell;
-    }
-  }
-  @media (width >= 64rem) {
     .lg\:max-w-\[500px\] {
       max-width: 500px;
     }
@@ -3559,11 +3501,6 @@
   @media (width >= 64rem) {
     .lg\:pr-80 {
       padding-right: calc(var(--spacing) * 80);
-    }
-  }
-  @media (width >= 80rem) {
-    .xl\:table-cell {
-      display: table-cell;
     }
   }
   @media (width >= 80rem) {

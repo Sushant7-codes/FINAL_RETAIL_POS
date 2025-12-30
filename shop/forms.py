@@ -99,8 +99,6 @@ class PriceForm(forms.ModelForm):
 
 
 class StaffRegistrationForm(forms.ModelForm):
-    # NO password field here
-
     class Meta:
         model = CustomUser
         fields = [
@@ -109,7 +107,6 @@ class StaffRegistrationForm(forms.ModelForm):
             "email",
             "phone_number",
             "address",
-            # NO password in fields list
         ]
 
     def __init__(self, *args, **kwargs):
@@ -118,12 +115,15 @@ class StaffRegistrationForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.role = CustomUser.Roles.STAFF  # enforce staff role
-        # NO password setting here - it's done in the view
+        user.role = CustomUser.Roles.STAFF
+        
+        # Assign staff to the admin's shop
+        if self.request and hasattr(self.request.user, 'shop'):
+            user.workplace = self.request.user.shop  # Changed from shop to workplace
+        
         if commit:
             user.save()
         return user
-    
 
 class StaffUpdateForm(forms.ModelForm):
     """Form for updating existing staff members"""
@@ -144,7 +144,12 @@ class StaffUpdateForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.role = CustomUser.Roles.STAFF  # maintain staff role
+        user.role = CustomUser.Roles.STAFF
+        
+        # Ensure staff remains linked to their shop
+        if not user.workplace and self.request and hasattr(self.request.user, 'shop'):
+            user.workplace = self.request.user.shop  # Changed from shop to workplace
+            
         if commit:
             user.save()
         return user
