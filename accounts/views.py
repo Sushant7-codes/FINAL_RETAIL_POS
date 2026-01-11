@@ -29,15 +29,34 @@ def retail_admin_register(request):
 
                 otp = random.randint(100000, 999999)
 
-                # Temporarily store form data in session
-                request.session["pending_user_data"] = form.cleaned_data
+                # Extract cleaned_data but remove the file field
+                user_data = form.cleaned_data.copy()
+                
+                # Get the file object separately
+                profile_pic = user_data.pop('profile_pic', None)
+                
+                # Store user data (without file) in session
+                request.session["pending_user_data"] = user_data
                 request.session["pending_user_password"] = form.cleaned_data.get("password1")
-
+                
+                # Store file in session separately (as temporary reference)
+                if profile_pic:
+                    # Save file temporarily and store its path
+                    import os
+                    from django.core.files.storage import default_storage
+                    
+                    # Create a temporary file name
+                    temp_filename = f"temp_{email}_{profile_pic.name}"
+                    temp_path = default_storage.save(f'temp/{temp_filename}', profile_pic)
+                    
+                    # Store the path in session instead of the file object
+                    request.session["pending_profile_pic_path"] = temp_path
+                
                 # Store OTP in session
                 request.session["register_otp"] = str(otp)
 
                 # Send OTP
-                send_otp(email, otp,purpose="register")
+                send_otp(email, otp, purpose="register")
 
                 messages.success(request, f"OTP sent to {email}. Please verify to complete registration.")
                 return redirect("accounts:register_otp_confirmation")
@@ -53,7 +72,6 @@ def retail_admin_register(request):
     form = RetailAdminRegisterForm()
     context = {"form": form}
     return render(request, "accounts/register.html", context)
-
 
 def retail_admin_login(request):
     
