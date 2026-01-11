@@ -2,6 +2,11 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+import os
+
+
 class CustomUser(AbstractUser):
     
     class Roles(models.TextChoices):
@@ -26,6 +31,14 @@ class CustomUser(AbstractUser):
         blank=True,
         related_name='staff_members'  # This is fine
     )
+    
+    @property
+    def profile_pic_url(self):
+        """Return profile picture URL or default if none exists"""
+        if self.profile_pic and hasattr(self.profile_pic, 'url'):
+            return self.profile_pic.url
+        # Return path to default profile picture
+        return '/static/images/default-profile.png'
     
     def __str__(self):
         return self.username
