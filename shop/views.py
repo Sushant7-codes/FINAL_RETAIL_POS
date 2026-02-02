@@ -45,6 +45,26 @@ def shop_register(request):
 
     return render(request, "shop/register.html", {"form": form})
 
+@login_required
+def update_profile_pic(request):
+    """Update user's profile picture"""
+    if request.method == 'POST':
+        new_profile_pic = request.FILES.get('profile_pic')
+        
+        if new_profile_pic:
+            # Delete old profile picture if exists
+            if request.user.profile_pic:
+                request.user.profile_pic.delete(save=False)
+            
+            # Save new profile picture
+            request.user.profile_pic = new_profile_pic
+            request.user.save()
+            
+            messages.success(request, "Profile picture updated successfully!")
+        else:
+            messages.error(request, "Please select a file to upload.")
+    
+    return redirect('shop:shop_profile')
 
 @login_required
 def shop_profile(request):
