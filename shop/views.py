@@ -119,7 +119,7 @@ def item_list(request):
             saved_item_dict={
                 "id":saved_item.id,
                 "name":saved_item.name,
-                "barcode": saved_item.barcode,  # Add barcode to response
+                "barcode": saved_item.barcode, 
             }
             return JsonResponse(
                 {"success":True,

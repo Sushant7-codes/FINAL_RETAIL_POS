@@ -12,6 +12,7 @@ def generate_unique_barcode():
         if not Item.objects.filter(barcode=code).exists() and not Price.objects.filter(barcode=code).exists():
             return code
 
+
 class Shop(models.Model):
     admin_user = models.OneToOneField("accounts.CustomUser", on_delete=models.CASCADE, related_name='shop')
     name = models.CharField(max_length=255)
