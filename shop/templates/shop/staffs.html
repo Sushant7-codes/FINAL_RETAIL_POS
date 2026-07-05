@@ -30,17 +30,23 @@
 
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        {% if request.user.role == "shop_admin" %}
         <div>
-            <h1 class="text-4xl font-extrabold text-primary mb-1 tracking-tight">Staff Management</h1>
-            <p class="text-base-content/60 text-sm">Manage and organize your staff members</p>
+            <h1 class="text-4xl font-extrabold text-primary mb-1 tracking-tight">
+                Staff Management
+            </h1>
+            <p class="text-base-content/60 text-sm">
+                Manage and organize your staff members
+            </p>
         </div>
+        {% endif %}
+
+        {% if request.user.role == "shop_admin" %}
         <div class="badge badge-primary badge-lg font-semibold px-4 py-3 shadow-lg flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
+            ...
             Admin Panel
         </div>
+        {% endif %}
     </div>
 
     <div class="flex flex-col xl:flex-row gap-8">
