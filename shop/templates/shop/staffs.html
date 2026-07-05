@@ -83,7 +83,7 @@
             </div>
         </div>
         {% endif %}
-        
+
         <!-- Staff List Section -->
         <div class="flex-grow shadow-2xl rounded-3xl p-8 bg-base-100 border border-base-300/50 hover:border-base-300 transition-all duration-300">
 
@@ -177,19 +177,26 @@
                             </td>
                             <td class="text-base-content/80">{{ staff.phone_number|default:"-" }}</td>
                             <td>
+
                                 <div class="flex gap-2 justify-center">
-                                    <a href="{% url 'shop:staff_detail' staff.id %}" 
+                                    <a href="{% url 'shop:staff_detail' staff.id %}"
                                        class="btn btn-xs btn-info btn-outline hover:btn-info transition-all shadow-sm hover:shadow-md">
                                         View
                                     </a>
-                                    <a href="{% url 'shop:staff_update' staff.id %}" 
-                                       class="btn btn-xs btn-warning btn-outline hover:btn-warning transition-all shadow-sm hover:shadow-md">
-                                        Edit
-                                    </a>
-                                    <button onclick="document.getElementById('delete_modal_{{ staff.id }}').showModal()" 
-                                            class="btn btn-xs btn-error btn-outline hover:btn-error transition-all shadow-sm hover:shadow-md">
-                                        Delete
-                                    </button>
+                                
+                                    {% if request.user.role == "shop_admin" %}
+                                
+                                        <a href="{% url 'shop:staff_update' staff.id %}"
+                                           class="btn btn-xs btn-warning btn-outline hover:btn-warning transition-all shadow-sm hover:shadow-md">
+                                            Edit
+                                        </a>
+                                    
+                                        <button onclick="document.getElementById('delete_modal_{{ staff.id }}').showModal()"
+                                                class="btn btn-xs btn-error btn-outline hover:btn-error transition-all shadow-sm hover:shadow-md">
+                                            Delete
+                                        </button>
+                                    
+                                    {% endif %}
                                 </div>
                             </td>
                         </tr>

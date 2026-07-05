@@ -357,7 +357,7 @@ Best regards,
         current_shop = request.user.shop
     else:
         current_shop = request.user.workplace
-    
+
     # Show all staff of the current shop
     all_staffs = CustomUser.objects.filter(
         role=CustomUser.Roles.STAFF,
@@ -384,22 +384,28 @@ Best regards,
 
     return render(request, "shop/staffs.html", context)
 
-
 @login_required
 def staff_detail(request, pk):
     """View staff details (read-only)"""
-    staff = get_object_or_404(
-        CustomUser, 
-        id=pk, 
-        role=CustomUser.Roles.STAFF,
-        workplace=request.user.shop  # Changed from shop to workplace
-    )
-    
-    context = {
-        'staff': staff,
-    }
-    return render(request, 'shop/staffs-detail.html', context)
 
+    # Get the current user's shop
+    if request.user.role == CustomUser.Roles.SHOP_ADMIN:
+        current_shop = request.user.shop
+    else:
+        current_shop = request.user.workplace
+
+    staff = get_object_or_404(
+        CustomUser,
+        id=pk,
+        role=CustomUser.Roles.STAFF,
+        workplace=current_shop,
+    )
+
+    context = {
+        "staff": staff,
+    }
+
+    return render(request, "shop/staffs-detail.html", context)
 
 @login_required
 def staff_update(request, pk):
@@ -434,7 +440,6 @@ def staff_update(request, pk):
         "staff": staff,
     }
     return render(request, "shop/staffs-update.html", context)
-
 
 @login_required
 def staff_delete(request, pk):
