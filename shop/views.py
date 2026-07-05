@@ -263,6 +263,14 @@ def price_update(request,pk):
 
 
 def staffs(request):
+    # Only Shop Admin can register new staff
+    if (
+        request.method == "POST"
+        and request.user.role != CustomUser.Roles.SHOP_ADMIN
+    ):
+        messages.error(request, "You do not have permission to register staff.")
+        return redirect("shop:staffs")
+    
     # --- Handle Staff Registration ---
     if request.method == "POST":
         form = StaffRegistrationForm(request.POST, request.FILES, request=request)
@@ -344,13 +352,17 @@ Best regards,
         form = StaffRegistrationForm(request=request)
 
     # --- Filter staff by logged-in admin's shop ---
-    if hasattr(request.user, 'shop'):
-        all_staffs = CustomUser.objects.filter(
-            role=CustomUser.Roles.STAFF,
-            workplace=request.user.shop  # Changed from shop to workplace
-        ).order_by("-id")
+    # Get the current user's shop
+    if request.user.role == CustomUser.Roles.SHOP_ADMIN:
+        current_shop = request.user.shop
     else:
-        all_staffs = CustomUser.objects.none()
+        current_shop = request.user.workplace
+    
+    # Show all staff of the current shop
+    all_staffs = CustomUser.objects.filter(
+        role=CustomUser.Roles.STAFF,
+        workplace=current_shop
+    ).order_by("-id")
     
     # Apply filters
     filtered_staffs = StaffFilter(request.GET, queryset=all_staffs)
@@ -366,6 +378,8 @@ Best regards,
         "page_obj": page_obj,
         "filter_form": filtered_staffs.form,
         "filtered_staffs": filtered_staffs,
+        
+        "can_manage_staff": request.user.role == CustomUser.Roles.SHOP_ADMIN,
     }
 
     return render(request, "shop/staffs.html", context)
@@ -389,6 +403,13 @@ def staff_detail(request, pk):
 
 @login_required
 def staff_update(request, pk):
+    
+    # Only Shop Admin can update staff
+    if request.user.role != CustomUser.Roles.SHOP_ADMIN:
+        messages.error(request, "You do not have permission to update staff.")
+        return redirect("shop:staffs")
+    
+    
     """Update staff information"""
     staff = get_object_or_404(
         CustomUser, 
@@ -417,6 +438,11 @@ def staff_update(request, pk):
 
 @login_required
 def staff_delete(request, pk):
+    
+    if request.user.role != CustomUser.Roles.SHOP_ADMIN:
+        messages.error(request, "You do not have permission to delete staff.")
+        return redirect("shop:staffs")
+
     """Delete staff member"""
     staff = get_object_or_404(
         CustomUser, 
