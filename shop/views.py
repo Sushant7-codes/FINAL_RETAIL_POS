@@ -107,7 +107,6 @@ def shop_update(request):
     }
     return render(request, "shop/update-shop-info.html", context)
 
-
 def item_list(request):
     form=ItemForm(request.POST,request=request)
     if form.is_valid():
@@ -133,10 +132,18 @@ def item_list(request):
             )
 
     
-    form=ItemForm()
-    item_list=request.user.shop.items.all()
+    if request.user.role == CustomUser.Roles.SHOP_ADMIN:
+        shop = request.user.shop
+    else:
+        shop = request.user.workplace
     
-    context={"form":form,"item_list":item_list}
+    form = ItemForm(request=request)
+    item_list = shop.items.all()
+    
+    context = {
+        "form": form,
+        "item_list": item_list,
+    }
     return render(request, "shop/item-create-form.html", context)
 
 def item_list_delete(request,pk):
