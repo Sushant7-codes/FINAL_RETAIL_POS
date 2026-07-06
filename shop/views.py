@@ -20,14 +20,10 @@ from shop.forms import(
     StaffRegistrationForm,
     StaffUpdateForm,
 )
-# from shop.models import Fee, Grade, TempCSVFile
-# from shop.background_tasks import bulk_create_students_from_csv
 from shop.filters import StaffFilter
-
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.paginator import Paginator
-
 
 @require_http_methods(["GET", "POST"])
 @login_required
@@ -84,7 +80,6 @@ def shop_profile(request):
     }
 
     return render(request, "shop/profile.html", context)
-
 
 @login_required
 def shop_update(request):
@@ -244,7 +239,6 @@ def price_delete(request,pk):
             {"success":True,"message":"Price deleted successfully !"}
         )
 
-
 def price_update(request,pk):
     
     try:
@@ -271,7 +265,6 @@ def price_update(request,pk):
         form=PriceForm(instance=price)
         context={"form":form,}
         return render(request, "shop/price-update.html", context)
-
 
 def staffs(request):
     # Only Shop Admin can register new staff

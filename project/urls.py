@@ -25,5 +25,7 @@ urlpatterns = [
     path("", include("app.urls")),
     # path("shop/", include("shop.urls")),
     path("shop/", include(("shop.urls", "shop"), namespace="shop")),
+    
+    path("billing/", include("billing.urls")),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

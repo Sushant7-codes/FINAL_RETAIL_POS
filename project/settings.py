@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'inventory',
     'sales',
     'shop',
+    'billing',
     
     'background_task',
     'django_filters',
