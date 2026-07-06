@@ -59,7 +59,7 @@
                 </div>
 
                 <h3 class="mt-3 text-lg font-bold text-gray-800 dark:text-gray-200">{{admin.get_full_name}}</h3>
-                <p class="text-sm text-gray-500">Administrator</p>
+                <p class="text-sm text-gray-500">{{ admin.get_role_display }}</p>
                 <p class="text-xs text-gray-400 mt-1 truncate">{{admin.email}}</p>
                 <a class="btn btn-sm btn-outline mt-4 w-full" href="{% url 'accounts:logout_view' %}">Logout</a>
             </div>
@@ -113,7 +113,7 @@
             </div>
 
             <h4 class="mt-2 font-semibold text-gray-800 dark:text-gray-200">{{admin.get_full_name}}</h4>
-            <p class="text-xs text-gray-500">Administrator</p>
+            <p class="text-xs text-gray-500">{{ admin.get_role_display }}</p>
             <p class="text-xs text-gray-400 truncate">{{admin.email}}</p>
             <a class="btn btn-outline btn-sm mt-3 w-full" href="{% url 'accounts:logout_view' %}">Logout</a>
         </div>
@@ -238,11 +238,14 @@
         </div>
 
         <!-- Update Button -->
+        {% if request.user.role == "shop_admin" %}
         <div class="px-8 pb-10 flex justify-center">
-            <a class="btn btn-primary px-10 py-2 text-lg shadow-md hover:shadow-lg" href="{% url 'shop:shop_update' %}">
+            <a class="btn btn-primary px-10 py-2 text-lg shadow-md hover:shadow-lg"
+               href="{% url 'shop:shop_update' %}">
                 Update Shop Information
             </a>
         </div>
+        {% endif %}
     </div>
 </main>
 

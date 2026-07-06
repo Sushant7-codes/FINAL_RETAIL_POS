@@ -68,17 +68,21 @@ def update_profile_pic(request):
 
 @login_required
 def shop_profile(request):
-    shop_admin = request.user
-    try:
-        shop_data = shop_admin.shop
-    except Exception:
+
+    if request.user.role == CustomUser.Roles.SHOP_ADMIN:
+        shop_data = request.user.shop
+    else:
+        shop_data = request.user.workplace
+
+    if shop_data is None:
         messages.warning(request, "You need to register your shop first.")
         return redirect("shop:shop_register")
 
     context = {
-        'admin': shop_admin,
-        'shop': shop_data
+        "admin": request.user,
+        "shop": shop_data,
     }
+
     return render(request, "shop/profile.html", context)
 
 
