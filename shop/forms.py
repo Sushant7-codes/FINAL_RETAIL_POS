@@ -73,7 +73,10 @@ class ItemForm(forms.ModelForm):
         
     def save(self,commit=True,*args, **kwargs):
         item=super(ItemForm, self).save(commit=False,*args, **kwargs)
-        item.shop=self.request.user.shop
+        if self.request.user.role == CustomUser.Roles.SHOP_ADMIN:
+            item.shop = self.request.user.shop
+        else:
+            item.shop = self.request.user.workplace
         
         if commit:
             item.save()
