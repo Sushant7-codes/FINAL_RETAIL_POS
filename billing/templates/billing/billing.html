@@ -135,7 +135,12 @@
                         data-barcode="{{ item.barcode }}"
                 
                         {% if item.stock > 0 %}
-                            onclick="addToCart({{ item.id }})"
+                            onclick="addToCart(
+                                {{ item.id }},
+                                '{{ item.name|escapejs }}',
+                                {{ item.amount }},
+                                {{ item.stock }}
+                            )"
                         {% endif %}
                     >
                 
@@ -213,8 +218,14 @@
                                 {% if item.stock > 0 %}
                             
                                     <button
-                                        class="btn btn-primary btn-sm opacity-0 group-hover:opacity-100 transition duration-200"
-                                        onclick="event.stopPropagation(); addToCart({{ item.id }})"
+                                        class="btn btn-primary btn-sm"
+                                        onclick="event.stopPropagation();
+                                        addToCart(
+                                            {{ item.id }},
+                                            '{{ item.name|escapejs }}',
+                                            {{ item.amount }},
+                                            {{ item.stock }}
+                                        )"
                                     >
                                         <i class="fas fa-plus"></i>
                                         Add
@@ -453,11 +464,157 @@
     setInterval(updateDateTime, 60000);
 
     // Cart Functions
-    let cartItems = 0;
-    let totalAmount = 0;
+    let cart = [];
 
-    function addToCart(name, price) {
-        addToCart(id)
+    function addToCart(id, name, price, stock) {
+
+        const existingItem = cart.find(item => item.id === id);
+        if (existingItem) {
+            if (existingItem.quantity >= stock) {
+                return;
+            }
+            existingItem.quantity++;
+        } else {
+            cart.push({
+                id: id,
+                name: name,
+                price: Number(price),
+                stock: stock,
+                quantity: 1
+            });
+        }
+        renderCart(); 
+    }
+
+    function renderCart() {
+
+        const cartContainer = document.getElementById("cart-items");
+
+        // Empty cart
+        cartContainer.innerHTML = "";
+
+    if (cart.length === 0) {
+
+        cartContainer.innerHTML = `
+            <div
+                id="empty-cart"
+                class="h-full flex flex-col items-center justify-center text-center"
+            >
+                <div class="text-6xl mb-4">
+                    🛒
+                </div>
+
+                <h3 class="text-xl font-bold">
+                    Cart is Empty
+                </h3>
+
+                <p class="text-base-content/60 mt-2">
+                    Scan products or search items to begin billing.
+                </p>
+
+            </div>
+        `;
+
+        document.getElementById("item-count").textContent = "0";
+        updateTotals();
+        return;
+    }
+
+        cartContainer.innerHTML = "";
+
+        cart.forEach(item => {
+
+            cartContainer.innerHTML += `
+
+            <div class="border rounded-xl p-4 shadow-sm bg-base-100">
+
+                <div class="flex justify-between items-start">
+
+                    <div>
+
+                        <h3 class="font-bold text-lg">${item.name}</h3>
+
+                        <p class="text-sm text-base-content/60">
+                            Rs. ${item.price}
+                        </p>
+
+                    </div>
+
+                    <button
+                        class="btn btn-error btn-xs"
+                        onclick="removeFromCart(${item.id})"
+                    >
+                        ✕
+                    </button>
+
+                </div>
+
+                <div class="flex justify-between items-center mt-4">
+
+                    <div class="join">
+
+                        <button
+                            class="btn btn-sm join-item"
+                            onclick="changeQuantity(${item.id}, -1)"
+                        >
+                            -
+                        </button>
+
+                        <button
+                            class="btn btn-sm join-item btn-disabled"
+                        >
+                            ${item.quantity}
+                        </button>
+
+                        <button
+                            class="btn btn-sm join-item"
+                            onclick="changeQuantity(${item.id}, 1)"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                    <div class="font-bold text-primary">
+
+                        Rs. ${(item.price * item.quantity).toFixed(0)}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            `;
+
+        });
+
+        document.getElementById("item-count").textContent = cart.length;
+
+    }
+
+    function changeQuantity(id, change) {
+
+        const item = cart.find(i => i.id === id);
+
+        if (!item) return;
+
+        item.quantity += change;
+
+        if (item.quantity <= 0) {
+            removeFromCart(id);
+            return;
+        }
+
+        renderCart();
+    }
+
+    function removeFromCart(id) {
+
+        cart = cart.filter(i => i.id !== id);
+
+        renderCart();
+
     }
 
     function updateQuantity(button, change) {
