@@ -2145,6 +2145,9 @@
   .right-0 {
     right: calc(var(--spacing) * 0);
   }
+  .right-2 {
+    right: calc(var(--spacing) * 2);
+  }
   .right-3 {
     right: calc(var(--spacing) * 3);
   }
@@ -3495,14 +3498,6 @@
       border-color: color-mix(in oklab, var(--color-blue-500) 30%, transparent);
     }
   }
-  .border-error\/20 {
-    border-color: var(--color-error);
-  }
-  @supports (color: color-mix(in lab, red, red)) {
-    .border-error\/20 {
-      border-color: color-mix(in oklab, var(--color-error) 20%, transparent);
-    }
-  }
   .border-error\/30 {
     border-color: var(--color-error);
   }
@@ -3701,14 +3696,6 @@
   }
   .bg-red-600 {
     background-color: var(--color-red-600);
-  }
-  .bg-secondary\/10 {
-    background-color: var(--color-secondary);
-  }
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-secondary\/10 {
-      background-color: color-mix(in oklab, var(--color-secondary) 10%, transparent);
-    }
   }
   .bg-warning\/10 {
     background-color: var(--color-warning);
@@ -3935,11 +3922,6 @@
     font-size: 1rem;
     padding-inline: calc(0.25rem * 3.5 - var(--border));
   }
-  .badge-sm {
-    --size: calc(var(--size-selector, 0.25rem) * 5);
-    font-size: 0.75rem;
-    padding-inline: calc(0.25rem * 2.5 - var(--border));
-  }
   .px-2 {
     padding-inline: calc(var(--spacing) * 2);
   }
@@ -3999,6 +3981,9 @@
   }
   .pt-20 {
     padding-top: calc(var(--spacing) * 20);
+  }
+  .pr-28 {
+    padding-right: calc(var(--spacing) * 28);
   }
   .pb-1 {
     padding-bottom: calc(var(--spacing) * 1);
@@ -4061,9 +4046,6 @@
   .kbd-xs {
     --size: calc(var(--size-selector, 0.25rem) * 4);
     font-size: 0.625rem;
-  }
-  .text-\[6px\] {
-    font-size: 6px;
   }
   .font-bold {
     --tw-font-weight: var(--font-weight-bold);
@@ -4557,16 +4539,6 @@
     }
   }
   @media (hover: hover) {
-    .hover\:border-error\/50:hover {
-      border-color: var(--color-error);
-    }
-    @supports (color: color-mix(in lab, red, red)) {
-      .hover\:border-error\/50:hover {
-        border-color: color-mix(in oklab, var(--color-error) 50%, transparent);
-      }
-    }
-  }
-  @media (hover: hover) {
     .hover\:border-primary:hover {
       border-color: var(--color-primary);
     }
@@ -4578,16 +4550,6 @@
     @supports (color: color-mix(in lab, red, red)) {
       .hover\:border-primary\/30:hover {
         border-color: color-mix(in oklab, var(--color-primary) 30%, transparent);
-      }
-    }
-  }
-  @media (hover: hover) {
-    .hover\:border-primary\/50:hover {
-      border-color: var(--color-primary);
-    }
-    @supports (color: color-mix(in lab, red, red)) {
-      .hover\:border-primary\/50:hover {
-        border-color: color-mix(in oklab, var(--color-primary) 50%, transparent);
       }
     }
   }

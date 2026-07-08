@@ -69,24 +69,28 @@
                             class="input input-bordered w-full input-lg focus:input-primary transition-all text-lg"
                             id="search-input"
                         />
-                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-base-content/40 bg-base-200 px-2 py-1 rounded">
-                            Ctrl + S
-                        </span>
                     </div>
                 </div>
                 
                 <!-- OR Divider -->
                 <div class="flex items-center gap-3">
                     <div class="flex-1 relative">
+                        
                         <input
                             type="text"
                             placeholder="📷 Scan Barcode..."
                             class="input input-bordered w-full input-lg focus:input-primary transition-all text-lg"
                             id="barcode-input"
-                        />
-                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-base-content/40 bg-base-200 px-2 py-1 rounded">
-                            F2
-                        </span>
+                        >
+                        <button
+                                id="scan-barcode-btn"
+                                class="btn btn-primary btn-sm absolute right-2 top-1/2 -translate-y-1/2"
+                                type = "button"
+                            >
+                                 <i class="fas fa-camera"></i>
+                                📷 Scan
+                        </button>
+
                     </div>
                 </div>
             </div>
@@ -120,12 +124,15 @@
                 
                     <div
                         class="card bg-base-100 shadow-sm border-2 transition-all duration-200
-                
+
                         {% if item.stock <= 0 %}
                             border-error/30 opacity-70 cursor-not-allowed
                         {% else %}
                             border-base-200 hover:border-primary hover:shadow-xl hover:-translate-y-1 cursor-pointer group
                         {% endif %}"
+
+                        data-name="{{ item.name|lower }}"
+                        data-barcode="{{ item.barcode }}"
                 
                         {% if item.stock > 0 %}
                             onclick="addToCart({{ item.id }})"
@@ -417,6 +424,36 @@
         </div>
     </div>
 
+    <dialog id="cameraModal" class="modal">
+
+        <div class="modal-box max-w-2xl">
+
+            <h3 class="font-bold text-xl mb-4">
+                Scan Barcode
+            </h3>
+
+            <video
+                id="camera-preview"
+                autoplay
+                playsinline
+                class="w-full rounded-xl border"
+            ></video>
+
+            <div class="modal-action">
+
+                <button
+                    class="btn"
+                    onclick="closeCamera()"
+                >
+                    Close
+                </button>
+
+            </div>
+
+        </div>
+
+    </dialog>
+
 </main>
 
 <script>
@@ -546,7 +583,7 @@
         let visibleCount = 0;
         
         productCards.forEach(card => {
-            const title = card.querySelector('h4')?.textContent?.toLowerCase() || '';
+            const title = card.querySelector('h3')?.textContent?.toLowerCase() || '';
             if (searchTerm === '' || title.includes(searchTerm)) {
                 card.style.display = 'block';
                 visibleCount++;
@@ -580,6 +617,80 @@
             sessionStorage.removeItem('billingPageScrollPosition');
         }
     });
+
+    const scanButton = document.getElementById("scan-barcode-btn");
+    const cameraModal = document.getElementById("cameraModal");
+    const video = document.getElementById("camera-preview");
+
+    let stream = null;
+
+    scanButton.addEventListener("click", async () => {
+
+        try {
+
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: "environment"
+                }
+            });
+
+            video.srcObject = stream;
+
+            cameraModal.showModal();
+
+        }
+
+        catch (err) {
+
+            alert("Unable to access camera.");
+
+            console.error(err);
+
+        }
+
+    });
+
+    function closeCamera() {
+
+        if (stream) {
+
+            stream.getTracks().forEach(track => track.stop());
+
+            stream = null;
+
+        }
+
+        cameraModal.close();
+
+    }
+
+    document.getElementById("barcode-input").addEventListener("input", function () {
+
+        const barcode = this.value.trim();
+
+        const cards = document.querySelectorAll(".grid .card");
+
+        let found = false;
+
+        cards.forEach(card => {
+
+            const cardBarcode = card.dataset.barcode;
+
+            if (barcode === "" || cardBarcode.includes(barcode)) {
+
+                card.style.display = "block";
+                found = true;
+
+            } else {
+
+                card.style.display = "none";
+
+            }
+
+        });
+
+    });
+
 </script>
 
 {% endblock %}
