@@ -164,20 +164,20 @@
                             
                                 {% if item.stock > 5 %}
                             
-                                    <div class="badge badge-success gap-1">
-                                        🟢 In Stock
+                                    <div class="badge badge-success gap-1 shrink-0">
+                                        🟢 Stock
                                     </div>
                                 
                                 {% elif item.stock > 0 %}
                                 
-                                    <div class="badge badge-warning gap-1">
-                                        🟡 Low Stock
+                                    <div class="badge badge-warning gap-1 shrink-0">
+                                        🟡 Low 
                                     </div>
                                 
                                 {% else %}
                                 
-                                    <div class="badge badge-error gap-1">
-                                        🔴 Out of Stock
+                                    <div class="badge badge-error gap-1 shrink-0">
+                                        🔴 Out
                                     </div>
                                 
                                 {% endif %}
@@ -194,7 +194,7 @@
                             </div>
                         
                             <!-- Footer -->
-                            <div class="flex justify-between items-center mt-5">
+                            <div class="flex justify-between items-center mt-auto pt-5">
                             
                                 <div class="text-sm">
                                 
@@ -262,7 +262,7 @@
         </div>
 
         <!-- RIGHT COLUMN - Current Bill (35%) -->
-        <div class="w-[35%] flex flex-col bg-base-100">
+        <div class="w-[34.8%] bg-base-100 rounded-l-xl rounded-r-xl shadow-lg h-fit">
             
             <!-- Bill Header -->
             <div class="p-4 border-b border-base-200 bg-gradient-to-r from-primary/5 to-secondary/5">
@@ -273,154 +273,134 @@
                             Current Bill
                         </h3>
                         <p class="text-sm text-base-content/60">
-                            <span id="item-count">3</span> Items
+                            <span id="item-count">0</span> Items
                         </p>
                     </div>
-                    <span class="badge badge-ghost font-mono text-lg">#0001</span>
+                    <span class="badge badge-ghost font-mono text-lg">#NEW</span>
                 </div>
             </div>
 
-            <!-- Customer Info - Collapsible -->
-            <div class="px-4 py-2 border-b border-base-200 bg-base-200/30">
-                <details class="group">
-                    <summary class="flex items-center gap-2 text-sm cursor-pointer hover:text-primary transition-colors">
-                        <i class="fas fa-user-circle text-base-content/40"></i>
-                        <span class="text-base-content/60">Customer Information</span>
-                        <i class="fas fa-chevron-down ml-auto group-open:rotate-180 transition-transform"></i>
-                    </summary>
-                    <div class="mt-2 space-y-2">
-                        <input type="text" placeholder="Customer Name" class="input input-bordered input-sm w-full" />
-                        <input type="text" placeholder="Phone Number" class="input input-bordered input-sm w-full" />
+            <!-- Current Bill -->
+            <div id="cart-items" class="p-4 space-y-3 min-h-[180px] max-h-[320px] overflow-y-auto">
+            
+                <div id="empty-cart"
+                     class="flex flex-col items-center justify-center text-center py-10">
+            
+                    <div class="text-6xl mb-4">
+                        🛒
                     </div>
-                </details>
-            </div>
-
-            <!-- Cart Items - Scrollable -->
-            <div class="flex-1 overflow-y-auto p-4 space-y-3" id="cart-items">
-                <!-- Cart Item 1 -->
-                <div class="flex flex-col p-3 bg-base-200/30 rounded-xl border border-base-200 hover:border-primary/30 transition-all">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="font-bold">⚽ Football</p>
-                            <p class="text-sm text-base-content/60">Rs. 1,300 × 2</p>
-                        </div>
-                        <button class="btn btn-ghost btn-xs btn-square text-error hover:bg-error/10" onclick="removeItem(this)">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                    <div class="flex items-center gap-3 mt-2">
-                        <button class="btn btn-ghost btn-sm btn-square border border-base-300 hover:border-primary" onclick="updateQuantity(this, -1)">
-                            <i class="fas fa-minus text-xs"></i>
-                        </button>
-                        <span class="font-bold w-8 text-center">2</span>
-                        <button class="btn btn-ghost btn-sm btn-square border border-base-300 hover:border-primary" onclick="updateQuantity(this, 1)">
-                            <i class="fas fa-plus text-xs"></i>
-                        </button>
-                        <span class="ml-auto font-bold text-primary">Rs. 2,600</span>
-                    </div>
-                </div>
-
-                <!-- Cart Item 2 -->
-                <div class="flex flex-col p-3 bg-base-200/30 rounded-xl border border-base-200 hover:border-primary/30 transition-all">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="font-bold">💧 Water Bottle</p>
-                            <p class="text-sm text-base-content/60">Rs. 40 × 1</p>
-                        </div>
-                        <button class="btn btn-ghost btn-xs btn-square text-error hover:bg-error/10" onclick="removeItem(this)">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                    <div class="flex items-center gap-3 mt-2">
-                        <button class="btn btn-ghost btn-sm btn-square border border-base-300 hover:border-primary" onclick="updateQuantity(this, -1)">
-                            <i class="fas fa-minus text-xs"></i>
-                        </button>
-                        <span class="font-bold w-8 text-center">1</span>
-                        <button class="btn btn-ghost btn-sm btn-square border border-base-300 hover:border-primary" onclick="updateQuantity(this, 1)">
-                            <i class="fas fa-plus text-xs"></i>
-                        </button>
-                        <span class="ml-auto font-bold text-primary">Rs. 40</span>
-                    </div>
-                </div>
-
-                <!-- Cart Item 3 -->
-                <div class="flex flex-col p-3 bg-base-200/30 rounded-xl border border-base-200 hover:border-primary/30 transition-all">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="font-bold">🍫 Chocolate</p>
-                            <p class="text-sm text-base-content/60">Rs. 120 × 3</p>
-                        </div>
-                        <button class="btn btn-ghost btn-xs btn-square text-error hover:bg-error/10" onclick="removeItem(this)">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                    <div class="flex items-center gap-3 mt-2">
-                        <button class="btn btn-ghost btn-sm btn-square border border-base-300 hover:border-primary" onclick="updateQuantity(this, -1)">
-                            <i class="fas fa-minus text-xs"></i>
-                        </button>
-                        <span class="font-bold w-8 text-center">3</span>
-                        <button class="btn btn-ghost btn-sm btn-square border border-base-300 hover:border-primary" onclick="updateQuantity(this, 1)">
-                            <i class="fas fa-plus text-xs"></i>
-                        </button>
-                        <span class="ml-auto font-bold text-primary">Rs. 360</span>
-                    </div>
-                </div>
-
-                <!-- Empty Cart State (hidden initially) -->
-                <div id="empty-cart" class="text-center py-12 hidden">
-                    <div class="text-6xl mb-4">🛒</div>
-                    <p class="text-lg font-semibold text-base-content/60">Cart is Empty</p>
-                    <p class="text-sm text-base-content/40">Scan barcode or search products</p>
-                </div>
-            </div>
-
-            <!-- Bill Summary - Always Visible -->
-            <div class="border-t border-base-200 bg-base-100 p-4 space-y-3">
-                <div class="space-y-2">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-base-content/60">Subtotal</span>
-                        <span class="font-mono font-semibold">Rs. 3,000</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-base-content/60">Discount</span>
-                        <span class="font-mono text-success font-semibold">- Rs. 0.00</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-base-content/60">Tax (13%)</span>
-                        <span class="font-mono font-semibold">Rs. 390</span>
-                    </div>
-                </div>
                 
-                <div class="border-t-2 border-primary/20 pt-3">
-                    <div class="flex justify-between items-center">
-                        <span class="text-lg font-bold">TOTAL</span>
-                        <span class="text-3xl font-bold text-primary" id="grand-total">Rs. 3,390</span>
-                    </div>
+                    <h3 class="text-xl font-bold">
+                        Cart is Empty
+                    </h3>
+                
+                    <p class="text-base-content/60 mt-2">
+                        Scan products or search items to begin billing.
+                    </p>
+                
                 </div>
+            
+            </div>
 
-                <!-- Quick Actions -->
-                <div class="flex gap-2">
-                    <button class="btn btn-ghost btn-sm flex-1 border border-base-300 hover:border-primary transition-all" onclick="alert('Discount functionality coming soon!')">
-                        <i class="fas fa-tag"></i> Discount
-                    </button>
-                    <button class="btn btn-ghost btn-sm flex-1 border border-base-300 hover:border-error hover:text-error transition-all" onclick="clearCart()">
-                        <i class="fas fa-trash"></i> Clear
-                    </button>
+            <!-- Customer Information -->
+            <div class="border-t border-base-300 p-4 space-y-4">
+                <h3 class="font-bold text-lg">
+                    Customer Information
+                </h3>
+                <div>
+                    <label class="label">
+                        <span class="label-text font-medium autocomplete="off" ">
+                            Customer Name
+                            <span class="text-error">*</span>
+                        </span>
+                    </label>
+                    <input
+                        type="text"
+                        id="customer-name"
+                        class="input input-bordered w-full"
+                        placeholder="Enter customer name"
+                        required
+                    >
                 </div>
-
-                <!-- Checkout Button - Dominant -->
-                <button class="btn btn-success btn-block text-lg font-bold py-4 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-3" onclick="checkout()">
-                    <i class="fas fa-credit-card text-xl"></i>
-                    COMPLETE SALE
-                    <span class="text-xs font-normal opacity-75">(F9)</span>
-                </button>
-
-                <!-- Future Reserved Space -->
-                <div class="mt-2 pt-2 border-t border-base-200/50 text-xs text-base-content/30 text-center">
-                    <i class="fas fa-clock mr-1"></i>
-                    Reserved for: Payment Method · Cash Received · Change · Print Receipt · Hold Sale
+            
+                <div>
+                    <label class="label">
+                        <span class="label-text font-medium autocomplete="off" ">
+                            Phone Number
+                            <span class="text-error">*</span>
+                        </span>
+                    </label>
+                    <input
+                        type="tel"
+                        id="customer-phone"
+                        class="input input-bordered w-full"
+                        placeholder="98XXXXXXXX"
+                        required
+                    >
                 </div>
             </div>
+
+            <!-- Billing Summary -->
+
+            <div class="border-t border-base-300 p-4 space-y-3">
+            
+                <div class="flex justify-between">
+                
+                    <span>Subtotal</span>
+                
+                    <span id="subtotal">
+                        Rs. 0
+                    </span>
+                
+                </div>
+            
+                <div class="flex justify-between">
+                
+                    <span>Discount</span>
+                
+                    <span id="discount">
+                        Rs. 0
+                    </span>
+                
+                </div>
+            
+                <div class="flex justify-between">
+                
+                    <span>Tax</span>
+                
+                    <span id="tax">
+                        Rs. 0
+                    </span>
+                
+                </div>
+            
+                <div class="divider my-1"></div>
+            
+                <div class="flex justify-between text-xl font-bold text-primary">
+                
+                    <span>Total</span>
+                
+                    <span id="grand-total">
+                        Rs. 0
+                    </span>
+                
+                </div>
+            
+            </div>
+
+            <div class="border-t border-base-300 p-4 space-y-3">
+                <button class="btn btn-outline btn-warning w-full">
+                    Apply Discount
+                </button>
+                <button class="btn btn-outline btn-error w-full">
+                    Clear Cart
+                </button>
+                <button class="btn btn-success w-full btn-lg">
+                    Complete Sale
+                </button>
+            </div>
+
+
         </div>
     </div>
 
@@ -473,12 +453,11 @@
     setInterval(updateDateTime, 60000);
 
     // Cart Functions
-    let cartItems = 3;
-    let totalAmount = 3390;
+    let cartItems = 0;
+    let totalAmount = 0;
 
     function addToCart(name, price) {
-        alert(`🛒 Added ${name} to cart!\nPrice: Rs. ${price}`);
-        // In real implementation, this would add to cart
+        addToCart(id)
     }
 
     function updateQuantity(button, change) {
