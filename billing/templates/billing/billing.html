@@ -133,6 +133,9 @@
 
                         data-name="{{ item.name|lower }}"
                         data-barcode="{{ item.barcode }}"
+
+                        data-id="{{ item.id }}"
+                        data-stock="{{ item.stock }}"
                 
                         {% if item.stock > 0 %}
                             onclick="addToCart(
@@ -206,12 +209,10 @@
                                     <span class="font-semibold">
                                         Stock:
                                     </span>
-                                
-                                    {% if item.stock > 0 %}
-                                        {{ item.stock }}
-                                    {% else %}
-                                        0
-                                    {% endif %}
+
+                                    <span class="stock-count">
+                                    {{ item.stock }}
+                                    </span>
                                 
                                 </div>
                             
@@ -591,30 +592,40 @@
 
         document.getElementById("item-count").textContent = cart.length;
 
+        updateTotals();
+        updateProductStocks();
+
     }
 
     function changeQuantity(id, change) {
-
+    
         const item = cart.find(i => i.id === id);
-
+    
         if (!item) return;
-
+    
+        // Don't allow quantity to exceed available stock
+        if (change > 0 && item.quantity >= item.stock) {
+            return;
+        }
+    
         item.quantity += change;
-
+    
         if (item.quantity <= 0) {
             removeFromCart(id);
             return;
         }
-
+    
+        updateProductStocks();
+        updateTotals();
         renderCart();
+    
     }
-
+   
     function removeFromCart(id) {
-
-        cart = cart.filter(i => i.id !== id);
-
+        cart = cart.filter(item => item.id !== id);
+        updateProductStocks();
+        updateTotals();
         renderCart();
-
     }
 
     function updateQuantity(button, change) {
@@ -663,18 +674,39 @@
     }
 
     function updateTotals() {
-        // In real implementation, this would recalculate from cart items
-        // For demo, we'll keep it simple
-        const items = document.querySelectorAll('#cart-items .flex-col:not(#empty-cart):not([style*="display: none"])');
-        let total = 0;
-        items.forEach(item => {
-            const priceText = item.querySelector('.font-bold.text-primary');
-            if (priceText) {
-                const price = parseInt(priceText.textContent.replace(/[^0-9]/g, ''));
-                total += price;
-            }
+
+        let subtotal = 0;
+
+        cart.forEach(item => {
+            subtotal += item.price * item.quantity;
         });
-        document.getElementById('grand-total').textContent = 'Rs. ' + total.toLocaleString();
+
+        document.getElementById("subtotal").textContent =
+            `Rs. ${subtotal.toFixed(0)}`;
+
+        document.getElementById("grand-total").textContent =
+            `Rs. ${subtotal.toFixed(0)}`;
+
+    }
+
+    function updateProductStocks() {
+
+        document.querySelectorAll(".card").forEach(card => {
+
+            const id = Number(card.dataset.id);
+
+            const originalStock = Number(card.dataset.stock);
+
+            const cartItem = cart.find(i => i.id === id);
+
+            const reserved = cartItem ? cartItem.quantity : 0;
+
+            const remaining = originalStock - reserved;
+
+            card.querySelector(".stock-count").textContent = remaining;
+
+        });
+
     }
 
     function checkout() {
