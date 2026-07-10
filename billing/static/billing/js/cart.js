@@ -110,24 +110,77 @@ function changeQuantity(id, change) {
     renderCart();
 }
 
-function removeFromCart(id) {
-    cart = cart.filter(item => item.id !== id);
-    renderCart();
+function removeFromCart(id){
+    const item = cart.find(i=>i.id===id);
+    openConfirmModal(
+        "Remove Item",
+        `Remove ${item.name} from this bill?`,
+        function(){
+            cart = cart.filter(i=>i.id!==id);
+            renderCart();
+        }
+    );
 }
 
 function clearCart() {
-    cart = [];
-    renderCart();
+    if(cart.length===0) return;
+    openConfirmModal(
+        "🛒 Clear Cart",
+        "Remove all items from this bill?",
+        function(){
+            cart=[];
+            renderCart();
+        }
+    );
 }
 
 function updateProductStocks() {
+
     document.querySelectorAll(".card").forEach(card => {
         const id = Number(card.dataset.id);
         const originalStock = Number(card.dataset.stock);
         const cartItem = cart.find(i => i.id === id);
         const reserved = cartItem ? cartItem.quantity : 0;
         const remaining = originalStock - reserved;
-        card.querySelector(".stock-count").textContent = remaining;
+        // Update stock number
+        const stockSpan = card.querySelector(".stock-count");
+        if (stockSpan) {
+            stockSpan.textContent = remaining;
+        }
+
+        // Update Add button
+        const addBtn = card.querySelector(".btn-primary");
+
+        if (addBtn) {
+            if (remaining <= 0) {
+                addBtn.disabled = true;
+                addBtn.innerHTML = "Unavailable";
+                card.classList.add(
+                    "opacity-70",
+                    "cursor-not-allowed",
+                    "border-error/30"
+                );
+                card.onclick = null;
+
+            } else {
+                addBtn.disabled = false;
+                addBtn.innerHTML = '<i class="fas fa-plus"></i> Add';
+                card.classList.remove(
+                    "opacity-70",
+                    "cursor-not-allowed",
+                    "border-error/30"
+                );
+                card.onclick = function () {
+                    addToCart(
+                        id,
+                        card.dataset.name,
+                        Number(card.querySelector("h2")
+                            .textContent.replace(/[^\d]/g, "")),
+                        originalStock
+                    );
+                };
+            }
+        }
     });
 }
 

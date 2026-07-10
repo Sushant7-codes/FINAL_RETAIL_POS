@@ -129,7 +129,7 @@
                             border-base-200 hover:border-primary hover:shadow-xl hover:-translate-y-1 cursor-pointer group
                         {% endif %}"
 
-                        data-name="{{ item.name|lower }}"
+                        data-name="{{ item.name|escapejs }}"
                         data-barcode="{{ item.barcode }}"
 
                         data-id="{{ item.id }}"
@@ -385,7 +385,6 @@
                                 >
                                     -
                                 </button>
-                            
                                 <input
                                     id="discount-input"
                                     type="number"
@@ -395,7 +394,6 @@
                                     class="input input-bordered input-xs join-item w-16 text-center"
                                     oninput="setDiscount(this.value)"
                                 >
-                            
                                 <button
                                     class="btn btn-xs join-item"
                                     onclick="changeDiscount(1)"
@@ -404,13 +402,10 @@
                                 </button>
                             
                             </div>
-                        
                             <span class="font-semibold whitespace-nowrap">
                                 %
                             </span>
-                        
                         </div>
-                    
                         <!-- Discount Amount -->
                         <span
                             id="discount"
@@ -418,71 +413,85 @@
                         >
                             Rs. 0
                         </span>
-                    
                     </div>
-                
                 </div>
 
-            
                 <div class="divider my-1"></div>
-            
                 <div class="flex justify-between text-xl font-bold text-primary">
-                
                     <span>Total</span>
-                
                     <span id="grand-total">
                         Rs. 0
                     </span>
-                
                 </div>
-            
             </div>
 
             <div class="border-t border-base-300 p-4 space-y-3">
-                <button class="btn btn-outline btn-error w-full">
+                <button class="btn btn-outline btn-error w-full"
+                        onclick="clearCart()">
                     Clear Cart
                 </button>
                 <button class="btn btn-success w-full btn-lg">
                     Complete Sale
                 </button>
             </div>
-
-
         </div>
     </div>
 
     <dialog id="cameraModal" class="modal">
-
         <div class="modal-box max-w-2xl">
-
             <h3 class="font-bold text-xl mb-4">
                 Scan Barcode
             </h3>
-
             <video
                 id="camera-preview"
                 autoplay
                 playsinline
                 class="w-full rounded-xl border"
             ></video>
-
             <div class="modal-action">
-
                 <button
                     class="btn"
                     onclick="closeCamera()"
                 >
                     Close
                 </button>
-
             </div>
-
         </div>
+    </dialog>
 
+    <dialog id="confirmModal" class="modal">
+        <div class="modal-box">
+            <h3
+                id="confirm-title"
+                class="font-bold text-xl"
+            >
+                Confirmation
+            </h3>
+            <p
+                id="confirm-message"
+                class="py-4"
+            >
+            </p>
+            <div class="modal-action">
+                <button
+                    class="btn"
+                    onclick="closeConfirmModal()"
+                >
+                    Cancel
+                </button>
+                <button
+                    id="confirm-btn"
+                    class="btn btn-error"
+                >
+                    Confirm
+                </button>
+            </div>
+        </div>
     </dialog>
 
 </main>
 
+<script src="{% static 'billing/js/modal.js' %}"></script>
 <script src="{% static 'billing/js/cart.js' %}"></script>
 <script src="{% static 'billing/js/discount.js' %}"></script>
 <script src="{% static 'billing/js/search.js' %}"></script>
