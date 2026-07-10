@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load form_extras %}
+{% load static %}
 
 {% block title %}Billing{% endblock title %}
 
@@ -119,12 +120,9 @@
             <!-- Product List -->
             <div class="flex-1 overflow-y-auto p-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
                     {% for item in items %}
-                
                     <div
                         class="card bg-base-100 shadow-sm border-2 transition-all duration-200
-
                         {% if item.stock <= 0 %}
                             border-error/30 opacity-70 cursor-not-allowed
                         {% else %}
@@ -366,25 +364,65 @@
                 
                 </div>
             
-                <div class="flex justify-between">
+                <div class="flex flex-col sm:flex-row sm:justify-between gap-2">
                 
-                    <span>Discount</span>
-                
-                    <span id="discount">
-                        Rs. 0
+                    <!-- Left -->
+                    <span class="font-medium self-start sm:self-center">
+                        Discount
                     </span>
                 
+                    <!-- Right -->
+                    <div class="flex flex-col items-start sm:items-end">
+                    
+                        <!-- Percentage Controls -->
+                        <div class="flex items-center gap-2">
+                        
+                            <div class="join">
+                            
+                                <button
+                                    class="btn btn-xs join-item"
+                                    onclick="changeDiscount(-1)"
+                                >
+                                    -
+                                </button>
+                            
+                                <input
+                                    id="discount-input"
+                                    type="number"
+                                    value="0"
+                                    min="0"
+                                    max="100"
+                                    class="input input-bordered input-xs join-item w-16 text-center"
+                                    oninput="setDiscount(this.value)"
+                                >
+                            
+                                <button
+                                    class="btn btn-xs join-item"
+                                    onclick="changeDiscount(1)"
+                                >
+                                    +
+                                </button>
+                            
+                            </div>
+                        
+                            <span class="font-semibold whitespace-nowrap">
+                                %
+                            </span>
+                        
+                        </div>
+                    
+                        <!-- Discount Amount -->
+                        <span
+                            id="discount"
+                            class="mt-1 text-sm font-semibold text-error whitespace-nowrap"
+                        >
+                            Rs. 0
+                        </span>
+                    
+                    </div>
+                
                 </div>
-            
-                <div class="flex justify-between">
-                
-                    <span>Tax</span>
-                
-                    <span id="tax">
-                        Rs. 0
-                    </span>
-                
-                </div>
+
             
                 <div class="divider my-1"></div>
             
@@ -401,9 +439,6 @@
             </div>
 
             <div class="border-t border-base-300 p-4 space-y-3">
-                <button class="btn btn-outline btn-warning w-full">
-                    Apply Discount
-                </button>
                 <button class="btn btn-outline btn-error w-full">
                     Clear Cart
                 </button>
@@ -448,417 +483,12 @@
 
 </main>
 
-<script>
-    // Date/Time Update
-    function updateDateTime() {
-        const now = new Date();
-        const options = { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        };
-        document.getElementById('current-datetime').textContent = '🕒 ' + now.toLocaleDateString('en-US', options);
-    }
-    updateDateTime();
-    setInterval(updateDateTime, 60000);
-
-    // Cart Functions
-    let cart = [];
-
-    function addToCart(id, name, price, stock) {
-
-        const existingItem = cart.find(item => item.id === id);
-        if (existingItem) {
-            if (existingItem.quantity >= stock) {
-                return;
-            }
-            existingItem.quantity++;
-        } else {
-            cart.push({
-                id: id,
-                name: name,
-                price: Number(price),
-                stock: stock,
-                quantity: 1
-            });
-        }
-        renderCart(); 
-    }
-
-    function renderCart() {
-
-        const cartContainer = document.getElementById("cart-items");
-
-        // Empty cart
-        cartContainer.innerHTML = "";
-
-    if (cart.length === 0) {
-
-        cartContainer.innerHTML = `
-            <div
-                id="empty-cart"
-                class="h-full flex flex-col items-center justify-center text-center"
-            >
-                <div class="text-6xl mb-4">
-                    🛒
-                </div>
-
-                <h3 class="text-xl font-bold">
-                    Cart is Empty
-                </h3>
-
-                <p class="text-base-content/60 mt-2">
-                    Scan products or search items to begin billing.
-                </p>
-
-            </div>
-        `;
-
-        document.getElementById("item-count").textContent = "0";
-        updateTotals();
-        return;
-    }
-
-        cartContainer.innerHTML = "";
-
-        cart.forEach(item => {
-
-            cartContainer.innerHTML += `
-
-            <div class="border rounded-xl p-4 shadow-sm bg-base-100">
-
-                <div class="flex justify-between items-start">
-
-                    <div>
-
-                        <h3 class="font-bold text-lg">${item.name}</h3>
-
-                        <p class="text-sm text-base-content/60">
-                            Rs. ${item.price}
-                        </p>
-
-                    </div>
-
-                    <button
-                        class="btn btn-error btn-xs"
-                        onclick="removeFromCart(${item.id})"
-                    >
-                        ✕
-                    </button>
-
-                </div>
-
-                <div class="flex justify-between items-center mt-4">
-
-                    <div class="join">
-
-                        <button
-                            class="btn btn-sm join-item"
-                            onclick="changeQuantity(${item.id}, -1)"
-                        >
-                            -
-                        </button>
-
-                        <button
-                            class="btn btn-sm join-item btn-disabled"
-                        >
-                            ${item.quantity}
-                        </button>
-
-                        <button
-                            class="btn btn-sm join-item"
-                            onclick="changeQuantity(${item.id}, 1)"
-                        >
-                            +
-                        </button>
-
-                    </div>
-
-                    <div class="font-bold text-primary">
-
-                        Rs. ${(item.price * item.quantity).toFixed(0)}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            `;
-
-        });
-
-        document.getElementById("item-count").textContent = cart.length;
-
-        updateTotals();
-        updateProductStocks();
-
-    }
-
-    function changeQuantity(id, change) {
-    
-        const item = cart.find(i => i.id === id);
-    
-        if (!item) return;
-    
-        // Don't allow quantity to exceed available stock
-        if (change > 0 && item.quantity >= item.stock) {
-            return;
-        }
-    
-        item.quantity += change;
-    
-        if (item.quantity <= 0) {
-            removeFromCart(id);
-            return;
-        }
-    
-        updateProductStocks();
-        updateTotals();
-        renderCart();
-    
-    }
-   
-    function removeFromCart(id) {
-        cart = cart.filter(item => item.id !== id);
-        updateProductStocks();
-        updateTotals();
-        renderCart();
-    }
-
-    function updateQuantity(button, change) {
-        const quantitySpan = button.parentElement.querySelector('span.w-8');
-        let quantity = parseInt(quantitySpan.textContent);
-        quantity = Math.max(1, quantity + change);
-        quantitySpan.textContent = quantity;
-        
-        // Update price
-        const itemDiv = button.closest('.flex-col');
-        const priceText = itemDiv.querySelector('.font-bold.text-primary');
-        const originalPrice = parseInt(itemDiv.querySelector('.text-sm.text-base-content\\/60').textContent.match(/Rs\.\s*([\d,]+)/)[1].replace(/,/g, ''));
-        const newTotal = originalPrice * quantity;
-        priceText.textContent = 'Rs. ' + newTotal.toLocaleString();
-        
-        // Recalculate total
-        updateTotals();
-    }
-
-    function removeItem(button) {
-        const itemDiv = button.closest('.flex-col');
-        if (confirm('Remove this item from cart?')) {
-            itemDiv.style.display = 'none';
-            cartItems--;
-            document.getElementById('item-count').textContent = cartItems;
-            
-            // Show empty cart if no items
-            if (cartItems === 0) {
-                document.getElementById('empty-cart').classList.remove('hidden');
-            }
-            updateTotals();
-        }
-    }
-
-    function clearCart() {
-        if (confirm('Clear all items from cart?')) {
-            document.querySelectorAll('#cart-items .flex-col:not(#empty-cart)').forEach(item => {
-                item.style.display = 'none';
-            });
-            cartItems = 0;
-            document.getElementById('item-count').textContent = '0';
-            document.getElementById('empty-cart').classList.remove('hidden');
-            document.getElementById('grand-total').textContent = 'Rs. 0.00';
-            updateTotals();
-        }
-    }
-
-    function updateTotals() {
-
-        let subtotal = 0;
-
-        cart.forEach(item => {
-            subtotal += item.price * item.quantity;
-        });
-
-        document.getElementById("subtotal").textContent =
-            `Rs. ${subtotal.toFixed(0)}`;
-
-        document.getElementById("grand-total").textContent =
-            `Rs. ${subtotal.toFixed(0)}`;
-
-    }
-
-    function updateProductStocks() {
-
-        document.querySelectorAll(".card").forEach(card => {
-
-            const id = Number(card.dataset.id);
-
-            const originalStock = Number(card.dataset.stock);
-
-            const cartItem = cart.find(i => i.id === id);
-
-            const reserved = cartItem ? cartItem.quantity : 0;
-
-            const remaining = originalStock - reserved;
-
-            card.querySelector(".stock-count").textContent = remaining;
-
-        });
-
-    }
-
-    function checkout() {
-        alert('✅ Checkout functionality coming soon!\n\nTotal Amount: ' + document.getElementById('grand-total').textContent);
-    }
-
-    // Keyboard Shortcuts
-    document.addEventListener('keydown', function(e) {
-        // Ctrl + S - Focus search
-        if (e.ctrlKey && e.key === 's') {
-            e.preventDefault();
-            document.getElementById('search-input').focus();
-        }
-        // F2 - Focus barcode
-        if (e.key === 'F2') {
-            e.preventDefault();
-            document.getElementById('barcode-input').focus();
-        }
-        // F9 - Checkout
-        if (e.key === 'F9') {
-            e.preventDefault();
-            checkout();
-        }
-        // Escape - Clear cart
-        if (e.key === 'Escape') {
-            clearCart();
-        }
-    });
-
-    // Enter key on barcode
-    document.getElementById('barcode-input').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            alert('📷 Barcode scanned: ' + this.value);
-            this.value = '';
-        }
-    });
-
-    // Live search
-    document.getElementById('search-input').addEventListener('input', function(e) {
-        const searchTerm = this.value.toLowerCase().trim();
-        const productCards = document.querySelectorAll('.grid .card');
-        let visibleCount = 0;
-        
-        productCards.forEach(card => {
-            const title = card.querySelector('h3')?.textContent?.toLowerCase() || '';
-            if (searchTerm === '' || title.includes(searchTerm)) {
-                card.style.display = 'block';
-                visibleCount++;
-            } else {
-                card.style.display = 'none';
-            }
-        });
-        
-        // Show message if no results
-        const noResults = document.getElementById('no-results');
-        if (visibleCount === 0 && searchTerm !== '') {
-            if (!noResults) {
-                const msg = document.createElement('div');
-                msg.id = 'no-results';
-                msg.className = 'text-center py-8 text-base-content/60 col-span-full';
-                msg.innerHTML = '<p class="text-lg">🔍 No products found for "' + searchTerm + '"</p>';
-                document.querySelector('.grid').appendChild(msg);
-            } else {
-                noResults.innerHTML = '<p class="text-lg">🔍 No products found for "' + searchTerm + '"</p>';
-            }
-        } else if (noResults) {
-            noResults.remove();
-        }
-    });
-
-    // Save scroll position
-    document.addEventListener('DOMContentLoaded', function() {
-        const savedScrollPosition = sessionStorage.getItem('billingPageScrollPosition');
-        if (savedScrollPosition) {
-            window.scrollTo(0, parseInt(savedScrollPosition));
-            sessionStorage.removeItem('billingPageScrollPosition');
-        }
-    });
-
-    const scanButton = document.getElementById("scan-barcode-btn");
-    const cameraModal = document.getElementById("cameraModal");
-    const video = document.getElementById("camera-preview");
-
-    let stream = null;
-
-    scanButton.addEventListener("click", async () => {
-
-        try {
-
-            stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: "environment"
-                }
-            });
-
-            video.srcObject = stream;
-
-            cameraModal.showModal();
-
-        }
-
-        catch (err) {
-
-            alert("Unable to access camera.");
-
-            console.error(err);
-
-        }
-
-    });
-
-    function closeCamera() {
-
-        if (stream) {
-
-            stream.getTracks().forEach(track => track.stop());
-
-            stream = null;
-
-        }
-
-        cameraModal.close();
-
-    }
-
-    document.getElementById("barcode-input").addEventListener("input", function () {
-
-        const barcode = this.value.trim();
-
-        const cards = document.querySelectorAll(".grid .card");
-
-        let found = false;
-
-        cards.forEach(card => {
-
-            const cardBarcode = card.dataset.barcode;
-
-            if (barcode === "" || cardBarcode.includes(barcode)) {
-
-                card.style.display = "block";
-                found = true;
-
-            } else {
-
-                card.style.display = "none";
-
-            }
-
-        });
-
-    });
-
-</script>
+<script src="{% static 'billing/js/cart.js' %}"></script>
+<script src="{% static 'billing/js/discount.js' %}"></script>
+<script src="{% static 'billing/js/search.js' %}"></script>
+<script src="{% static 'billing/js/barcode.js' %}"></script>
+<script src="{% static 'billing/js/shortcuts.js' %}"></script>
+<script src="{% static 'billing/js/datetime.js' %}"></script>
+<script src="{% static 'billing/js/billing.js' %}"></script>
 
 {% endblock %}
