@@ -430,11 +430,16 @@
                         onclick="clearCart()">
                     Clear Cart
                 </button>
-                <button class="btn btn-success w-full btn-lg">
+                <button class="btn btn-success w-full btn-lg" onclick="checkout()">
                     Complete Sale
                 </button>
             </div>
         </div>
+    </div>
+
+    <div
+        id="toast-container"
+        class="toast toast-top toast-end z-50">
     </div>
 
     <dialog id="cameraModal" class="modal">
@@ -460,12 +465,12 @@
     </dialog>
 
     <dialog id="confirmModal" class="modal">
-        <div class="modal-box">
+        <div class="modal-box max-w-lg">
             <h3
                 id="confirm-title"
                 class="font-bold text-xl"
             >
-                Confirmation
+                🧾 Billing Confirmation
             </h3>
             <p
                 id="confirm-message"
@@ -491,6 +496,7 @@
 
 </main>
 
+<script src="{% static 'billing/js/validation.js' %}"></script>
 <script src="{% static 'billing/js/modal.js' %}"></script>
 <script src="{% static 'billing/js/cart.js' %}"></script>
 <script src="{% static 'billing/js/discount.js' %}"></script>

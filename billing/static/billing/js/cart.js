@@ -185,5 +185,41 @@ function updateProductStocks() {
 }
 
 function checkout() {
-    alert('✅ Checkout functionality coming soon!\n\nTotal Amount: ' + document.getElementById('grand-total').textContent);
+
+    if (!validateCustomer()) return;
+
+    const customer = document.getElementById("customer-name").value;
+    const phone = document.getElementById("customer-phone").value;
+    const total = document.getElementById("grand-total").textContent;
+    const items = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+    openConfirmModal(
+        "🧾 Complete Sale",
+        `
+        <div class="space-y-3">
+            <div class="grid grid-cols-2 gap-2 text-sm">
+                <span class="font-semibold">Customer</span>
+                <span>${customer}</span>
+                <span class="font-semibold">Phone</span>
+                <span>${phone}</span>
+                <span class="font-semibold">Items</span>
+                <span>${items}</span>
+                <span class="font-semibold">Discount</span>
+                <span>${discountPercent}%</span>
+            </div>
+            <div class="divider my-1"></div>
+            <div class="flex justify-between text-xl font-bold text-primary">
+                <span>Total</span>
+                <span>${total}</span>
+            </div>
+            <p class="text-center text-base-content/70 mt-2">
+                Are you sure you want to complete this sale?
+            </p>
+        </div>
+        `,
+        function () {
+            completeSale();
+        }
+    );
+
 }
