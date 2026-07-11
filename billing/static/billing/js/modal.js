@@ -14,6 +14,7 @@ function openConfirmModal(title, message, callback = null) {
     document.getElementById("confirmModal").showModal();
 }
 
+
 function closeConfirmModal() {
     document.getElementById("confirmModal").close();
 }

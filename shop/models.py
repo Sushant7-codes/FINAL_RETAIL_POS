@@ -49,7 +49,6 @@ class Item(models.Model):
     shop=models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='items')
     barcode = models.CharField(max_length=50, unique=True, blank=True, null=True)
     
-    
     class Meta:
         unique_together = ('name', 'shop')
         
