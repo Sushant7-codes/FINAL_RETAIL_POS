@@ -8,5 +8,9 @@ urlpatterns = [
         views.checkout,
         name="checkout"
     ),
-
+    path(
+        "khalti/initiate/",
+        views.khalti_initiate,
+        name="khalti_initiate"
+    ),
 ]

@@ -9,6 +9,8 @@ from django.utils import timezone
 from .models import Sale, SaleItem
 from shop.models import Price
 
+from .services import initiate_khalti_payment
+from django.views.decorators.csrf import csrf_exempt
 
 @require_POST
 @transaction.atomic
@@ -108,3 +110,73 @@ def checkout(request):
             "success": False,
             "message": str(e)
         }, status=400)
+
+
+# @require_POST
+# def khalti_initiate(request):
+
+#     try:
+
+#         data = json.loads(request.body)
+
+#         print(data)
+
+#         return JsonResponse({
+#             "success": True
+#         })
+
+#     except Exception as e:
+
+#         return JsonResponse({
+#             "success": False,
+#             "message": str(e)
+#         }, status=400)
+
+@require_POST
+def khalti_initiate(request):
+
+    data = json.loads(request.body)
+
+    subtotal = Decimal("0")
+
+    for entry in data["cart"]:
+
+        product = Price.objects.get(id=entry["price_id"])
+
+        subtotal += product.amount * entry["quantity"]
+
+    discount = (
+        subtotal * Decimal(str(data["discount_percent"]))
+    ) / Decimal("100")
+
+    grand_total = subtotal - discount
+
+    payload = {
+
+        "return_url": "http://127.0.0.1:8000/sales/khalti/success/",
+
+        "website_url": "http://127.0.0.1:8000",
+
+        "amount": int(grand_total * 100),
+
+        "purchase_order_id": "TEST123",
+
+        "purchase_order_name": "Retail POS Sale",
+
+        "customer_info": {
+
+            "name": data["customer_name"],
+
+            "phone": data["customer_phone"]
+
+        }
+
+    }
+
+    response = initiate_khalti_payment(payload)
+
+    print(response.status_code)
+    print(response.text)
+
+    return JsonResponse(response.json(), status=response.status_code)
+

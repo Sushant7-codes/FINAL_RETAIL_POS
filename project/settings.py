@@ -160,5 +160,7 @@ EMAIL_HOST_USER = "sushantpahari06@gmail.com"
 EMAIL_HOST_PASSWORD = "nbol kvvg glvy jnhe"
 DEFAULT_FROM_EMAIL = "sushantpahari06@gmail.com"
 
+KHALTI_SECRET_KEY = "082afcc0e6844e0383d7bd73b1e0057e"
+KHALTI_PUBLIC_KEY = "a83b28380f5d4d2e8c6b75b98d6706e2"
 
 MAX_ATTEMPTS = 3
