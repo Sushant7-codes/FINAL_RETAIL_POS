@@ -78,8 +78,9 @@ async function completeSale() {
     renderCart();
 
     openSuccessToast(
-        `Invoice ${result.invoice} completed successfully!`
-    );
+        result.invoice,
+        result.sale_id
+        );
 
     console.log(result);
 }
@@ -97,6 +98,73 @@ function openSuccessToast(message){
     setTimeout(()=>{
         toast.remove();
     },3000);
+}
+
+function openInvoiceSuccessModal(invoice, saleId) {
+
+    openConfirmModal(
+        "✅ Sale Completed",
+
+        `
+        <div class="space-y-5">
+
+            <div class="text-center">
+
+                <div class="text-5xl mb-3">
+                    🎉
+                </div>
+
+                <p class="text-lg">
+                    Sale completed successfully.
+                </p>
+
+                <p class="font-bold text-primary mt-2">
+                    ${invoice}
+                </p>
+
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+
+                <button
+                    class="btn btn-outline"
+                    onclick="previewInvoice('${invoice}')"
+                >
+                    👁 Preview
+                </button>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="printInvoice('${invoice}')"
+                >
+                    🖨 Print
+                </button>
+
+            </div>
+
+        </div>
+        `,
+        null
+    );
+
+}
+
+function previewInvoice(invoice){
+
+    window.open(
+        `/sales/invoice/${invoice}/`,
+        "_blank"
+    );
+
+}
+
+function printInvoice(invoice){
+
+    window.open(
+        `/sales/invoice/${invoice}/?print=1`,
+        "_blank"
+    );
+
 }
 
 function getCookie(name) {

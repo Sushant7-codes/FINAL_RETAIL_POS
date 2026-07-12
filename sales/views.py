@@ -13,6 +13,8 @@ from shop.models import Price
 from .services import initiate_khalti_payment
 from django.views.decorators.csrf import csrf_exempt
 
+from django.shortcuts import get_object_or_404, render
+
 from .utils import create_sale
 
 @require_POST
@@ -145,7 +147,8 @@ def khalti_success(request):
         request.session.pop("khalti_checkout", None)
 
         return redirect(
-            f"/billing/billing/?invoice={sale.invoice_number}"
+            "sale_success",
+            invoice_number=sale.invoice_number
         )
 
     except Exception as e:
@@ -153,3 +156,38 @@ def khalti_success(request):
         request.session.pop("khalti_checkout", None)
 
         return HttpResponse(str(e))
+    
+    
+def invoice_view(request, invoice_number):
+
+    sale = get_object_or_404(
+        Sale.objects.select_related(
+            "shop",
+            "created_by"
+        ).prefetch_related(
+            "items__price"
+        ),
+        invoice_number=invoice_number
+    )
+
+    return render(
+        request,
+        "sales/invoice.html",
+        {
+            "sale": sale
+        }
+    )
+    
+def sale_success(request, invoice_number):
+
+    sale = get_object_or_404(
+        Sale,
+        invoice_number=invoice_number
+    )
+    return render(
+        request,
+        "sales/sale_success.html",
+        {
+            "sale": sale
+        }
+    )
