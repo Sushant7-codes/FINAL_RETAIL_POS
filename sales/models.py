@@ -1,7 +1,7 @@
 from django.db import models
 from accounts.models import CustomUser
 from shop.models import Shop, Price
-
+from django.utils import timezone
 
 class Sale(models.Model):
 
@@ -83,7 +83,22 @@ class Sale(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        
+    def save(self, *args, **kwargs):
 
+        creating = self.pk is None      
+        if creating and not self.invoice_number:        
+            self.invoice_number = (
+                "TEMP-"
+                + timezone.localtime().strftime("%Y%m%d%H%M%S")
+            )       
+        super().save(*args, **kwargs)       
+        if creating:        
+            self.invoice_number = (
+                f"INV-{timezone.localtime().strftime('%Y-%m-%d-%H%M%S')}-{self.id:03d}"
+            )       
+            super().save(update_fields=["invoice_number"])
+        
     def __str__(self):
         return self.invoice_number
 

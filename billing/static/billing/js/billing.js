@@ -8,11 +8,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function completeSale() {
 
-    const payload = {
+    // const payload = {
 
+    //     customer_name: document.getElementById("customer-name").value,
+    //     customer_phone: document.getElementById("customer-phone").value,
+    //     discount_percent: discountPercent,
+    //     cart: cart.map(item => ({
+    //         price_id: item.id,
+    //         quantity: item.quantity
+    //     }))
+    // };
+
+    const payload = {
+    
         customer_name: document.getElementById("customer-name").value,
         customer_phone: document.getElementById("customer-phone").value,
         discount_percent: discountPercent,
+    
+        payment_method:
+            document.querySelector(
+                'input[name="payment-method"]:checked'
+            ).value,
+        cash_received:
+            parseFloat(
+                document.getElementById("cash-received").value
+            ) || 0,
+        change_amount:
+            parseFloat(
+                document.getElementById("change-amount").textContent
+            ) || 0,
+    
         cart: cart.map(item => ({
             price_id: item.id,
             quantity: item.quantity

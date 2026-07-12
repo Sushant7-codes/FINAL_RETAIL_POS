@@ -13,4 +13,11 @@ urlpatterns = [
         views.khalti_initiate,
         name="khalti_initiate"
     ),
+    
+    path(
+    "khalti/success/",
+    views.khalti_success,
+    name="khalti_success",
+    )
+
 ]
