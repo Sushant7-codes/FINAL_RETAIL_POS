@@ -6,7 +6,7 @@
 
 <head>
 
-    <title>Payment Successful</title>
+    <title>Sale Completed Successfully</title>
 
     <link
         rel="stylesheet"
@@ -22,12 +22,12 @@
 <div class="card-body text-center">
 
 <h1 class="text-5xl mb-4">
-✅
+🧾
 </h1>
 
 <h2 class="text-3xl font-bold">
 
-Payment Successful
+Sale Completed Successfully
 
 </h2>
 
@@ -42,6 +42,16 @@ Invoice
 {{ sale.invoice_number }}
 
 </p>
+
+<div class="mt-3">
+
+    <span class="badge badge-success">
+
+        {{ sale.get_payment_method_display }}
+
+    </span>
+
+</div>
 
 <div class="divider"></div>
 

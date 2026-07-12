@@ -8,17 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function completeSale() {
 
-    // const payload = {
-
-    //     customer_name: document.getElementById("customer-name").value,
-    //     customer_phone: document.getElementById("customer-phone").value,
-    //     discount_percent: discountPercent,
-    //     cart: cart.map(item => ({
-    //         price_id: item.id,
-    //         quantity: item.quantity
-    //     }))
-    // };
-
     const payload = {
     
         customer_name: document.getElementById("customer-name").value,
@@ -77,12 +66,8 @@ async function completeSale() {
     document.getElementById("customer-phone").value = "";
     renderCart();
 
-    openSuccessToast(
-        result.invoice,
-        result.sale_id
-        );
-
-    console.log(result);
+    window.location.href =
+        `/sales/success/${result.invoice}/`;
 }
 
 function openSuccessToast(message){
@@ -98,55 +83,6 @@ function openSuccessToast(message){
     setTimeout(()=>{
         toast.remove();
     },3000);
-}
-
-function openInvoiceSuccessModal(invoice, saleId) {
-
-    openConfirmModal(
-        "✅ Sale Completed",
-
-        `
-        <div class="space-y-5">
-
-            <div class="text-center">
-
-                <div class="text-5xl mb-3">
-                    🎉
-                </div>
-
-                <p class="text-lg">
-                    Sale completed successfully.
-                </p>
-
-                <p class="font-bold text-primary mt-2">
-                    ${invoice}
-                </p>
-
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-
-                <button
-                    class="btn btn-outline"
-                    onclick="previewInvoice('${invoice}')"
-                >
-                    👁 Preview
-                </button>
-
-                <button
-                    class="btn btn-primary"
-                    onclick="printInvoice('${invoice}')"
-                >
-                    🖨 Print
-                </button>
-
-            </div>
-
-        </div>
-        `,
-        null
-    );
-
 }
 
 function previewInvoice(invoice){
