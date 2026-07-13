@@ -51,9 +51,14 @@ def create_sale(
 
     grand_total = subtotal - discount_amount
 
+    if user.role == user.Roles.SHOP_ADMIN:
+        shop = user.shop
+    else:
+        shop = user.workplace
+    
     sale = Sale.objects.create(
 
-        shop=user.shop,
+        shop=shop,
         customer_name=customer_name,
         customer_phone=customer_phone,
 
