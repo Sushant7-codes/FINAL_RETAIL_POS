@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1 class="text-3xl font-bold mb-8">
+<h1 class="text-3xl font-bold mt-17 mb-4">
     Sales Reports
 </h1>
 
 <!-- Search Card -->
 
-<div class="card bg-base-100 shadow-lg mb-6">   
+<div class="card bg-base-100 shadow-lg mb-6 ">   
     <div class="card-body"> 
         <form
             id="search-form"
@@ -148,7 +148,7 @@
                                 class="btn btn-sm btn-primary"
                             >
                                 View
-                            </a>    
+                            </a>
                             <a
                                 href="{% url 'invoice' sale.invoice_number %}?print=1"
                                 target="_blank"

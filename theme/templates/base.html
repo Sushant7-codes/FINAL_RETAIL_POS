@@ -389,6 +389,11 @@
                         link.classList.add('active');
                         matchFound = true;
                     }
+                    // Billing page
+                    else if (linkPage === 'billing' && (currentPath.includes('billing') || currentPath.includes('billings'))) {
+                        link.classList.add('active');
+                        matchFound = true;
+                    }
                 }
             
             });
