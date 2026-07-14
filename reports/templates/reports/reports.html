@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="text-3xl font-bold mb-8">
+    Sales Reports
+</h1>
+
+<!-- Search Card -->
+
+<div class="card bg-base-100 shadow-lg mb-6">   
+    <div class="card-body"> 
+        <form
+            id="search-form"
+            method="GET"
+        >   
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4"> 
+                <div>   
+                    <label class="label">
+                        <span class="label-text font-semibold">
+                            Search
+                        </span>
+                    </label>    
+                    <input
+                        id="search-input"
+                        type="text"
+                        name="search"
+                        value="{{ search }}"
+                        placeholder="Invoice, customer, phone..."
+                        class="input input-bordered w-full"
+                    >   
+                </div>  
+                <div>   
+                    <label class="label">
+                        <span class="label-text font-semibold">
+                            Search By
+                        </span>
+                    </label>    
+                    <select
+                        name="search_by"
+                        class="select select-bordered w-full"
+                    >   
+                        <option
+                            value="invoice"
+                            {% if search_by == "invoice" %}selected{% endif %}
+                        >
+                            Invoice
+                        </option>   
+                        <option
+                            value="phone"
+                            {% if search_by == "phone" %}selected{% endif %}
+                        >
+                            Phone
+                        </option>   
+                        <option
+                            value="customer"
+                            {% if search_by == "customer" %}selected{% endif %}
+                        >
+                            Customer
+                        </option>   
+                        <option
+                            value="cashier"
+                            {% if search_by == "cashier" %}selected{% endif %}
+                        >
+                            Cashier
+                        </option>   
+                    </select>   
+                </div>  
+            </div>  
+        </form> 
+    </div>
+
+</div>
+
+<!-- Filters -->
+
+<div class="flex flex-wrap gap-3 mb-8"> 
+    <a
+        href="?filter=all&search={{ search }}&search_by={{ search_by }}"
+        class="btn {% if filter == 'all' %}btn-primary{% else %}btn-outline{% endif %}"
+    >
+        All Time
+    </a>    
+    <a
+        href="?filter=today&search={{ search }}&search_by={{ search_by }}"
+        class="btn {% if filter == 'today' %}btn-primary{% else %}btn-outline{% endif %}"
+    >
+        Today
+    </a>    
+    <a
+        href="?filter=week&search={{ search }}&search_by={{ search_by }}"
+        class="btn {% if filter == 'week' %}btn-primary{% else %}btn-outline{% endif %}"
+    >
+        This Week
+    </a>    
+    <a
+        href="?filter=month&search={{ search }}&search_by={{ search_by }}"
+        class="btn {% if filter == 'month' %}btn-primary{% else %}btn-outline{% endif %}"
+    >
+        This Month
+    </a>
+
+</div>
+
+<div class="bg-base-100 rounded-xl shadow-lg overflow-hidden">  
+    <div class="overflow-x-auto">   
+        <table class="table table-zebra w-full min-w-max">  
+            <thead> 
+                <tr>    
+                    <th>Invoice</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Cashier</th>
+                    <th>Payment</th>
+                    <th>Total</th>
+                    <th>Date</th>
+                    <th class="text-center">Actions</th>    
+                </tr>   
+            </thead>    
+            <tbody> 
+            {% for sale in sales %} 
+                <tr>    
+                    <td class="font-semibold">  
+                        {{ sale.invoice_number }}   
+                    </td>   
+                    <td>    
+                        {{ sale.customer_name }}    
+                    </td>   
+                    <td>    
+                        {{ sale.customer_phone }}   
+                    </td>   
+                    <td>    
+                        {{ sale.created_by.username }}  
+                    </td>   
+                    <td>    
+                        {{ sale.get_payment_method_display }}   
+                    </td>   
+                    <td class="font-semibold">  
+                        Rs. {{ sale.grand_total }}  
+                    </td>   
+                    <td>    
+                        {{ sale.created_at|date:"d M Y, h:i A" }}   
+                    </td>   
+                    <td>    
+                        <div class="flex justify-center gap-2"> 
+                            <a
+                                href="{% url 'invoice' sale.invoice_number %}"
+                                target="_blank"
+                                class="btn btn-sm btn-primary"
+                            >
+                                View
+                            </a>    
+                            <a
+                                href="{% url 'invoice' sale.invoice_number %}?print=1"
+                                target="_blank"
+                                class="btn btn-sm btn-secondary"
+                            >
+                                Print
+                            </a>    
+                        </div>  
+                    </td>   
+                </tr>   
+            {% empty %} 
+                <tr>    
+                    <td colspan="8" class="text-center py-8 text-base-content/60">  
+                        No sales found. 
+                    </td>   
+                </tr>   
+            {% endfor %}    
+            </tbody>    
+        </table>    
+    </div>
+</div>
+
+<script>
+
+const searchInput =
+    document.getElementById("search-input");
+
+let timeout = null;
+
+searchInput.addEventListener("input", () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+        document
+            .getElementById("search-form")
+            .submit();
+    }, 5000);
+
+});
+
+const searchBy =
+    document.querySelector(
+        'select[name="search_by"]'
+    );
+
+searchBy.addEventListener("change", () => {
+
+    document
+        .getElementById("search-form")
+        .submit();
+
+});
+</script>
+{% endblock %}

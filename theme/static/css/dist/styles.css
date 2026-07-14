@@ -2742,6 +2742,9 @@
   .mt-0 {
     margin-top: calc(var(--spacing) * 0);
   }
+  .mt-0\.5 {
+    margin-top: calc(var(--spacing) * 0.5);
+  }
   .mt-1 {
     margin-top: calc(var(--spacing) * 1);
   }
@@ -2774,6 +2777,9 @@
   }
   .mt-17 {
     margin-top: calc(var(--spacing) * 17);
+  }
+  .mt-20 {
+    margin-top: calc(var(--spacing) * 20);
   }
   .mt-auto {
     margin-top: auto;
@@ -3192,6 +3198,9 @@
   .w-28 {
     width: calc(var(--spacing) * 28);
   }
+  .w-40 {
+    width: calc(var(--spacing) * 40);
+  }
   .w-72 {
     width: calc(var(--spacing) * 72);
   }
@@ -3234,11 +3243,17 @@
   .min-w-\[200px\] {
     min-width: 200px;
   }
+  .min-w-\[220px\] {
+    min-width: 220px;
+  }
   .min-w-\[300px\] {
     min-width: 300px;
   }
   .min-w-\[600px\] {
     min-width: 600px;
+  }
+  .min-w-max {
+    min-width: max-content;
   }
   .flex-1 {
     flex: 1;
@@ -3361,12 +3376,6 @@
   }
   .gap-12 {
     gap: calc(var(--spacing) * 12);
-  }
-  .gap-20 {
-    gap: calc(var(--spacing) * 20);
-  }
-  .gap-100 {
-    gap: calc(var(--spacing) * 100);
   }
   :where(.space-y-1\.5 > :not(:last-child)) {
     --tw-space-y-reverse: 0;
