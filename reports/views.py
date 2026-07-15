@@ -3,15 +3,26 @@ from sales.models import Sale, SaleItem
 from django.utils import timezone
 from datetime import timedelta, datetime
 from django.db.models import Sum, Avg
+from accounts.models import CustomUser
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def reports(request):
+    if request.user.role == CustomUser.Roles.SHOP_ADMIN:
+        shop = request.user.shop
+    else:
+        shop = request.user.workplace
 
-    sales = Sale.objects.select_related(
-        "created_by",
-        "shop"
-    ).prefetch_related(
-        "items"
+    sales = (
+        Sale.objects
+        .filter(shop=shop)
+        .select_related(
+            "created_by",
+            "shop"
+        )
+        .prefetch_related("items")
     )
+
     filter_by = request.GET.get("filter", "all")
     today = timezone.localdate()
     
@@ -81,11 +92,22 @@ def reports(request):
         context
     )
     
+@login_required
 def sales_analytics(request):   
-    sales = Sale.objects.select_related(
-        "created_by",
-        "shop"
-    )   
+    if request.user.role == CustomUser.Roles.SHOP_ADMIN:
+        shop = request.user.shop
+    else:
+        shop = request.user.workplace
+
+    sales = (
+        Sale.objects
+        .filter(shop=shop)
+        .select_related(
+            "created_by",
+            "shop"
+        )
+    ) 
+    
     start = request.GET.get("start")
     end = request.GET.get("end")    
     if start and end:   
