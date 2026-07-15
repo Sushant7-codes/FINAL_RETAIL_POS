@@ -2,6 +2,7 @@
 {% load form_extras %}
 {% load humanize %}
 
+
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -9,16 +10,14 @@
     body {
         padding-top: 80px; /* Account for fixed header height */
     }
-    
-    /* Ensure header stays above everything */
+
     header {
         z-index: 9999 !important;
         background: rgba(15, 23, 42, 0.95) !important;
         backdrop-filter: blur(20px) !important;
         -webkit-backdrop-filter: blur(20px) !important;
     }
-    
-    /* Prevent content from going over header */
+
     main {
         position: relative;
         z-index: 1;
@@ -33,22 +32,34 @@
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10">
         <!-- Today's Revenue -->
-        <div class="card p-5 rounded-xl shadow-lg border-l-8 border-green-500 transition-transform transform hover:scale-105 hover:shadow-2xl bg-white dark:bg-gray-800">
+        <div class="group card p-5 rounded-xl shadow-lg border-l-8 border-green-500 transition-transform transform hover:scale-105 hover:shadow-2xl bg-white dark:bg-gray-800">
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">Total Revenue</h2>
                     <p class="text-2xl sm:text-3xl font-bold text-green-600">Rs. {{ total_revenue|intcomma }}</p>
+                    <a
+                        href="{% url 'reports:sales_analytics' %}"
+                        class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-primary text-sm mt-2"
+                    >
+                        View Analytics →
+                    </a>
                 </div>
                 <div class="text-3xl sm:text-4xl text-green-400">📈</div>
             </div>
         </div>
 
         <!-- Total Orders -->
-        <div class="card p-5 rounded-xl shadow-lg border-l-8 border-blue-500 transition-transform transform hover:scale-105 hover:shadow-2xl bg-white dark:bg-gray-800">
+        <div class="group card p-5 rounded-xl shadow-lg border-l-8 border-blue-500 transition-transform transform hover:scale-105 hover:shadow-2xl bg-white dark:bg-gray-800">
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">Total Sales</h2>
                     <p class="text-2xl sm:text-3xl font-bold text-blue-600">{{ total_sales }}</p>
+                    <a
+                        href="{% url 'reports:sales_analytics' %}"
+                        class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-primary text-sm mt-2"
+                    >
+                        View Analytics →
+                    </a>
                 </div>
                 <div class="text-3xl sm:text-4xl text-blue-400">🛒</div>
             </div>
@@ -78,14 +89,22 @@
     </div>
 
     <div class="card p-6 rounded-xl shadow-lg bg-white dark:bg-gray-800 mb-8">      
-        <div class="flex justify-between items-center mb-3">        
-            <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-200">
+        <div class="flex justify-between items-center mb-3">
+
+            <h2 class="text-xl font-semibold">
                 🎯 Today's Revenue Goal
-            </h2>       
-            <span class="text-lg font-bold text-primary">
-                {{ goal_percent }}%
-            </span>     
-        </div>      
+            </h2>
+        
+            {% if user.role == "shop_admin" %}
+            <button
+                class="btn btn-xs btn-outline"
+                onclick="goalModal.showModal()"
+            >
+                ✏ Edit
+            </button>
+            {% endif %}
+        
+        </div>     
         <progress
             class="progress progress-success w-full h-4"
             value="{{ goal_percent }}"
@@ -245,6 +264,74 @@
     </div>
 </main>
 
+<dialog id="goalModal" class="modal">
+    <div class="modal-box"> 
+        <h3 class="font-bold text-lg">
+            Update Daily Revenue Goal
+        </h3>   
+        <input
+            id="goal-input"
+            type="number"
+            class="input input-bordered w-full mt-4"
+            value="{{ daily_goal }}"
+        >   
+        <div class="modal-action">  
+            <button
+                class="btn btn-primary"
+                onclick="saveGoal()"
+            >
+                Save
+            </button>   
+            <form method="dialog">
+                <button class="btn">
+                    Cancel
+                </button>
+            </form> 
+        </div>  
+    </div>
+</dialog>
+
+<script>
+function getCookie(name) {
+
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+async function saveGoal() {
+    const goal =
+        document.getElementById("goal-input").value;    
+    const response = await fetch(   
+        "{% url 'app:update_daily_goal' %}",    
+        {   
+            method: "POST", 
+            headers: {  
+                "Content-Type": "application/json", 
+                "X-CSRFToken": getCookie("csrftoken")   
+            },  
+            body: JSON.stringify({  
+                goal: goal  
+            })  
+        }   
+    );  
+    const result = await response.json();   
+    if(result.success){ 
+        location.reload();  
+    }
+}
+</script>
 {% else %}
 {% include 'shop/registration-form.html' with form=form %}
 {% endif %}

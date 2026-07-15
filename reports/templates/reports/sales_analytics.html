@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block content %}
+
+<h1 class="text-3xl font-bold mb-4 mt-17">
+    📈 Sales Analytics
+</h1>
+
+<!-- Date Filter -->
+
+<div class="card bg-base-100 shadow-xl mb-6">
+
+    <div class="card-body">
+
+        <form method="GET" class="flex flex-wrap gap-4 items-end">
+
+            <div>
+
+                <label class="label">
+                    <span class="label-text">From</span>
+                </label>
+
+                <input
+                    type="date"
+                    name="start"
+                    value="{{ start }}"
+                    class="input input-bordered"
+                >
+
+            </div>
+
+            <div>
+
+                <label class="label">
+                    <span class="label-text">To</span>
+                </label>
+
+                <input
+                    type="date"
+                    name="end"
+                    value="{{ end }}"
+                    class="input input-bordered"
+                >
+
+            </div>
+
+            <button class="btn btn-primary">
+
+                Apply
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- Summary -->
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+
+    <div class="stat bg-base-100 shadow rounded-xl">
+
+        <div class="stat-title">
+            Revenue
+        </div>
+
+        <div class="stat-value text-success">
+
+            Rs. {{ revenue|intcomma }}
+
+        </div>
+
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-xl">
+
+        <div class="stat-title">
+
+            Sales
+
+        </div>
+
+        <div class="stat-value">
+
+            {{ total_sales }}
+
+        </div>
+
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-xl">
+
+        <div class="stat-title">
+
+            Average Sale
+
+        </div>
+
+        <div class="stat-value">
+
+            Rs. {{ average_sale|floatformat:0|intcomma }}
+
+        </div>
+
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-xl">
+
+        <div class="stat-title">
+
+            Discount Given
+
+        </div>
+
+        <div class="stat-value text-warning">
+
+            Rs. {{ total_discount|intcomma }}
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Biggest Sale + Payment -->
+
+<div class="grid lg:grid-cols-2 gap-6 mb-8">
+
+<div class="card bg-base-100 shadow-xl">
+
+<div class="card-body">
+
+<h2 class="card-title">
+
+🏆 Biggest Sale
+
+</h2>
+
+{% if biggest_sale %}
+
+<p>
+
+<strong>Customer:</strong>
+
+{{ biggest_sale.customer_name }}
+
+</p>
+
+<p>
+
+<strong>Invoice:</strong>
+
+{{ biggest_sale.invoice_number }}
+
+</p>
+
+<p>
+
+<strong>Amount:</strong>
+
+Rs. {{ biggest_sale.grand_total|intcomma }}
+
+</p>
+
+<p>
+
+<strong>Date:</strong>
+
+{{ biggest_sale.created_at }}
+
+</p>
+
+{% else %}
+
+No sales found.
+
+{% endif %}
+
+</div>
+
+</div>
+
+<div class="card bg-base-100 shadow-xl">
+
+<div class="card-body">
+
+<h2 class="card-title">
+
+💳 Payment Split
+
+</h2>
+
+<div class="flex justify-between">
+
+<span>Cash</span>
+
+<strong>
+
+Rs. {{ payment_split.cash|intcomma }}
+
+</strong>
+
+</div>
+
+<div class="flex justify-between">
+
+<span>Khalti</span>
+
+<strong>
+
+Rs. {{ payment_split.khalti|intcomma }}
+
+</strong>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Top Products -->
+
+<div class="card bg-base-100 shadow-xl mb-8">
+
+<div class="card-body">
+
+<h2 class="card-title">
+
+📦 Top Selling Products
+
+</h2>
+
+{% for product in top_products %}
+
+<div class="flex justify-between py-2 border-b last:border-0">
+
+<span>
+
+{{ product.price__name }}
+
+</span>
+
+<span class="badge badge-primary">
+
+{{ product.total_sold }}
+
+Sold
+
+</span>
+
+</div>
+
+{% empty %}
+
+No products.
+
+{% endfor %}
+
+</div>
+
+</div>
+
+<!-- Recent Transactions -->
+
+<div class="card bg-base-100 shadow-xl">
+
+<div class="card-body">
+
+<h2 class="card-title">
+
+🧾 Recent Transactions
+
+</h2>
+
+<div class="overflow-x-auto">
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Invoice</th>
+
+<th>Customer</th>
+
+<th>Cashier</th>
+
+<th>Payment</th>
+
+<th>Total</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for sale in recent_transactions %}
+
+<tr>
+
+<td>
+
+{{ sale.invoice_number }}
+
+</td>
+
+<td>
+
+{{ sale.customer_name }}
+
+</td>
+
+<td>
+
+{{ sale.created_by.username }}
+
+</td>
+
+<td>
+
+{{ sale.get_payment_method_display }}
+
+</td>
+
+<td>
+
+Rs. {{ sale.grand_total|intcomma }}
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td colspan="5">
+
+No transactions.
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

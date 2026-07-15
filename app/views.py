@@ -9,6 +9,8 @@ from sales.models import Sale, SaleItem
 from django.db.models import Sum
 from django.utils import timezone
 from decimal import Decimal
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 from django.db.models.functions import TruncDate
 from django.db.models import Sum
@@ -90,7 +92,7 @@ def dashboard(request):
         
         context["daily_sales_chart"] = json.dumps(last_7_days)
         
-        DAILY_GOAL = Decimal("75000")
+        DAILY_GOAL = shop.daily_revenue_goal
         goal_percent = min(
             round((today_revenue / DAILY_GOAL) * 100, 1)
             if DAILY_GOAL else 0,
@@ -160,3 +162,33 @@ def dashboard(request):
         })
     
     return render(request, "app/dashboard.html", context)
+
+@require_POST
+@login_required
+def update_daily_goal(request):
+
+    if request.user.role != CustomUser.Roles.SHOP_ADMIN:
+
+        return JsonResponse(
+            {
+                "success": False
+            },
+            status=403
+        )
+
+    data = json.loads(request.body)
+
+    goal = data.get("goal")
+
+    shop = request.user.shop
+
+    shop.daily_revenue_goal = goal
+
+    shop.save()
+
+    return JsonResponse({
+
+        "success": True,
+        "goal": shop.daily_revenue_goal
+
+    })

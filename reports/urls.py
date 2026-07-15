@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+app_name = "reports"
+
 urlpatterns = [
 
     path(
@@ -8,5 +10,9 @@ urlpatterns = [
         views.reports,
         name="reports"
     ),
-
+    path(
+        "analytics/",
+        views.sales_analytics,
+        name="sales_analytics"
+    ),
 ]

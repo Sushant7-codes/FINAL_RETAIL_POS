@@ -21,6 +21,11 @@ class Shop(models.Model):
     owner_name = models.CharField(max_length=255)
     email = models.EmailField(blank=True, null=True)
     phone_number = models.CharField(max_length=20)
+    daily_revenue_goal = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=75000
+    )
     
     address_line_1 = models.CharField(max_length=255)
     address_line_2 = models.CharField(max_length=255)
@@ -39,7 +44,6 @@ class Shop(models.Model):
     
     updated_at = models.DateTimeField(auto_now=True)
     established_date = models.DateField(blank=True, null=True)
-    
     
     def __str__(self):
         return self.name 
