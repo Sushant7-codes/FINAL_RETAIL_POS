@@ -25,21 +25,123 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.core.paginator import Paginator
 
+# @require_http_methods(["GET", "POST"])
+# @login_required
+# def shop_register(request):
+
+#     if request.method == "POST":
+
+#         form = ShopForm(
+#             request.POST,
+#             request.FILES,
+#             request=request
+#         )
+
+#         if form.is_valid():
+
+#             form.save()
+
+#             messages.success(
+#                 request,
+#                 "Shop registered successfully!"
+#             )
+
+#             return redirect("shop:shop_profile")
+
+#         else:
+
+#             messages.error(
+#                 request,
+#                 "Please correct the errors below."
+#             )
+
+#             context = {
+
+#                 "form": form,
+
+#                 "has_shop": False,
+
+#                 "form_submission_url": reverse_lazy(
+#                     "shop:shop_register"
+#                 ),
+
+#             }
+
+#             return render(
+#                 request,
+#                 "app/dashboard.html",
+#                 context
+#             )
+
+#     return redirect("app:dashboard")
+
 @require_http_methods(["GET", "POST"])
 @login_required
 def shop_register(request):
-    if request.method == "POST":
-        form = ShopForm(request.POST, request.FILES, request=request)  # ✅ pass request here
-        if form.is_valid():
-            form.save()  # ✅ no request here
-            messages.success(request, "Shop registered successfully!")
-            return redirect("shop:shop_profile")
-        else:
-            messages.error(request, "Please correct the errors below.")
-    else:
-        form = ShopForm(request=request)
 
-    return render(request, "shop/register.html", {"form": form})
+    if request.method == "POST":
+
+        form = ShopForm(
+            request.POST,
+            request.FILES,
+            request=request
+        )
+
+        if form.is_valid():
+
+            print("========== FORM IS VALID ==========")
+
+            try:
+
+                shop = form.save()
+
+                print("SHOP CREATED SUCCESSFULLY")
+                print("Shop ID:", shop.id)
+                print("Shop Name:", shop.name)
+
+                messages.success(
+                    request,
+                    "Shop registered successfully!"
+                )
+
+                return redirect("shop:shop_profile")
+
+            except Exception as e:
+
+                print("========== SAVE ERROR ==========")
+                print(e)
+                print(type(e))
+
+                messages.error(
+                    request,
+                    f"Save Error: {e}"
+                )
+
+        else:
+
+            print("========== FORM ERRORS ==========")
+            print(form.errors)
+
+            messages.error(
+                request,
+                "Please correct the errors below."
+            )
+
+        context = {
+            "form": form,
+            "has_shop": False,
+            "form_submission_url": reverse_lazy(
+                "shop:shop_register"
+            ),
+        }
+
+        return render(
+            request,
+            "app/dashboard.html",
+            context
+        )
+
+    return redirect("app:dashboard")
 
 @login_required
 def update_profile_pic(request):

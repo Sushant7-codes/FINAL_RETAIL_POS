@@ -8,7 +8,7 @@ CustomUser = get_user_model()
 class ShopForm(forms.ModelForm):
     class Meta:
         model = Shop
-        exclude = ["admin_user", "slug", "is_active", "updated_at"]
+        exclude = ["admin_user", "slug", "is_active", "updated_at","daily_revenue_goal"]
 
         widgets = {
             "established_date": forms.DateInput(attrs={"type": "date"}),

@@ -2784,12 +2784,6 @@
   .mt-17 {
     margin-top: calc(var(--spacing) * 17);
   }
-  .mt-20 {
-    margin-top: calc(var(--spacing) * 20);
-  }
-  .mt-50 {
-    margin-top: calc(var(--spacing) * 50);
-  }
   .mt-auto {
     margin-top: auto;
   }
@@ -4312,12 +4306,6 @@
   }
   .opacity-0 {
     opacity: 0%;
-  }
-  .opacity-2 {
-    opacity: 2%;
-  }
-  .opacity-27 {
-    opacity: 27%;
   }
   .opacity-40 {
     opacity: 40%;
