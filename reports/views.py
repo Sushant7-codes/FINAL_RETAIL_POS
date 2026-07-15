@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from sales.models import Sale, SaleItem
 from django.utils import timezone
-from datetime import timedelta, datetime
+from datetime import timedelta
 from django.db.models import Sum, Avg
 from accounts.models import CustomUser
 from django.contrib.auth.decorators import login_required
