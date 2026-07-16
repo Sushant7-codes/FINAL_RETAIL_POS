@@ -1,6 +1,4 @@
 from django.conf import settings
-from django.conf import settings
-from django.core.mail import EmailMessage
 
 # from django.core.mail import send_mail
 
@@ -31,22 +29,6 @@ from django.core.mail import EmailMessage
 
 #     send_mail(subject, message, settings.EMAIL_HOST_USER, [email])
 
-
-
 def send_otp(email, new_otp, purpose="forgot"):
-
-    if purpose == "register":
-        subject = "Registration OTP"
-        body = f"Your OTP is {new_otp}"
-    else:
-        subject = "Reset OTP"
-        body = f"Your OTP is {new_otp}"
-
-    mail = EmailMessage(
-        subject,
-        body,
-        settings.EMAIL_HOST_USER,
-        [email],
-    )
-
-    mail.send(fail_silently=False)
+    print("OTP WOULD BE:", new_otp)
+    return
