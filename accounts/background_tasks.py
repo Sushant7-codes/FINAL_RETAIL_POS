@@ -1,9 +1,6 @@
-from background_task import background
 from django.conf import settings
 from django.core.mail import send_mail
 
-
-@background(schedule=3)
 def send_otp(email, new_otp, purpose="forgot"):
     if purpose == "register":
         subject = "Verify Your Email - Registration"

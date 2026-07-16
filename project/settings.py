@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'shop',
     'billing',
     
-    'background_task',
     'django_filters',
     
     'django.contrib.humanize'
