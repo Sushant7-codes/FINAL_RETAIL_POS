@@ -23,4 +23,7 @@ def send_otp(email, new_otp, purpose="forgot"):
         This OTP will expire in 5 minutes.
         """
 
+    print("EMAIL_HOST_USER:", settings.EMAIL_HOST_USER)
+    print("EMAIL_HOST_PASSWORD exists:", bool(settings.EMAIL_HOST_PASSWORD))
+
     send_mail(subject, message, settings.EMAIL_HOST_USER, [email])
