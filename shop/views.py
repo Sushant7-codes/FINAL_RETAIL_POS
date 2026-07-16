@@ -11,6 +11,7 @@ from urllib.parse import urlencode
 import random
 import secrets
 import string
+import resend
 
 from accounts.models import CustomUser
 from shop.forms import(
@@ -21,59 +22,10 @@ from shop.forms import(
     StaffUpdateForm,
 )
 from shop.filters import StaffFilter
-from django.core.mail import send_mail
+
 from django.conf import settings
 from django.core.paginator import Paginator
 
-# @require_http_methods(["GET", "POST"])
-# @login_required
-# def shop_register(request):
-
-#     if request.method == "POST":
-
-#         form = ShopForm(
-#             request.POST,
-#             request.FILES,
-#             request=request
-#         )
-
-#         if form.is_valid():
-
-#             form.save()
-
-#             messages.success(
-#                 request,
-#                 "Shop registered successfully!"
-#             )
-
-#             return redirect("shop:shop_profile")
-
-#         else:
-
-#             messages.error(
-#                 request,
-#                 "Please correct the errors below."
-#             )
-
-#             context = {
-
-#                 "form": form,
-
-#                 "has_shop": False,
-
-#                 "form_submission_url": reverse_lazy(
-#                     "shop:shop_register"
-#                 ),
-
-#             }
-
-#             return render(
-#                 request,
-#                 "app/dashboard.html",
-#                 context
-#             )
-
-#     return redirect("app:dashboard")
 
 @require_http_methods(["GET", "POST"])
 @login_required
@@ -410,37 +362,37 @@ def staffs(request):
 
             # --- Send email with credentials ---
             try:
-                shop_name = request.user.shop.name if hasattr(request.user, 'shop') else "Our Shop"
-                
-                send_mail(
-                    f'Welcome to {shop_name} - Your POS System Credentials',
-                    f'''
-Dear {staff.first_name} {staff.last_name},
-
-Your account has been created for the {shop_name} POS system.
-
-Here are your login credentials:
-
-🔐 Username: {username}
-🔑 Password: {password}
-🌐 Login URL: {request.build_absolute_uri('/accounts/login/')}
-
-Important Security Notes:
-- Keep your credentials secure
-- Do not share your password with anyone
-
-If you have any issues, please contact your administrator.
-
-Best regards,
-{shop_name} Management
-                    ''',
-                    settings.DEFAULT_FROM_EMAIL,
-                    [staff.email],
-                    fail_silently=False,
-                )
-                
+                resend.api_key = settings.RESEND_API_KEY
+            
+                shop_name = request.user.shop.name if hasattr(request.user, "shop") else "Our Shop"
+            
+                resend.Emails.send({
+                    "from": "Retail POS <onboarding@resend.dev>",
+                    "to": [staff.email],
+                    "subject": f"Welcome to {shop_name} - Your POS Credentials",
+                    "html": f"""
+                    <h2>Welcome to {shop_name}</h2>
+            
+                    <p>Your staff account has been created.</p>
+            
+                    <p><strong>Username:</strong> {username}</p>
+                    <p><strong>Password:</strong> {password}</p>
+            
+                    <p>
+                    Login here:<br>
+                    <a href="{request.build_absolute_uri('/accounts/login/')}">
+                    {request.build_absolute_uri('/accounts/login/')}
+                    </a>
+                    </p>
+            
+                    <hr>
+            
+                    <p>Please change your password after logging in.</p>
+                    """
+                })
+            
                 messages.success(
-                    request, 
+                    request,
                     f"✅ Staff registered successfully! Login credentials have been sent to {staff.email}"
                 )
                 
