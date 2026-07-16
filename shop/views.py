@@ -322,90 +322,74 @@ def price_update(request,pk):
 
 def staffs(request):
     # Only Shop Admin can register new staff
-    if (
-        request.method == "POST"
-        and request.user.role != CustomUser.Roles.SHOP_ADMIN
-    ):
-        messages.error(request, "You do not have permission to register staff.")
-        return redirect("shop:staffs")
-    
-    # --- Handle Staff Registration ---
     if request.method == "POST":
-        form = StaffRegistrationForm(request.POST, request.FILES, request=request)
+        form = StaffRegistrationForm(request.POST, request.FILES, request=request)      
         if form.is_valid():
-            staff = form.save(commit=False)
-
-            # --- Generate unique username automatically ---
+            staff = form.save(commit=False)     
+            # ---------- Generate Username ----------
             first = staff.first_name[:3].lower() if staff.first_name else "usr"
-            last = staff.last_name[-3:].lower() if staff.last_name else str(random.randint(100, 999))
-            base_username = f"{first}{last}"
-
+            last = staff.last_name[-3:].lower() if staff.last_name else str(random.randint(100, 999))       
+            base_username = f"{first}{last}"        
             username = base_username
-            counter = 1
+            counter = 1     
             while CustomUser.objects.filter(username=username).exists():
                 username = f"{base_username}{counter}"
-                counter += 1
-
-            # --- Generate secure random password ---
+                counter += 1        
+            # ---------- Generate Password ----------
             alphabet = string.ascii_letters + string.digits
-            password = ''.join(secrets.choice(alphabet) for i in range(8))
-            
+            password = "".join(secrets.choice(alphabet) for _ in range(8))      
             staff.username = username
             staff.is_staff = True
-            staff.set_password(password)
-            
-            # Assign to shop
-            if hasattr(request.user, 'shop'):
-                staff.workplace = request.user.shop  # Changed from shop to workplace
-            
-            staff.save()
-
-            # --- Send email with credentials ---
-            try:
-                resend.api_key = settings.RESEND_API_KEY
-            
-                shop_name = request.user.shop.name if hasattr(request.user, "shop") else "Our Shop"
-            
+            staff.set_password(password)        
+            if hasattr(request.user, "shop"):
+                staff.workplace = request.user.shop     
+            staff.save()        
+            # ---------- Send Email ----------
+            try:        
+                resend.api_key = settings.RESEND_API_KEY        
+                shop_name = (
+                    request.user.shop.name
+                    if hasattr(request.user, "shop")
+                    else "Retail POS"
+                )       
                 resend.Emails.send({
                     "from": "Retail POS <onboarding@resend.dev>",
                     "to": [staff.email],
-                    "subject": f"Welcome to {shop_name} - Your POS Credentials",
+                    "subject": f"Welcome to {shop_name}",
                     "html": f"""
-                    <h2>Welcome to {shop_name}</h2>
-            
-                    <p>Your staff account has been created.</p>
-            
-                    <p><strong>Username:</strong> {username}</p>
-                    <p><strong>Password:</strong> {password}</p>
-            
+                    <h2>Welcome to {shop_name}</h2>     
+                    <p>Your staff account has been created.</p>     
+                    <p><strong>Username:</strong> {username}</p>        
+                    <p><strong>Password:</strong> {password}</p>        
                     <p>
-                    Login here:<br>
+                    Login:
+                    <br>
                     <a href="{request.build_absolute_uri('/accounts/login/')}">
                     {request.build_absolute_uri('/accounts/login/')}
                     </a>
-                    </p>
-            
-                    <hr>
-            
-                    <p>Please change your password after logging in.</p>
+                    </p>        
+                    <hr>        
                     """
-                })
-            
+                })      
                 messages.success(
                     request,
-                    f"✅ Staff registered successfully! Login credentials have been sent to {staff.email}"
-                )
-                
-            except Exception:
-                messages.success(
-                    request, 
-                    f"✅ Staff registered successfully!<br>"
-                    f"<strong>Username:</strong> {username}<br>"
-                    f"<strong>Password:</strong> {password}<br>"
-                    f"<em>Email sending failed. Please share these credentials securely with the staff member.</em>"
-                )
-
+                    f"✅ Staff registered successfully! Credentials sent to {staff.email}"
+                )       
+            except Exception as e:      
+                print("========== RESEND STAFF ERROR ==========")
+                print(e)
+                print("========================================")       
+                messages.warning(
+                    request,
+                    f"""
+                    ✅ Staff registered successfully!<br>
+                    <strong>Username:</strong> {username}<br>
+                    <strong>Password:</strong> {password}<br><br>
+                    <strong>Email Error:</strong> {e}
+                    """
+                )       
             return redirect(request.path)
+        
     else:
         form = StaffRegistrationForm(request=request)
 
