@@ -1,61 +1,49 @@
+import requests
 from django.conf import settings
-from django.core.mail import EmailMessage
-
-# from django.core.mail import send_mail
-
-# def send_otp(email, new_otp, purpose="forgot"):
-#     if purpose == "register":
-#         subject = "Verify Your Email - Registration"
-#         message = f"""
-#         Welcome! 🎉
-        
-#         Use the OTP {new_otp} to verify your email and complete registration.
-        
-#         This OTP will expire in 5 minutes.
-#         """
-#     else:  # default → forgot password
-#         subject = "Password Reset OTP"
-#         message = f"""
-#         You requested to reset your password.
-        
-#         Use the OTP {new_otp} to reset your password
-#         OR
-#         Go to the OTP confirmation page: http://127.0.0.1:8000/accounts/otp-confirmation/
-        
-#         This OTP will expire in 5 minutes.
-#         """
-
-#     print("EMAIL_HOST_USER:", settings.EMAIL_HOST_USER)
-#     print("EMAIL_HOST_PASSWORD exists:", bool(settings.EMAIL_HOST_PASSWORD))
-
-#     send_mail(subject, message, settings.EMAIL_HOST_USER, [email])
 
 
 def send_otp(email, new_otp, purpose="forgot"):
 
     if purpose == "register":
-        subject = "Verify Your Email"
-        message = f"Your OTP is {new_otp}"
+        subject = "Verify Your Email - Registration"
+
+        message = f"""
+Welcome!
+
+Use the OTP below to verify your account.
+
+OTP: {new_otp}
+
+This OTP expires in 5 minutes.
+"""
+
     else:
         subject = "Password Reset OTP"
-        message = f"Your OTP is {new_otp}"
 
-    print("EMAIL:", settings.EMAIL_HOST_USER)
+        message = f"""
+You requested to reset your password.
 
-    try:
-        mail = EmailMessage(
-            subject,
-            message,
-            settings.EMAIL_HOST_USER,
-            [email],
-        )
+OTP: {new_otp}
 
-        mail.send(fail_silently=False)
+This OTP expires in 5 minutes.
+"""
 
-        print("EMAIL SENT SUCCESSFULLY")
+    response = requests.post(
+        "https://api.resend.com/emails",
+        headers={
+            "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "from": "onboarding@resend.dev",
+            "to": [email],
+            "subject": subject,
+            "text": message,
+        },
+        timeout=15,
+    )
 
-    except Exception as e:
-        print("EMAIL ERROR:")
-        print(type(e))
-        print(e)
-        raise
+    print(response.status_code)
+    print(response.text)
+
+    response.raise_for_status()
