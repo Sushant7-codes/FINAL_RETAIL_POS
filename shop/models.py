@@ -1,4 +1,5 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
 import random
 import string
 
@@ -36,8 +37,17 @@ class Shop(models.Model):
     map_location_url=models.URLField(blank=True, null=True)
     
     registration_number = models.CharField(max_length=100, blank=True, null=True)
-    logo = models.ImageField(upload_to="shop_logos/", blank=True, null=True)
-    banner = models.ImageField(upload_to="shop_banners/", blank=True, null=True)
+    logo = CloudinaryField(
+        "shop_logo",
+        blank=True,
+        null=True
+    )
+    
+    banner = CloudinaryField(
+        "shop_banner",
+        blank=True,
+        null=True
+    )
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
