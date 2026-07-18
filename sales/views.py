@@ -1,4 +1,5 @@
 import json
+import uuid 
 
 from decimal import Decimal
 from django.http import JsonResponse, HttpResponse
@@ -84,25 +85,19 @@ def khalti_initiate(request):
     grand_total = subtotal - discount
 
     payload = {
+        "return_url": request.build_absolute_uri(
+            "/sales/khalti/success/"
+        ),
 
-        "return_url": "http://127.0.0.1:8000/sales/khalti/success/",
-
-        "website_url": "http://127.0.0.1:8000",
-
+        "website_url": request.build_absolute_uri("/"),
         "amount": int(grand_total * 100),
-
-        "purchase_order_id": "TEST123",
-
+        "purchase_order_id": f"SALE-{timezone.now().strftime('%Y%m%d%H%M%S')}"
         "purchase_order_name": "Retail POS Sale",
 
         "customer_info": {
-
             "name": data["customer_name"],
-
-            "phone": data["customer_phone"]
-
-        }
-
+            "phone": data["customer_phone"],
+        },
     }
     
     response = initiate_khalti_payment(payload)
