@@ -202,3 +202,4 @@ def register_otp_confirmation(request):
         return redirect("accounts:retail_admin_login")
 
     return render(request, "accounts/otp-confirmation.html")
+

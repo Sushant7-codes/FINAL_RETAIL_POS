@@ -1,128 +1,72 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 
-{% block sidebar %}
-{% endblock %}
-
-{% block header %}
-{% endblock header %}
+{% block sidebar %}{% endblock %}
+{% block header %}{% endblock header %}
+{% block content_padding %}{% endblock %}
 
 {% block content %}
-<div class="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-6">
+<div class="w-full min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
 
-    <!-- Toast Messages -->
-    <div class="toast toast-end toast-top z-50">
+    <div class="w-full max-w-sm space-y-4">
+
+        <!-- App name -->
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">MyStore POS</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Sign in to your account</p>
+        </div>
+
+        <!-- Messages -->
         {% for message in messages %}
-        <div class="alert alert-error shadow-lg">
-            <span class="font-semibold">{{ message }}</span>
+        <div class="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-2.5 rounded-md dark:bg-red-900/20 dark:border-red-800 dark:text-red-300">
+            {{ message }}
         </div>
         {% endfor %}
-    </div>
 
-    <div class="w-full max-w-md space-y-5">
-
-        <!-- Demo Card -->
-        <div class="bg-blue-500/10 border border-blue-500/30 rounded-2xl backdrop-blur-xl p-5">
-
-            <h2 class="text-xl font-bold text-blue-300 mb-3">
-                🚀 Demo Access
-            </h2>
-
-            <p class="text-sm text-gray-300 leading-relaxed">
-                To help reviewers quickly explore the application, a demo staff account has been provided below. Public email verification is currently limited in this deployment.
-            </p>
-
-            <div class="mt-4 space-y-3">
-
-                <div class="bg-gray-900/60 rounded-lg p-3 border border-gray-700">
-                    <p class="text-xs uppercase tracking-wider text-gray-400">
-                        Username
-                    </p>
-                    <p class="text-lg font-bold text-white">
-                        demo
-                    </p>
+        <!-- Demo credentials -->
+        <div class="bg-blue-50 border border-blue-200 rounded-md p-4 dark:bg-blue-900/20 dark:border-blue-800">
+            <p class="text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wide mb-2">Demo Access</p>
+            <p class="text-xs text-blue-600 dark:text-blue-400 mb-3">A demo staff account is available for reviewers and portfolio visitors.</p>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-white dark:bg-gray-800 border border-blue-200 dark:border-blue-700 rounded px-2 py-1.5">
+                    <span class="text-gray-400 block">Username</span>
+                    <span class="font-mono font-semibold text-gray-800 dark:text-gray-200">demo</span>
                 </div>
-
-                <div class="bg-gray-900/60 rounded-lg p-3 border border-gray-700">
-                    <p class="text-xs uppercase tracking-wider text-gray-400">
-                        Password
-                    </p>
-                    <p class="text-lg font-bold text-white">
-                        tMq9NYER
-                    </p>
+                <div class="bg-white dark:bg-gray-800 border border-blue-200 dark:border-blue-700 rounded px-2 py-1.5">
+                    <span class="text-gray-400 block">Password</span>
+                    <span class="font-mono font-semibold text-gray-800 dark:text-gray-200">tMq9NYER</span>
                 </div>
-
             </div>
-
-            <p class="text-xs text-gray-400 mt-4">
-                Demo account has limited permissions and is intended for recruiters,
-                clients, and portfolio reviewers.
-            </p>
-
         </div>
 
-        <!-- Login Card -->
-        <form method="post"
-              class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-8 flex flex-col gap-6">
-
+        <!-- Login Form -->
+        <form method="post" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 space-y-4">
             {% csrf_token %}
 
+            {% for field in form %}
             <div>
-                <h1 class="text-4xl font-extrabold text-center text-white">
-                    Welcome Back
-                </h1>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+                {{ field|add_class:"input input-bordered w-full text-sm" }}
+                {% if field.errors %}
+                <p class="text-red-600 dark:text-red-400 text-xs mt-1">{{ field.errors|striptags }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
 
-                <p class="text-gray-300 text-center mt-2">
-                    Login to continue
+            <button type="submit" class="btn btn-primary w-full">Sign in</button>
+
+            <div class="text-center text-sm text-gray-500 dark:text-gray-400 space-y-1 pt-1">
+                <p>Don't have an account?
+                    <a href="{% url 'accounts:retail_admin_register' %}" class="text-blue-600 dark:text-blue-400 hover:underline">Register</a>
+                </p>
+                <p>Forgot your password?
+                    <a href="{% url 'accounts:forgot_password' %}" class="text-blue-600 dark:text-blue-400 hover:underline">Reset it</a>
                 </p>
             </div>
-
-            <div class="space-y-5">
-                {% for field in form %}
-                <fieldset class="fieldset">
-                    <legend class="fieldset-legend text-sm font-semibold text-gray-200">
-                        {{ field.label }}
-                    </legend>
-
-                    {{ field|add_class:"input input-bordered w-full bg-gray-900/50 text-white placeholder-gray-400" }}
-
-                    {% if field.errors %}
-                    <p class="text-red-400 text-sm mt-1">
-                        {{ field.errors }}
-                    </p>
-                    {% endif %}
-                </fieldset>
-                {% endfor %}
-            </div>
-
-            <button type="submit"
-                    class="btn btn-primary w-full py-3 text-lg font-semibold rounded-xl shadow-lg hover:scale-105 transition">
-                Login
-            </button>
-
-            <div class="text-center space-y-2 pt-2">
-
-                <p class="text-gray-400 text-sm">
-                    Don't have an account?
-                    <a href="{% url 'accounts:retail_admin_register' %}"
-                       class="text-blue-400 font-semibold hover:underline">
-                        Register
-                    </a>
-                </p>
-
-                <p class="text-gray-400 text-sm">
-                    Forgot your password?
-                    <a href="{% url 'accounts:forgot_password' %}"
-                       class="text-blue-400 font-semibold hover:underline">
-                        Reset Password
-                    </a>
-                </p>
-
-            </div>
-
         </form>
 
     </div>
-
 </div>
 {% endblock %}

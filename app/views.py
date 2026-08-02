@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from shop.forms import ShopForm
@@ -15,6 +15,13 @@ from django.views.decorators.http import require_POST
 from django.db.models.functions import TruncDate
 from django.db.models import Sum
 import json
+
+def landing(request):
+    """Public landing page. Redirect already-authenticated users to dashboard."""
+    if request.user.is_authenticated:
+        return redirect("app:dashboard")
+    return render(request, "app/landing.html")
+
 
 @login_required
 def dashboard(request):

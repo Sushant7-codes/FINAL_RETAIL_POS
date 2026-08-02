@@ -1,69 +1,67 @@
 {% extends 'base.html' %}
 {% load form_extras %}
 
-
-{% block title %}
-Price Update
-{% endblock title %}
+{% block title %}Update Item{% endblock title %}
 
 {% block content %}
+<main class="p-4 sm:p-6 max-w-lg mx-auto">
 
-<main class=" min-h-screen flex flex-col  gap-5 p-6 w-full mt-17" id="main">
-
-    <div class="toast toast-end toast-top">
-    {% for message in messages %}
-    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-    <div class="alert alert-error alert-soft">
-        {% else %}
-        <div class="alert alert-success alert-soft">
-            {% endif %}
-            <span>{{message}}</span>
+    {% if messages %}
+    <div class="fixed top-16 right-4 z-50 space-y-2">
+        {% for message in messages %}
+        <div class="{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}bg-red-600{% else %}bg-green-600{% endif %} text-white text-sm px-4 py-2.5 rounded shadow-md">
+            {{ message }}
         </div>
         {% endfor %}
     </div>
-    
-    <h1 class="text-3xl font-bold mb-4">Update Price </h1>
-    <div class="flex  gap-12">
-        <form id="add-price-form" action="" method="post" class="flex-grow max-w-[500px]">
-            {% csrf_token %}
-            <input type="hidden" name="item_id" value="{{item.id}}">
-            <fieldset class="fieldset mb-1">
-                <label class="label text-xl" for="{{ form.name.id_for_label }}">Price {{form.name.label}}</label>
-                {{ form.name|add_class:"input p-3 mb-1 min-w-[300px] w-full" }}
+    {% endif %}
 
-                <ul>
-                    {% for error in form.name.errors %}
-                    <li class="text-red-500 text-sm">{{ error }}</li>
-                    {% endfor %}
-                </ul>
-
-            </fieldset>
-            <fieldset class="fieldset mb-1">
-                <label class="label text-xl" for="{{ form.amount.id_for_label }}">{{form.amount.label}} (Nrs)</label>
-                {{ form.amount|add_class:"input p-3 mb-1 min-w-[300px] w-full" }}
-
-                <ul>
-                    {% for error in form.name.errors %}
-                    <li class="text-red-500 text-sm">{{ error }}</li>
-                    {% endfor %}
-                </ul>
-
-            </fieldset> 
-
-            <fieldset class="fieldset mb-1">
-                <label class="label text-xl" for="{{ form.amount.id_for_label }}">{{form.stock.label}}</label>
-                {{ form.stock|add_class:"input p-3 mb-1 min-w-[300px] w-full" }}
-
-                <ul>
-                    {% for error in form.name.errors %}
-                    <li class="text-red-500 text-sm">{{ error }}</li>
-                    {% endfor %}
-                </ul>
-
-            </fieldset> 
-            <button type="submit" class="btn btn-primary">Update Price</button>
-        </form
+    <div class="mb-5">
+        <a href="{% url 'shop:price' %}?item_id={{ item.id }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">← Back to Items</a>
+        <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-1">Update Item</h1>
     </div>
-</main>
 
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5">
+        <form id="add-price-form" action="" method="post" class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="item_id" value="{{ item.id }}">
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="{{ form.name.id_for_label }}">
+                    Item Name
+                </label>
+                {{ form.name|add_class:"input input-bordered w-full" }}
+                {% for error in form.name.errors %}
+                <p class="text-red-600 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="{{ form.amount.id_for_label }}">
+                    Selling Price (Rs.)
+                </label>
+                {{ form.amount|add_class:"input input-bordered w-full" }}
+                {% for error in form.amount.errors %}
+                <p class="text-red-600 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="{{ form.stock.id_for_label }}">
+                    Stock Quantity
+                </label>
+                {{ form.stock|add_class:"input input-bordered w-full" }}
+                {% for error in form.stock.errors %}
+                <p class="text-red-600 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="flex gap-2 pt-2">
+                <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+                <a href="{% url 'shop:price' %}?item_id={{ item.id }}" class="btn btn-ghost btn-sm">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+</main>
 {% endblock content %}

@@ -2,10 +2,23 @@
 @plugin "daisyui";
 
 /**
-  * A catch-all path to Django template files, JavaScript, and Python files
-  * that contain Tailwind CSS classes and will be scanned by Tailwind to generate the final CSS file.
-  *
-  * If your final CSS file is not being updated after code changes, you may want to broaden or narrow
-  * the scope of this path.
-  */
+ * Tell Tailwind v4 to activate dark-mode utilities when
+ * the html element carries data-theme="dark"  (DaisyUI v5 convention).
+ * This keeps Tailwind's  dark:bg-*  /  dark:text-*  utilities in sync
+ * with DaisyUI's own colour tokens.
+ */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/**
+ * Scan all Django templates, JS and Python files for Tailwind classes.
+ */
 @source "../../../**/*.{html,py,js}";
+
+/* ── Global typography ─────────────────────────────────── */
+@layer base {
+    html {
+        font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}

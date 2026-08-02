@@ -1,285 +1,186 @@
 {% extends 'base.html' %}
 {% load form_extras %}
 
-
-{% block title %}
-Price
-{% endblock title %}
+{% block title %}Manage Items — {{ item.name }}{% endblock title %}
 
 {% block content %}
+<main class="p-4 sm:p-6 max-w-7xl mx-auto" id="main">
 
-<main class="min-h-screen flex flex-col gap-5 p-4 md:p-6 w-full mt-17" id="main">
-
-    <div class="toast toast-end toast-top">
-    {% for message in messages %}
-    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-    <div class="alert alert-error alert-soft">
-        {% else %}
-        <div class="alert alert-success alert-soft">
-            {% endif %}
-            <span>{{message}}</span>
+    <!-- Toast -->
+    <div class="fixed top-16 right-4 z-50 space-y-2" id="toast-container">
+        {% for message in messages %}
+        <div class="{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}bg-red-600{% else %}bg-green-600{% endif %} text-white text-sm px-4 py-2.5 rounded shadow-md">
+            {{ message }}
         </div>
         {% endfor %}
     </div>
-    
-    <h1 class="text-2xl md:text-3xl font-bold mb-4">Add Item ({{item.name}})</h1>
-    
-    <div class="flex flex-col lg:flex-row gap-6 lg:gap-8">
-        <!-- Form Section -->
-        <div class="w-full lg:max-w-[500px]">
-            <form id="add-price-form" action="" method="post" class="card bg-base-100 shadow-xl p-6">
-                {% csrf_token %}
-                <input type="hidden" name="item_id" value="{{item.id}}">
-                
-                <fieldset class="fieldset mb-4">
-                    <label class="label text-lg font-semibold" for="{{ form.name.id_for_label }}">Item {{form.name.label}}</label>
-                    {{ form.name|add_class:"input input-bordered w-full" }}
 
-                    <ul>
+    <div class="mb-5">
+        <a href="{% url 'shop:item_list' %}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">← Back to Categories</a>
+        <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-1">{{ item.name }} — Items</h1>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-5">
+
+        <!-- Add Item Form -->
+        <div class="lg:w-80 flex-shrink-0">
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5">
+                <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Add Item</h2>
+                <form id="add-price-form" action="" method="post" class="space-y-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="item_id" value="{{ item.id }}">
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1" for="{{ form.name.id_for_label }}">
+                            Item Name
+                        </label>
+                        {{ form.name|add_class:"input input-bordered w-full input-sm" }}
                         {% for error in form.name.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
+                        <p class="text-red-600 text-xs mt-1">{{ error }}</p>
                         {% endfor %}
-                    </ul>
-                </fieldset>
+                    </div>
 
-                <fieldset class="fieldset mb-4">
-                    <label class="label text-lg font-semibold" for="{{ form.amount.id_for_label }}">{{form.amount.label}} (Nrs)</label>
-                    {{ form.amount|add_class:"input input-bordered w-full" }}
-
-                    <ul>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1" for="{{ form.amount.id_for_label }}">
+                            Selling Price (Rs.)
+                        </label>
+                        {{ form.amount|add_class:"input input-bordered w-full input-sm" }}
                         {% for error in form.amount.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
+                        <p class="text-red-600 text-xs mt-1">{{ error }}</p>
                         {% endfor %}
-                    </ul>
-                </fieldset> 
+                    </div>
 
-                <fieldset class="fieldset mb-6">
-                    <label class="label text-lg font-semibold" for="{{ form.stock.id_for_label }}">{{ form.stock.label }}</label>
-                    {{ form.stock|add_class:"input input-bordered w-full" }}
-                
-                    <ul>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1" for="{{ form.stock.id_for_label }}">
+                            Stock Quantity
+                        </label>
+                        {{ form.stock|add_class:"input input-bordered w-full input-sm" }}
                         {% for error in form.stock.errors %}
-                        <li class="text-red-500 text-sm">{{ error }}</li>
+                        <p class="text-red-600 text-xs mt-1">{{ error }}</p>
                         {% endfor %}
-                    </ul>
-                </fieldset>
-                
-                <button type="submit" class="btn btn-primary w-full mb-4">Add Item</button>
-                
-                <a href="{% url 'shop:item_list' %}" class="btn btn-outline btn-secondary gap-2 w-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Back to Categories
-                </a>
-            </form>
-        </div>
+                    </div>
 
-        <!-- Table Section -->
-        <div class="flex-grow">
-            <div class="card bg-base-100 shadow-xl">
-                <div class="card-body p-4 md:p-6">
-                    <h1 class="text-xl md:text-2xl font-bold mb-4">Items List</h1>
-                    
-                    <!-- Scrollable Container -->
-                    <div class="border border-gray-200 rounded-lg bg-base-100">
-                        <div class="overflow-x-auto">
-                            <table class="table table-zebra w-full">
-                                <thead>
-                                    <tr class="bg-base-200">
-                                        <th class="bg-base-200">SN</th>
-                                        <th class="bg-base-200">Item Name</th>
-                                        <th class="bg-base-200">Amount</th>
-                                        <th class="bg-base-200">Stock</th>
-                                        <th class="bg-base-200">Barcode</th>
-                                        <th class="bg-base-200">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="price-list">
-                                    {% for price in prices %}
-                                    <tr id="price-{{price.id}}">
-                                        <th>{{ forloop.counter }}</th>
-                                        <td class="font-medium">{{ price.name }}</td>
-                                        <td>Rs {{ price.amount }}</td>
-                                        <td>{{ price.stock }}</td>
-                                        <td>
-                                            <span class="font-mono text-xs bg-base-200 px-2 py-1 rounded border border-base-300">
-                                                {{ price.barcode }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div class="flex gap-1 flex-wrap">
-                                                <a href="{% url 'shop:price_update' price.id %}" 
-                                                   class="btn btn-xs btn-primary whitespace-nowrap">Update</a>
-                                                <button data-price-id="{{price.id}}" 
-                                                        class="btn btn-xs btn-error whitespace-nowrap"
-                                                        onclick="delete_price(this)">Delete</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <!-- Empty State -->
-                    {% if not prices %}
-                    <div class="text-center py-12 text-gray-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-3 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                        </svg>
-                        <p class="text-lg font-medium">No items yet</p>
-                        <p class="text-sm mt-1">Add your first item using the form on the left!</p>
-                    </div>
-                    {% endif %}
-                </div>
+                    <button type="submit" class="btn btn-primary btn-sm w-full mt-1">Add Item</button>
+                </form>
             </div>
         </div>
+
+        <!-- Items Table -->
+        <div class="flex-grow bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Items in {{ item.name }}</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                        <tr>
+                            <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide w-10">SN</th>
+                            <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Item Name</th>
+                            <th class="text-right px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Price</th>
+                            <th class="text-right px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Stock</th>
+                            <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide hidden sm:table-cell">Barcode</th>
+                            <th class="text-center px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="price-list" class="divide-y divide-gray-100 dark:divide-gray-700">
+                        {% for price in prices %}
+                        <tr id="price-{{ price.id }}" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-4 py-2.5 text-gray-500 dark:text-gray-400">{{ forloop.counter }}</td>
+                            <td class="px-4 py-2.5 font-medium text-gray-800 dark:text-gray-200">{{ price.name }}</td>
+                            <td class="px-4 py-2.5 text-right text-gray-700 dark:text-gray-300">Rs. {{ price.amount }}</td>
+                            <td class="px-4 py-2.5 text-right text-gray-700 dark:text-gray-300">{{ price.stock }}</td>
+                            <td class="px-4 py-2.5 font-mono text-xs text-gray-400 hidden sm:table-cell">{{ price.barcode }}</td>
+                            <td class="px-4 py-2.5">
+                                <div class="flex gap-1 justify-center">
+                                    <a href="{% url 'shop:price_update' price.id %}" class="btn btn-xs btn-outline">Edit</a>
+                                    <button data-price-id="{{ price.id }}" class="btn btn-xs btn-outline btn-error" onclick="delete_price(this)">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-4 py-10 text-center text-sm text-gray-400">
+                                No items yet. Add your first item using the form.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 </main>
-<script>
-    function remove_price_from_table(price_id) {
-        const row_id_to_be_deleted = `price-${price_id}`;
-        const row_to_be_deleted = document.getElementById(row_id_to_be_deleted);
-        if (row_to_be_deleted) {
-            row_to_be_deleted.remove();
-            
-            // Check if table is now empty and show empty state
-            const table_body = document.getElementById("price-list");
-            if (table_body.children.length === 0) {
-                show_empty_state();
-            }
-        }
-    }
 
-    function show_empty_state() {
-        const cardBody = document.querySelector('.card-body');
-        const existingEmptyState = cardBody.querySelector('.text-center.py-12');
-        
-        if (!existingEmptyState) {
-            const emptyStateHTML = `
-                <div class="text-center py-12 text-gray-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-3 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                    </svg>
-                    <p class="text-lg font-medium">No items yet</p>
-                    <p class="text-sm mt-1">Add your first item using the form on the left!</p>
-                </div>
-            `;
-            cardBody.insertAdjacentHTML('beforeend', emptyStateHTML);
-        }
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tc = document.getElementById('toast-container');
+        if (tc && tc.children.length > 0) setTimeout(() => { tc.innerHTML = ''; }, 3000);
+    });
+
+    function remove_price_from_table(price_id) {
+        const row = document.getElementById(`price-${price_id}`);
+        if (row) row.remove();
     }
 
     function delete_price(btnElement) {
         const price_id = btnElement.dataset.priceId;
-
         fetch("{% url 'shop:price_delete' 'dummy' %}".replace('dummy', price_id))
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    show_toast_message(data.message, true);
-                    remove_price_from_table(price_id);
-                } else {
-                    show_toast_message("Error: " + data.message, false);
-                }
-            })
-            .catch((err) => console.error(err));
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) { show_toast(data.message, true); remove_price_from_table(price_id); }
+                else { show_toast('Error: ' + data.message, false); }
+            });
     }
 
-    function show_toast_message(message, success = true) {
-        const mainDiv = document.getElementById("main");
-        const toastDiv = document.getElementById("toast-message");
-
-        toastDiv?.remove();
-
-        mainDiv.insertAdjacentHTML(
-            "afterbegin",
-            `<div class="toast toast-end toast-top z-50" id="toast-message">
-                <div class="alert alert-${success ? 'success' : 'error'} shadow-lg">
-                    <span class="font-semibold">${message}</span>
-                </div>
-            </div>`
-        );
-
-        // Auto-remove after 5 seconds
-        setTimeout(() => {
-            const currentToast = document.getElementById("toast-message");
-            if (currentToast) {
-                currentToast.remove();
-            }
-        }, 5000);
+    function show_toast(message, success = true) {
+        const c = document.getElementById('toast-container');
+        c.innerHTML = '';
+        const d = document.createElement('div');
+        d.className = (success ? 'bg-green-600' : 'bg-red-600') + ' text-white text-sm px-4 py-2.5 rounded shadow-md';
+        d.textContent = message;
+        c.appendChild(d);
+        setTimeout(() => { c.innerHTML = ''; }, 3000);
     }
 
     function add_price_to_table(price) {
-        const table_body = document.getElementById("price-list");
-        const rows_count = table_body.children.length;
-
-        // Remove "No items yet" message if it exists
-        const emptyState = table_body.closest('.card-body').querySelector('.text-center.py-12');
-        if (emptyState) {
-            emptyState.remove();
-        }
-
-        const update_url_template = "{% url 'shop:price_update' 'dummy' %}";
-        const update_url = update_url_template.replace('dummy', price.id);
-
-        const table_row = document.createElement("tr");
-        table_row.id = `price-${price.id}`;
-
-        table_row.innerHTML = `
-            <th>${rows_count + 1}</th>
-            <td class="font-medium">${price.name}</td>
-            <td>Rs ${price.amount}</td>
-            <td>${price.stock}</td>
-            <td>
-                <span class="font-mono text-xs bg-base-200 px-2 py-1 rounded border border-base-300">
-                    ${price.barcode}
-                </span>
-            </td>
-            <td>
-                <div class="flex gap-1 flex-wrap">
-                    <a href="${update_url}" class="btn btn-xs btn-primary whitespace-nowrap">Update</a>
-                    <button data-price-id="${price.id}" class="btn btn-xs btn-error whitespace-nowrap" onclick="delete_price(this)">Delete</button>
+        const tbody = document.getElementById('price-list');
+        const emptyRow = tbody.querySelector('tr td[colspan]');
+        if (emptyRow) emptyRow.parentElement.remove();
+        const count = tbody.children.length;
+        const row = document.createElement('tr');
+        row.id = `price-${price.id}`;
+        row.className = 'hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors';
+        const updateUrl = "{% url 'shop:price_update' 'dummy' %}".replace('dummy', price.id);
+        row.innerHTML = `
+            <td class="px-4 py-2.5 text-gray-500 dark:text-gray-400">${count + 1}</td>
+            <td class="px-4 py-2.5 font-medium text-gray-800 dark:text-gray-200">${price.name}</td>
+            <td class="px-4 py-2.5 text-right text-gray-700 dark:text-gray-300">Rs. ${price.amount}</td>
+            <td class="px-4 py-2.5 text-right text-gray-700 dark:text-gray-300">${price.stock}</td>
+            <td class="px-4 py-2.5 font-mono text-xs text-gray-400 hidden sm:table-cell">${price.barcode}</td>
+            <td class="px-4 py-2.5">
+                <div class="flex gap-1 justify-center">
+                    <a href="${updateUrl}" class="btn btn-xs btn-outline">Edit</a>
+                    <button data-price-id="${price.id}" class="btn btn-xs btn-outline btn-error" onclick="delete_price(this)">Delete</button>
                 </div>
-            </td>
-        `;
-
-        table_body.appendChild(table_row);
+            </td>`;
+        tbody.appendChild(row);
     }
 
-    document.getElementById("add-price-form").addEventListener("submit", function (e) {
+    document.getElementById('add-price-form').addEventListener('submit', function(e) {
         e.preventDefault();
-
         const formData = new FormData(this);
-        const csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-        
+        const csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value;
         fetch("{% url 'shop:price' %}", {
-            method: "POST",
-            headers: { "X-CSRFToken": csrf_token },
-            body: formData,
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrf },
+            body: formData
         })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.success) {
-                show_toast_message(data.message, true);
-                add_price_to_table(data.data);
-            } else {
-                show_toast_message("Error: " + data.message, false);
-            }
-        })
-        .catch((err) => console.error(err));
-    });
-
-    // Auto-hide Django messages after 5 seconds
-    document.addEventListener('DOMContentLoaded', function() {
-        const toastContainer = document.getElementById('toast-container');
-        if (toastContainer && toastContainer.children.length > 0) {
-            setTimeout(() => {
-                toastContainer.innerHTML = '';
-            }, 5000);
-        }
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) { show_toast(data.message, true); add_price_to_table(data.data); }
+            else { show_toast('Error: ' + data.message, false); }
+        });
     });
 </script>
-
 {% endblock content %}

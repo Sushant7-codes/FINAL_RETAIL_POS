@@ -3,421 +3,343 @@
 <html lang="en">
 
 <head>
-    <title>Django Tailwind</title>
+    <title>{% block title %}MyStore POS{% endblock %}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     {% tailwind_css %}
+    <!-- Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom animations */
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes shimmer {
-            0% {
-                background-position: -100% 0;
-            }
-            100% {
-                background-position: 200% 0;
-            }
-        }
-        
-        .animate-slide-down {
-            animation: slideDown 0.3s ease-out;
-        }
-        
-        /* Glassmorphism effect */
-        .glass-morphism {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        /* Enhanced active state with glow effect */
-        .nav-link.active {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(147, 51, 234, 0.3)) !important;
-            border: 1px solid rgba(96, 165, 250, 0.5);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(147, 51, 234, 0.2);
-            font-weight: 600 !important;
-            color: white !important;
-            position: relative;
-        }
-        
-        .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 10%;
-            right: 10%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.8), transparent);
-            border-radius: 2px;
-        }
-        
-        /* Custom gradient hover effect */
-        .nav-gradient {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .nav-gradient::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .nav-gradient:hover::before {
-            left: 100%;
-        }
-        
-        /* Prevent multiple active states */
-        .nav-link:not(.active) {
-            background: transparent !important;
-            font-weight: 400 !important;
-            color: rgb(209, 213, 219) !important;
-            box-shadow: none !important;
-        }
+        *, *::before, *::after { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
 
-        /* Optional: Add placeholder styling */
-        .default-profile {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
+        .nav-link.active {
+            background-color: rgba(255,255,255,0.13);
+            color: #fff !important;
+            font-weight: 600;
         }
+        .nav-link:not(.active) {
+            color: rgb(203,213,225);
+        }
+        .nav-link:not(.active):hover {
+            background-color: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        /* Smooth dark-mode background transitions */
+        body { transition: background-color 0.2s, color 0.2s; }
     </style>
     <script>
-        // Initialize theme before page renders to prevent flash
+        /* Apply saved theme immediately — no flash */
         (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            if (savedTheme === 'dark') {
-                document.documentElement.classList.add('dark');
-            }
+            var t = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', t);
         })();
     </script>
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+<body class="bg-base-100 text-base-content min-h-screen">
 
 {% block header %}
-<!-- Enhanced Top Navigation Bar -->
-<header class="w-full bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 text-white shadow-2xl fixed top-0 left-0 z-50 glass-morphism">
-    <div class="w-full px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-            <!-- Left Section: Logo and Navigation -->
-            <div class="flex items-center flex-1">
+<header class="w-full bg-slate-900 text-white fixed top-0 left-0 z-50 border-b border-slate-700/80">
+    <div class="w-full px-3 sm:px-5 lg:px-8">
+        <div class="flex justify-between items-center h-14">
+
+            <!-- Logo + Desktop Nav -->
+            <div class="flex items-center gap-4 flex-1 min-w-0">
+
                 <!-- Logo -->
-                <div class="flex-shrink-0 mr-8">
-                    <div class="font-bold text-xl sm:text-2xl bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent animate-pulse">
-                        MyStore POS
-                    </div>
-                </div>
-                
-                <!-- Desktop Navigation -->
-                <nav class="hidden [@media(min-width:1100px)]:flex items-center space-x-1">
-                    <a href="{% url "app:dashboard"%}" 
+                <a href="{% url 'app:dashboard' %}" class="flex-shrink-0 flex items-center gap-2 font-bold text-base text-white tracking-tight">
+                    <!-- Store icon -->
+                    <svg class="w-6 h-6 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 19a1 1 0 100 2 1 1 0 000-2zm8 0a1 1 0 100 2 1 1 0 000-2z"/>
+                    </svg>
+                    <span class="hidden sm:inline">MyStore POS</span>
+                </a>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden lg:flex items-center gap-0.5 overflow-x-auto">
+
+                    <a href="{% url 'app:dashboard' %}"
                        data-page="dashboard"
-                       class="nav-link nav-gradient px-4 py-2 rounded-lg transition-all duration-300 hover:bg-white/10 hover:scale-105">
-                        <span class="flex items-center space-x-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                            </svg>
-                            <span>Dashboard</span>
-                        </span>
+                       class="nav-link flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors duration-150 whitespace-nowrap">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        Dashboard
                     </a>
-                    <a href="{% url "shop:item_list"%}" 
+
+                    <a href="{% url 'shop:item_list' %}"
                        data-page="items"
-                       class="nav-link nav-gradient px-4 py-2 rounded-lg transition-all duration-300 hover:bg-white/10 hover:scale-105">
-                        <span class="flex items-center space-x-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
-                            </svg>
-                            <span>Products</span>
-                        </span>
+                       class="nav-link flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors duration-150 whitespace-nowrap">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+                        </svg>
+                        Products
                     </a>
 
-                    <a href="{% url "billing:billing"%}" 
+                    <a href="{% url 'billing:billing' %}"
                        data-page="billing"
-                       class="nav-link nav-gradient px-4 py-2 rounded-lg transition-all duration-300 hover:bg-white/10 hover:scale-105">
-                        <span class="flex items-center space-x-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                            <span>Billing</span>
-                        </span>
+                       class="nav-link flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors duration-150 whitespace-nowrap">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 7H6a2 2 0 00-2 2v9a2 2 0 002 2h9a2 2 0 002-2v-3M9 7V5a2 2 0 012-2h5l3 3v3M9 7h5m-5 4h4m-4 4h2"/>
+                        </svg>
+                        Billing
                     </a>
 
-                    <a href="{% url "shop:staffs"%}" 
+                    <a href="{% url 'shop:staffs' %}"
                        data-page="staffs"
-                       class="nav-link nav-gradient px-4 py-2 rounded-lg transition-all duration-300 hover:bg-white/10 hover:scale-105">
-                        <span class="flex items-center space-x-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                            <span>Staffs</span>
-                        </span>
+                       class="nav-link flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors duration-150 whitespace-nowrap">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        Staff
                     </a>
 
-                    <a href="{% url "reports:reports"%}" 
+                    <a href="{% url 'reports:reports' %}"
                        data-page="reports"
-                       class="nav-link nav-gradient px-4 py-2 rounded-lg transition-all duration-300 hover:bg-white/10 hover:scale-105">
-                        <span class="flex items-center space-x-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                            <span>Reports</span>
-                        </span>
+                       class="nav-link flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors duration-150 whitespace-nowrap">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 17v-6m3 6V7m3 10v-4M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                        Reports
                     </a>
 
-                    
+                    <a href="{% url 'reports:sales_analytics' %}"
+                       data-page="analytics"
+                       class="nav-link flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors duration-150 whitespace-nowrap">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+                        </svg>
+                        Analytics
+                    </a>
+
                 </nav>
             </div>
 
-            <!-- Right Section: Profile and Logout -->
-            <div class="flex items-center space-x-2 sm:space-x-3">
-                 
-                <!-- Profile Button -->
+            <!-- Right: Theme toggle, Profile, Logout, Hamburger -->
+            <div class="flex items-center gap-1 flex-shrink-0">
+
+                <!-- Dark mode toggle -->
+                <button id="themeToggleBtn"
+                        class="p-2 rounded hover:bg-white/10 transition-colors text-slate-300 hover:text-white"
+                        title="Toggle theme" aria-label="Toggle dark mode">
+                    <!-- Sun (shown in dark mode) -->
+                    <svg id="icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+                    </svg>
+                    <!-- Moon (shown in light mode) -->
+                    <svg id="icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>
+                    </svg>
+                </button>
+
+                <!-- Profile -->
                 <a href="{% url 'shop:shop_profile' %}"
                    data-page="profile"
-                   class="action-link px-3 sm:px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500/20 to-indigo-500/20 hover:from-blue-500/30 hover:to-indigo-500/30 text-blue-300 hover:text-blue-200 border border-blue-500/30 transition-all duration-300 flex items-center space-x-2 hover:scale-105 shadow-lg">
-                    <span class="hidden sm:inline">Profile</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="nav-link hidden sm:flex items-center gap-1.5 px-3 py-2 rounded text-sm transition-colors duration-150 whitespace-nowrap">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M5.121 17.804A7.5 7.5 0 0112 15a7.5 7.5 0 016.879 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                              d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
+                    <span class="hidden md:inline">Profile</span>
                 </a>
 
-                <!-- Logout Button -->
-                <a href="{% url 'accounts:logout_view' %}" 
-                   class="action-link px-3 sm:px-4 py-2 rounded-lg bg-gradient-to-r from-red-500/20 to-pink-500/20 hover:from-red-500/30 hover:to-pink-500/30 text-red-300 hover:text-red-200 border border-red-500/30 transition-all duration-300 flex items-center space-x-2 hover:scale-105 shadow-lg">
-                    <span class="hidden sm:inline">Logout</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                <!-- Logout -->
+                <a href="{% url 'accounts:logout_view' %}"
+                   class="flex items-center gap-1.5 px-3 py-2 rounded text-sm text-red-300 hover:bg-red-900/30 hover:text-red-200 transition-colors duration-150 whitespace-nowrap">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                     </svg>
+                    <span class="hidden md:inline">Logout</span>
                 </a>
 
-                <!-- Mobile Menu Button -->
-                <button id="mobileMenuBtn" class="[@media(min-width:1100px)]:hidden p-2 rounded-lg hover:bg-white/10 transition-all duration-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path class="menu-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        <path class="menu-close hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                <!-- Mobile hamburger -->
+                <button id="mobileMenuBtn"
+                        class="lg:hidden p-2 rounded hover:bg-white/10 transition-colors"
+                        aria-label="Open menu">
+                    <svg class="w-5 h-5 menu-open" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    <svg class="w-5 h-5 menu-close hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
         </div>
     </div>
-    
-    <!-- Mobile Navigation Menu -->
-    <div id="mobileMenu" class="hidden [@media(min-width:1100px)]:hidden glass-morphism border-t border-white/10 animate-slide-down">
-        <nav class="px-4 py-3 space-y-2">
-            <a href="{% url "app:dashboard"%}"  
-               data-page="dashboard"
-               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/20">
-                <span class="flex items-center space-x-3">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                    </svg>
-                    <span>Dashboard</span>
-                </span>
-            </a>
-            <a href="{% url "shop:item_list"%}"  
-               data-page="items"
-               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/20">
-                <span class="flex items-center space-x-3">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
-                    </svg>
-                    <span>Products</span>
-                </span>
-            </a>
 
-             <a href="{% url "billing:billing"%}" 
-               data-page="billing"
-               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/20">
-                <span class="flex items-center space-x-3">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                    <span>Billing</span>
-                </span>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden lg:hidden border-t border-slate-700/80 bg-slate-900">
+        <nav class="px-3 py-2 space-y-0.5">
+            <a href="{% url 'app:dashboard' %}" data-page="dashboard"
+               class="nav-link mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded text-sm transition-colors duration-150">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                Dashboard
             </a>
-
-            <a href="{% url "shop:staffs"%}" 
-               data-page="staffs"
-               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/20">
-                <span class="flex items-center space-x-3">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                    </svg>
-                    <span>Staffs</span>
-                </span>
+            <a href="{% url 'shop:item_list' %}" data-page="items"
+               class="nav-link mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded text-sm transition-colors duration-150">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+                </svg>
+                Products
             </a>
-
-            <a href="{% url "reports:reports"%}" 
-               data-page="reports"
-               class="nav-link mobile-nav-link block px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/20">
-                <span class="flex items-center space-x-3">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                    <span>Reports</span>
-                </span>
+            <a href="{% url 'billing:billing' %}" data-page="billing"
+               class="nav-link mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded text-sm transition-colors duration-150">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 7H6a2 2 0 00-2 2v9a2 2 0 002 2h9a2 2 0 002-2v-3M9 7V5a2 2 0 012-2h5l3 3v3M9 7h5m-5 4h4m-4 4h2"/>
+                </svg>
+                Billing
             </a>
-            
+            <a href="{% url 'shop:staffs' %}" data-page="staffs"
+               class="nav-link mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded text-sm transition-colors duration-150">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Staff
+            </a>
+            <a href="{% url 'reports:reports' %}" data-page="reports"
+               class="nav-link mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded text-sm transition-colors duration-150">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 17v-6m3 6V7m3 10v-4M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                </svg>
+                Reports
+            </a>
+            <a href="{% url 'reports:sales_analytics' %}" data-page="analytics"
+               class="nav-link mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded text-sm transition-colors duration-150">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+                </svg>
+                Analytics
+            </a>
+            <a href="{% url 'shop:shop_profile' %}" data-page="profile"
+               class="nav-link mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded text-sm transition-colors duration-150">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Profile
+            </a>
+            <a href="{% url 'accounts:logout_view' %}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded text-sm text-red-300 hover:bg-red-900/30 transition-colors duration-150">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+                Logout
+            </a>
         </nav>
     </div>
 </header>
-
-<!-- Global Scripts -->
-<script>
-        
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const menuOpen = document.querySelector('.menu-open');
-        const menuClose = document.querySelector('.menu-close');
-        
-        if (mobileMenuBtn && mobileMenu) {
-            mobileMenuBtn.addEventListener('click', function() {
-                mobileMenu.classList.toggle('hidden');
-                menuOpen.classList.toggle('hidden');
-                menuClose.classList.toggle('hidden');
-            });
-        }
-        
-        // Get all navigation links (excluding action buttons like Profile/Logout)
-        const navLinks = document.querySelectorAll('.nav-link');
-        
-        // Function to remove active state from all nav links
-        function clearAllActiveStates() {
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-            });
-        }
-        
-        // Navigation Click Handler
-        navLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                // Only handle navigation links, not action buttons
-                const isNavigationLink = this.hasAttribute('data-page') && 
-                                        !this.classList.contains('action-link');
-                
-                if (isNavigationLink) {
-                    // Clear all active states first
-                    clearAllActiveStates();
-                    
-                    // Add active state to clicked link
-                    this.classList.add('active');
-                    
-                    // Close mobile menu if open
-                    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                        mobileMenu.classList.add('hidden');
-                        menuOpen.classList.remove('hidden');
-                        menuClose.classList.add('hidden');
-                    }
-                }
-            });
-        });
-        
-        // Profile button click handler - clear all nav highlights
-        const profileButton = document.querySelector('[data-page="profile"].action-link');
-        if (profileButton) {
-            profileButton.addEventListener('click', function() {
-                clearAllActiveStates();
-            });
-        }
-        
-        // Set initial active page based on current URL
-        function setActivePageFromURL() {
-            const currentPath = window.location.pathname.toLowerCase();
-            let matchFound = false;
-            
-            // Clear all active states first
-            clearAllActiveStates();
-            
-            // Check each nav link for URL match
-            navLinks.forEach(link => {
-                const linkHref = link.getAttribute('href');
-                const linkPage = link.getAttribute('data-page');
-                
-                // Skip if it's an action link (profile, logout)
-                if (link.classList.contains('action-link')) {
-                    return;
-                }
-                
-                // If we're on profile page, don't highlight any nav items
-                if (currentPath.includes('profile')) {
-                    matchFound = true;
-                    return;
-                }
-                
-                // Check for exact or partial URL match
-                // Check for exact or partial URL match
-                if (linkHref && linkHref !== '#') {
-                    // Dashboard page
-                    if (linkPage === 'dashboard' && (currentPath.includes('dashboard') || currentPath === '/' || currentPath === '')) {
-                        link.classList.add('active');
-                        matchFound = true;
-                    }
-                    // Items page
-                    else if (linkPage === 'items' && (currentPath.includes('item') || currentPath.includes('items'))) {
-                        link.classList.add('active');
-                        matchFound = true;
-                    }
-                    // Staffs page
-                    else if (linkPage === 'staffs' && (currentPath.includes('staff') || currentPath.includes('staffs'))) {
-                        link.classList.add('active');
-                        matchFound = true;
-                    }
-                    // Reports page
-                    else if (linkPage === 'reports' && (currentPath.includes('report') || currentPath.includes('reports'))) {
-                        link.classList.add('active');
-                        matchFound = true;
-                    }
-                    // Billing page
-                    else if (linkPage === 'billing' && (currentPath.includes('billing') || currentPath.includes('billings'))) {
-                        link.classList.add('active');
-                        matchFound = true;
-                    }
-                }
-            
-            });
-            
-            // If no match found and we're on root/home, activate dashboard
-            if (!matchFound && (currentPath === '/' || currentPath === '' || currentPath.includes('dashboard'))) {
-                const dashboardLink = document.querySelector('[data-page="dashboard"]:not(.action-link)');
-                if (dashboardLink) {
-                    dashboardLink.classList.add('active');
-                }
-            }
-        }
-        
-        // Initialize active state on page load
-        setActivePageFromURL();
-        
-        // Update active state when navigating with browser back/forward
-        window.addEventListener('popstate', setActivePageFromURL);
-</script>
 {% endblock header %}
 
+<div class="{% block content_padding %}pt-14{% endblock %}">
+    {% block content %}{% endblock content %}
+</div>
 
-{% block content %}
-{% endblock content %}
+<script>
+    // ── Mobile menu toggle ──────────────────────────────────
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu    = document.getElementById('mobileMenu');
+    const menuOpen      = document.querySelector('.menu-open');
+    const menuClose     = document.querySelector('.menu-close');
+
+    if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+            menuOpen.classList.toggle('hidden');
+            menuClose.classList.toggle('hidden');
+        });
+    }
+
+    // ── Active nav state — URL-based ────────────────────────
+    (function() {
+        const path = window.location.pathname;
+
+        // Map each data-page value to the URL prefixes that should activate it.
+        // Dashboard lives at '/' (root) so we do an exact match for it.
+        const pageMap = {
+            'dashboard': { prefix: ['/dashboard'] },
+            'items':     { prefix: ['/shop/item', '/shop/price'] },
+            'billing':   { prefix: ['/billing/'] },
+            'staffs':    { prefix: ['/shop/staff'] },
+            'reports':   { prefix: ['/reports/'] },
+            'analytics': { prefix: ['/reports/analytics'] },
+            'profile':   { prefix: ['/shop/profile', '/shop/update'] },
+        };
+
+        document.querySelectorAll('.nav-link[data-page]').forEach(function(link) {
+            const page  = link.getAttribute('data-page');
+            const rules = pageMap[page];
+            if (!rules) return;
+
+            let isActive = false;
+
+            if (rules.exact) {
+                isActive = rules.exact.some(function(p) { return path === p; });
+            }
+            if (!isActive && rules.prefix) {
+                isActive = rules.prefix.some(function(p) { return path.startsWith(p); });
+            }
+
+            if (isActive) link.classList.add('active');
+        });
+    })();
+
+    // ── Dark / light theme toggle ───────────────────────────
+    (function() {
+        var btn      = document.getElementById('themeToggleBtn');
+        var iconSun  = document.getElementById('icon-sun');
+        var iconMoon = document.getElementById('icon-moon');
+        var html     = document.documentElement;
+
+        function applyTheme(theme) {
+            // DaisyUI v5 uses data-theme on <html>
+            html.setAttribute('data-theme', theme);
+            // Keep Tailwind .dark class in sync for any dark: utilities
+            if (theme === 'dark') {
+                html.classList.add('dark');
+                if (iconSun)  iconSun.classList.remove('hidden');
+                if (iconMoon) iconMoon.classList.add('hidden');
+            } else {
+                html.classList.remove('dark');
+                if (iconSun)  iconSun.classList.add('hidden');
+                if (iconMoon) iconMoon.classList.remove('hidden');
+            }
+        }
+
+        // Sync icon state on load (data-theme already set in <head>)
+        applyTheme(localStorage.getItem('theme') || 'light');
+
+        if (btn) {
+            btn.addEventListener('click', function() {
+                var current = localStorage.getItem('theme') || 'light';
+                var next    = current === 'dark' ? 'light' : 'dark';
+                localStorage.setItem('theme', next);
+                applyTheme(next);
+            });
+        }
+    })();
+</script>
 
 </body>
 </html>

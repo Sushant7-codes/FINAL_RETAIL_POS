@@ -1,204 +1,108 @@
 {% extends "base.html" %}
+{% block title %}Sales Reports{% endblock %}
+
 {% block content %}
+<main class="p-4 sm:p-6 max-w-7xl mx-auto">
 
-<h1 class="text-3xl font-bold mt-17 mb-4">
-    Sales Reports
-</h1>
-
-<!-- Search Card -->
-
-<div class="card bg-base-100 shadow-lg mb-6 ">   
-    <div class="card-body"> 
-        <form
-            id="search-form"
-            method="GET"
-        >   
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4"> 
-                <div>   
-                    <label class="label">
-                        <span class="label-text font-semibold">
-                            Search
-                        </span>
-                    </label>    
-                    <input
-                        id="search-input"
-                        type="text"
-                        name="search"
-                        value="{{ search }}"
-                        placeholder="Invoice, customer, phone..."
-                        class="input input-bordered w-full"
-                    >   
-                </div>  
-                <div>   
-                    <label class="label">
-                        <span class="label-text font-semibold">
-                            Search By
-                        </span>
-                    </label>    
-                    <select
-                        name="search_by"
-                        class="select select-bordered w-full"
-                    >   
-                        <option
-                            value="invoice"
-                            {% if search_by == "invoice" %}selected{% endif %}
-                        >
-                            Invoice
-                        </option>   
-                        <option
-                            value="phone"
-                            {% if search_by == "phone" %}selected{% endif %}
-                        >
-                            Phone
-                        </option>   
-                        <option
-                            value="customer"
-                            {% if search_by == "customer" %}selected{% endif %}
-                        >
-                            Customer
-                        </option>   
-                        <option
-                            value="cashier"
-                            {% if search_by == "cashier" %}selected{% endif %}
-                        >
-                            Cashier
-                        </option>   
-                    </select>   
-                </div>  
-            </div>  
-        </form> 
+    <div class="mb-5">
+        <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Sales Reports</h1>
     </div>
 
-</div>
-
-<!-- Filters -->
-
-<div class="flex flex-wrap gap-3 mb-8"> 
-    <a
-        href="?filter=all&search={{ search }}&search_by={{ search_by }}"
-        class="btn {% if filter == 'all' %}btn-primary{% else %}btn-outline{% endif %}"
-    >
-        All Time
-    </a>    
-    <a
-        href="?filter=today&search={{ search }}&search_by={{ search_by }}"
-        class="btn {% if filter == 'today' %}btn-primary{% else %}btn-outline{% endif %}"
-    >
-        Today
-    </a>    
-    <a
-        href="?filter=week&search={{ search }}&search_by={{ search_by }}"
-        class="btn {% if filter == 'week' %}btn-primary{% else %}btn-outline{% endif %}"
-    >
-        This Week
-    </a>    
-    <a
-        href="?filter=month&search={{ search }}&search_by={{ search_by }}"
-        class="btn {% if filter == 'month' %}btn-primary{% else %}btn-outline{% endif %}"
-    >
-        This Month
-    </a>
-
-</div>
-
-<div class="bg-base-100 rounded-xl shadow-lg overflow-hidden">  
-    <div class="overflow-x-auto">   
-        <table class="table table-zebra w-full min-w-max">  
-            <thead> 
-                <tr>    
-                    <th>Invoice</th>
-                    <th>Customer</th>
-                    <th>Phone</th>
-                    <th>Cashier</th>
-                    <th>Payment</th>
-                    <th>Total</th>
-                    <th>Date</th>
-                    <th class="text-center">Actions</th>    
-                </tr>   
-            </thead>    
-            <tbody> 
-            {% for sale in sales %} 
-                <tr>    
-                    <td class="font-semibold">  
-                        {{ sale.invoice_number }}   
-                    </td>   
-                    <td>    
-                        {{ sale.customer_name }}    
-                    </td>   
-                    <td>    
-                        {{ sale.customer_phone }}   
-                    </td>   
-                    <td>    
-                        {{ sale.created_by.username }}  
-                    </td>   
-                    <td>    
-                        {{ sale.get_payment_method_display }}   
-                    </td>   
-                    <td class="font-semibold">  
-                        Rs. {{ sale.grand_total }}  
-                    </td>   
-                    <td>    
-                        {{ sale.created_at|date:"d M Y, h:i A" }}   
-                    </td>   
-                    <td>    
-                        <div class="flex justify-center gap-2"> 
-                            <a
-                                href="{% url 'invoice' sale.invoice_number %}"
-                                target="_blank"
-                                class="btn btn-sm btn-primary"
-                            >
-                                View
-                            </a>
-                            <a
-                                href="{% url 'invoice' sale.invoice_number %}?print=1"
-                                target="_blank"
-                                class="btn btn-sm btn-secondary"
-                            >
-                                Print
-                            </a>    
-                        </div>  
-                    </td>   
-                </tr>   
-            {% empty %} 
-                <tr>    
-                    <td colspan="8" class="text-center py-8 text-base-content/60">  
-                        No sales found. 
-                    </td>   
-                </tr>   
-            {% endfor %}    
-            </tbody>    
-        </table>    
+    <!-- Filters row -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
+        <form id="search-form" method="GET" class="flex flex-wrap gap-3 items-end">
+            <div class="flex-1 min-w-[200px]">
+                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Search</label>
+                <input
+                    id="search-input"
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Invoice, customer, phone..."
+                    class="input input-bordered input-sm w-full"
+                >
+            </div>
+            <div class="w-40">
+                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Search by</label>
+                <select name="search_by" class="select select-bordered select-sm w-full">
+                    <option value="invoice" {% if search_by == "invoice" %}selected{% endif %}>Invoice</option>
+                    <option value="phone" {% if search_by == "phone" %}selected{% endif %}>Phone</option>
+                    <option value="customer" {% if search_by == "customer" %}selected{% endif %}>Customer</option>
+                    <option value="cashier" {% if search_by == "cashier" %}selected{% endif %}>Cashier</option>
+                </select>
+            </div>
+            <div class="flex gap-2 items-end">
+                <span class="text-xs text-gray-400 self-center hidden sm:block">Period:</span>
+                <div class="flex gap-1 flex-wrap">
+                    <a href="?filter=all&search={{ search }}&search_by={{ search_by }}"
+                       class="btn btn-xs {% if filter == 'all' %}btn-primary{% else %}btn-outline{% endif %}">All</a>
+                    <a href="?filter=today&search={{ search }}&search_by={{ search_by }}"
+                       class="btn btn-xs {% if filter == 'today' %}btn-primary{% else %}btn-outline{% endif %}">Today</a>
+                    <a href="?filter=week&search={{ search }}&search_by={{ search_by }}"
+                       class="btn btn-xs {% if filter == 'week' %}btn-primary{% else %}btn-outline{% endif %}">This Week</a>
+                    <a href="?filter=month&search={{ search }}&search_by={{ search_by }}"
+                       class="btn btn-xs {% if filter == 'month' %}btn-primary{% else %}btn-outline{% endif %}">This Month</a>
+                </div>
+            </div>
+        </form>
     </div>
-</div>
+
+    <!-- Table -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                    <tr>
+                        <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Invoice</th>
+                        <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Customer</th>
+                        <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide hidden sm:table-cell">Phone</th>
+                        <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide hidden md:table-cell">Cashier</th>
+                        <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide hidden md:table-cell">Payment</th>
+                        <th class="text-right px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total</th>
+                        <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide hidden lg:table-cell">Date</th>
+                        <th class="text-center px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                    {% for sale in sales %}
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                        <td class="px-4 py-2.5 font-medium text-gray-800 dark:text-gray-200">{{ sale.invoice_number }}</td>
+                        <td class="px-4 py-2.5 text-gray-700 dark:text-gray-300">{{ sale.customer_name }}</td>
+                        <td class="px-4 py-2.5 text-gray-500 dark:text-gray-400 hidden sm:table-cell">{{ sale.customer_phone }}</td>
+                        <td class="px-4 py-2.5 text-gray-500 dark:text-gray-400 hidden md:table-cell">{{ sale.created_by.username }}</td>
+                        <td class="px-4 py-2.5 text-gray-500 dark:text-gray-400 hidden md:table-cell">{{ sale.get_payment_method_display }}</td>
+                        <td class="px-4 py-2.5 text-right font-semibold text-gray-800 dark:text-gray-200">Rs. {{ sale.grand_total }}</td>
+                        <td class="px-4 py-2.5 text-gray-400 text-xs hidden lg:table-cell">{{ sale.created_at|date:"d M Y, h:i A" }}</td>
+                        <td class="px-4 py-2.5">
+                            <div class="flex justify-center gap-1">
+                                <a href="{% url 'invoice' sale.invoice_number %}" target="_blank"
+                                   class="btn btn-xs btn-outline">View</a>
+                                <a href="{% url 'invoice' sale.invoice_number %}?print=1" target="_blank"
+                                   class="btn btn-xs btn-outline">Print</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="px-4 py-10 text-center text-gray-400 text-sm">No sales found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
 
 <script>
-
-const searchInput =
-    document.getElementById("search-input");
-
+const searchInput = document.getElementById('search-input');
 let timeout = null;
-
-searchInput.addEventListener("input", () => {
+searchInput.addEventListener('input', () => {
     clearTimeout(timeout);
-    timeout = setTimeout(() => {
-        document
-            .getElementById("search-form")
-            .submit();
-    }, 5000);
-
+    timeout = setTimeout(() => { document.getElementById('search-form').submit(); }, 600);
 });
-
-const searchBy =
-    document.querySelector(
-        'select[name="search_by"]'
-    );
-
-searchBy.addEventListener("change", () => {
-
-    document
-        .getElementById("search-form")
-        .submit();
-
+document.querySelector('select[name="search_by"]').addEventListener('change', () => {
+    document.getElementById('search-form').submit();
 });
 </script>
 {% endblock %}

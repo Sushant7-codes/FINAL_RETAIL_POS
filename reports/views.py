@@ -5,8 +5,11 @@ from datetime import timedelta
 from django.db.models import Sum, Avg
 from accounts.models import CustomUser
 from django.contrib.auth.decorators import login_required
+from common.decorators import shop_required
+
 
 @login_required
+@shop_required
 def reports(request):
     if request.user.role == CustomUser.Roles.SHOP_ADMIN:
         shop = request.user.shop
@@ -93,6 +96,7 @@ def reports(request):
     )
     
 @login_required
+@shop_required
 def sales_analytics(request):   
     if request.user.role == CustomUser.Roles.SHOP_ADMIN:
         shop = request.user.shop

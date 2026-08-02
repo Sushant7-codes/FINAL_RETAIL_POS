@@ -1,365 +1,152 @@
 {% extends "base.html" %}
-
 {% load humanize %}
+{% block title %}Sales Analytics{% endblock %}
 
 {% block content %}
+<main class="p-4 sm:p-6 max-w-7xl mx-auto">
 
-<h1 class="text-3xl font-bold mb-4 mt-17">
-    📈 Sales Analytics
-</h1>
+    <div class="mb-5">
+        <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Sales Analytics</h1>
+    </div>
 
-<!-- Date Filter -->
-
-<div class="card bg-base-100 shadow-xl mb-6">
-
-    <div class="card-body">
-
-        <form method="GET" class="flex flex-wrap gap-4 items-end">
-
+    <!-- Date filter -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-5">
+        <form method="GET" class="flex flex-wrap gap-3 items-end">
             <div>
-
-                <label class="label">
-                    <span class="label-text">From</span>
-                </label>
-
-                <input
-                    type="date"
-                    name="start"
-                    value="{{ start }}"
-                    class="input input-bordered"
-                >
-
+                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">From</label>
+                <input type="date" name="start" value="{{ start }}" class="input input-bordered input-sm">
             </div>
-
             <div>
-
-                <label class="label">
-                    <span class="label-text">To</span>
-                </label>
-
-                <input
-                    type="date"
-                    name="end"
-                    value="{{ end }}"
-                    class="input input-bordered"
-                >
-
+                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">To</label>
+                <input type="date" name="end" value="{{ end }}" class="input input-bordered input-sm">
             </div>
-
-            <button class="btn btn-primary">
-
-                Apply
-
-            </button>
-
+            <button type="submit" class="btn btn-primary btn-sm">Apply</button>
         </form>
+    </div>
+
+    <!-- Summary stats -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Revenue</p>
+            <p class="text-xl font-bold text-green-600 dark:text-green-400 mt-1">Rs. {{ revenue|intcomma }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Sales</p>
+            <p class="text-xl font-bold text-gray-900 dark:text-gray-100 mt-1">{{ total_sales }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Average Sale</p>
+            <p class="text-xl font-bold text-gray-900 dark:text-gray-100 mt-1">Rs. {{ average_sale|floatformat:0|intcomma }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Discount</p>
+            <p class="text-xl font-bold text-amber-600 dark:text-amber-400 mt-1">Rs. {{ total_discount|intcomma }}</p>
+        </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-6 mb-6">
+
+        <!-- Biggest Sale -->
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Biggest Sale</h2>
+            </div>
+            <div class="px-4 py-4">
+                {% if biggest_sale %}
+                <dl class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <dt class="text-gray-500 dark:text-gray-400">Customer</dt>
+                        <dd class="font-medium text-gray-800 dark:text-gray-200">{{ biggest_sale.customer_name }}</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-gray-500 dark:text-gray-400">Invoice</dt>
+                        <dd class="font-medium text-gray-800 dark:text-gray-200">{{ biggest_sale.invoice_number }}</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-gray-500 dark:text-gray-400">Amount</dt>
+                        <dd class="font-semibold text-green-600 dark:text-green-400">Rs. {{ biggest_sale.grand_total|intcomma }}</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-gray-500 dark:text-gray-400">Date</dt>
+                        <dd class="text-gray-600 dark:text-gray-300">{{ biggest_sale.created_at|date:"d M Y, h:i A" }}</dd>
+                    </div>
+                </dl>
+                {% else %}
+                <p class="text-sm text-gray-400 py-2">No sales in this period.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Payment Split -->
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Payment Split</h2>
+            </div>
+            <div class="px-4 py-4 space-y-3 text-sm">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600 dark:text-gray-300">Cash</span>
+                    <span class="font-semibold text-gray-800 dark:text-gray-200">Rs. {{ payment_split.cash|intcomma }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600 dark:text-gray-300">Khalti</span>
+                    <span class="font-semibold text-gray-800 dark:text-gray-200">Rs. {{ payment_split.khalti|intcomma }}</span>
+                </div>
+            </div>
+        </div>
 
     </div>
 
-</div>
-
-<!-- Summary -->
-
-<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-
-    <div class="stat bg-base-100 shadow rounded-xl">
-
-        <div class="stat-title">
-            Revenue
+    <!-- Top Selling Products -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg mb-6">
+        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Top Selling Products</h2>
         </div>
-
-        <div class="stat-value text-success">
-
-            Rs. {{ revenue|intcomma }}
-
+        <div class="divide-y divide-gray-100 dark:divide-gray-700">
+            {% for product in top_products %}
+            <div class="flex justify-between items-center px-4 py-2.5 text-sm">
+                <span class="text-gray-700 dark:text-gray-300">{{ product.price__name }}</span>
+                <span class="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded">
+                    {{ product.total_sold }} sold
+                </span>
+            </div>
+            {% empty %}
+            <div class="px-4 py-6 text-center text-sm text-gray-400">No products in this period.</div>
+            {% endfor %}
         </div>
-
     </div>
 
-    <div class="stat bg-base-100 shadow rounded-xl">
-
-        <div class="stat-title">
-
-            Sales
-
+    <!-- Recent Transactions -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Recent Transactions</h2>
         </div>
-
-        <div class="stat-value">
-
-            {{ total_sales }}
-
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                    <tr>
+                        <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Invoice</th>
+                        <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Customer</th>
+                        <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide hidden sm:table-cell">Cashier</th>
+                        <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide hidden md:table-cell">Payment</th>
+                        <th class="text-right px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                    {% for sale in recent_transactions %}
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                        <td class="px-4 py-2.5 font-medium text-gray-800 dark:text-gray-200">{{ sale.invoice_number }}</td>
+                        <td class="px-4 py-2.5 text-gray-700 dark:text-gray-300">{{ sale.customer_name }}</td>
+                        <td class="px-4 py-2.5 text-gray-500 dark:text-gray-400 hidden sm:table-cell">{{ sale.created_by.username }}</td>
+                        <td class="px-4 py-2.5 text-gray-500 dark:text-gray-400 hidden md:table-cell">{{ sale.get_payment_method_display }}</td>
+                        <td class="px-4 py-2.5 text-right font-semibold text-gray-800 dark:text-gray-200">Rs. {{ sale.grand_total|intcomma }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="px-4 py-6 text-center text-gray-400">No transactions.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-
     </div>
 
-    <div class="stat bg-base-100 shadow rounded-xl">
-
-        <div class="stat-title">
-
-            Average Sale
-
-        </div>
-
-        <div class="stat-value">
-
-            Rs. {{ average_sale|floatformat:0|intcomma }}
-
-        </div>
-
-    </div>
-
-    <div class="stat bg-base-100 shadow rounded-xl">
-
-        <div class="stat-title">
-
-            Discount Given
-
-        </div>
-
-        <div class="stat-value text-warning">
-
-            Rs. {{ total_discount|intcomma }}
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- Biggest Sale + Payment -->
-
-<div class="grid lg:grid-cols-2 gap-6 mb-8">
-
-<div class="card bg-base-100 shadow-xl">
-
-<div class="card-body">
-
-<h2 class="card-title">
-
-🏆 Biggest Sale
-
-</h2>
-
-{% if biggest_sale %}
-
-<p>
-
-<strong>Customer:</strong>
-
-{{ biggest_sale.customer_name }}
-
-</p>
-
-<p>
-
-<strong>Invoice:</strong>
-
-{{ biggest_sale.invoice_number }}
-
-</p>
-
-<p>
-
-<strong>Amount:</strong>
-
-Rs. {{ biggest_sale.grand_total|intcomma }}
-
-</p>
-
-<p>
-
-<strong>Date:</strong>
-
-{{ biggest_sale.created_at }}
-
-</p>
-
-{% else %}
-
-No sales found.
-
-{% endif %}
-
-</div>
-
-</div>
-
-<div class="card bg-base-100 shadow-xl">
-
-<div class="card-body">
-
-<h2 class="card-title">
-
-💳 Payment Split
-
-</h2>
-
-<div class="flex justify-between">
-
-<span>Cash</span>
-
-<strong>
-
-Rs. {{ payment_split.cash|intcomma }}
-
-</strong>
-
-</div>
-
-<div class="flex justify-between">
-
-<span>Khalti</span>
-
-<strong>
-
-Rs. {{ payment_split.khalti|intcomma }}
-
-</strong>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Top Products -->
-
-<div class="card bg-base-100 shadow-xl mb-8">
-
-<div class="card-body">
-
-<h2 class="card-title">
-
-📦 Top Selling Products
-
-</h2>
-
-{% for product in top_products %}
-
-<div class="flex justify-between py-2 border-b last:border-0">
-
-<span>
-
-{{ product.price__name }}
-
-</span>
-
-<span class="badge badge-primary">
-
-{{ product.total_sold }}
-
-Sold
-
-</span>
-
-</div>
-
-{% empty %}
-
-No products.
-
-{% endfor %}
-
-</div>
-
-</div>
-
-<!-- Recent Transactions -->
-
-<div class="card bg-base-100 shadow-xl">
-
-<div class="card-body">
-
-<h2 class="card-title">
-
-🧾 Recent Transactions
-
-</h2>
-
-<div class="overflow-x-auto">
-
-<table class="table">
-
-<thead>
-
-<tr>
-
-<th>Invoice</th>
-
-<th>Customer</th>
-
-<th>Cashier</th>
-
-<th>Payment</th>
-
-<th>Total</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-{% for sale in recent_transactions %}
-
-<tr>
-
-<td>
-
-{{ sale.invoice_number }}
-
-</td>
-
-<td>
-
-{{ sale.customer_name }}
-
-</td>
-
-<td>
-
-{{ sale.created_by.username }}
-
-</td>
-
-<td>
-
-{{ sale.get_payment_method_display }}
-
-</td>
-
-<td>
-
-Rs. {{ sale.grand_total|intcomma }}
-
-</td>
-
-</tr>
-
-{% empty %}
-
-<tr>
-
-<td colspan="5">
-
-No transactions.
-
-</td>
-
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</div>
-
+</main>
 {% endblock %}

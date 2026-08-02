@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from shop.models import Price
 from django.contrib.auth.decorators import login_required
+from common.decorators import shop_required
 
 
-# Create your views here.
 @login_required
+@shop_required
 def billing(request):
     if request.user.role == request.user.Roles.SHOP_ADMIN:
         shop = request.user.shop

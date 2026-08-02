@@ -1,0 +1,708 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyStore POS — Retail Management Software</title>
+    {% tailwind_css %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+        html { scroll-behavior: smooth; }
+        .hero-grid {
+            background-image:
+                linear-gradient(rgba(148,163,184,.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(148,163,184,.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* ── Hero section dark/light adaptation ── */
+        .lp-hero {
+            background-color: #020617;  /* slate-950 — light mode default for hero (dark feel) */
+        }
+        [data-theme=dark] .lp-hero {
+            background-color: #0f172a;  /* slate-900 — slightly lighter so body bg-base-100 (gray-900) contrasts */
+        }
+        /* Grid dot pattern — brighter in dark mode */
+        [data-theme=dark] .hero-grid {
+            background-image:
+                linear-gradient(rgba(148,163,184,.13) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(148,163,184,.13) 1px, transparent 1px);
+        }
+        /* Mock POS card in hero adapts too */
+        [data-theme=dark] .lp-hero-card {
+            background-color: #1e293b;
+            border-color: #334155;
+        }
+        [data-theme=dark] .lp-hero-card-row {
+            border-color: #334155;
+        }
+        [data-theme=dark] .lp-hero-card-text    { color: #e2e8f0; }
+        [data-theme=dark] .lp-hero-card-sub     { color: #64748b; }
+        [data-theme=dark] .lp-hero-card-footer  { background-color: #0f172a; border-color: #334155; }
+           The hero / stats / CTA / footer are already dark (slate-900/950)
+           so they need no changes.
+           Only the white/gray sections need these overrides.
+        ──────────────────────────────────────────────────────────── */
+        [data-theme=dark] .lp-section-white   { background-color: #111827; }   /* gray-900 */
+        [data-theme=dark] .lp-section-gray    { background-color: #1f2937; }   /* gray-800 */
+
+        [data-theme=dark] .lp-heading   { color: #f9fafb; }                    /* gray-50  */
+        [data-theme=dark] .lp-subtext   { color: #9ca3af; }                    /* gray-400 */
+        [data-theme=dark] .lp-bodytext  { color: #d1d5db; }                    /* gray-300 */
+
+        [data-theme=dark] .lp-card      { background-color: #1f2937; border-color: #374151; } /* gray-800 / gray-700 */
+        [data-theme=dark] .lp-card-icon-blue   { background-color: #1e3a5f; color: #60a5fa; }
+        [data-theme=dark] .lp-card-icon-green  { background-color: #14532d; color: #4ade80; }
+        [data-theme=dark] .lp-card-icon-violet { background-color: #2e1065; color: #c084fc; }
+        [data-theme=dark] .lp-card-icon-amber  { background-color: #451a03; color: #fbbf24; }
+        [data-theme=dark] .lp-card-icon-rose   { background-color: #4c0519; color: #fb7185; }
+        [data-theme=dark] .lp-card-icon-cyan   { background-color: #083344; color: #22d3ee; }
+
+        [data-theme=dark] .lp-mock-wrap        { background-color: #1f2937; border-color: #374151; }
+        [data-theme=dark] .lp-mock-divider     { border-color: #374151; }
+        [data-theme=dark] .lp-mock-cell-bg     { background-color: #1f2937; }
+        [data-theme=dark] .lp-mock-text-main   { color: #f3f4f6; }
+        [data-theme=dark] .lp-mock-text-sub    { color: #6b7280; }
+        [data-theme=dark] .lp-mock-footer      { background-color: #111827; border-color: #374151; color: #9ca3af; }
+        [data-theme=dark] .lp-track-bg         { background-color: #374151; }
+    </style>
+    <script>
+        (function(){
+            var t = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+</head>
+<body class="bg-base-100 text-base-content">
+
+<!-- ═══════════════════════════════════════════
+     NAVBAR
+═══════════════════════════════════════════ -->
+<header class="fixed top-0 left-0 w-full z-50 bg-slate-900 border-b border-slate-700/80">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <!-- Logo -->
+        <a href="{% url 'app:landing' %}" class="flex items-center gap-2 font-bold text-base text-white">
+            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 19a1 1 0 100 2 1 1 0 000-2zm8 0a1 1 0 100 2 1 1 0 000-2z"/>
+            </svg>
+            MyStore POS
+        </a>
+        <!-- Nav links -->
+        <nav class="hidden sm:flex items-center gap-1 text-sm text-slate-300">
+            <a href="#features" class="px-3 py-1.5 rounded hover:bg-white/10 hover:text-white transition-colors">Features</a>
+            <a href="#how-it-works" class="px-3 py-1.5 rounded hover:bg-white/10 hover:text-white transition-colors">How it works</a>
+            <a href="#demo" class="px-3 py-1.5 rounded hover:bg-white/10 hover:text-white transition-colors">Demo</a>
+        </nav>
+        <!-- CTA buttons -->
+        <div class="flex items-center gap-2">
+            <!-- Theme toggle -->
+            <button id="themeToggleBtn"
+                    class="p-2 rounded text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
+                    title="Toggle dark mode" aria-label="Toggle dark mode">
+                <svg id="icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+                </svg>
+                <svg id="icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>
+                </svg>
+            </button>
+            <a href="{% url 'accounts:retail_admin_login' %}"
+               class="px-3 py-1.5 rounded text-sm text-slate-300 hover:bg-white/10 hover:text-white transition-colors hidden sm:inline-flex">
+                Sign in
+            </a>
+            <a href="{% url 'accounts:retail_admin_register' %}"
+               class="btn btn-primary btn-sm">
+                Get started
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- ═══════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════ -->
+<section class="lp-hero hero-grid pt-14 min-h-screen flex items-center">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24 w-full">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+            <!-- ── Left: copy ── -->
+            <div>
+                <!-- Badge -->
+                <div class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/25 text-blue-400 text-xs font-medium px-3 py-1 rounded-full mb-6">
+                    <span class="w-1.5 h-1.5 bg-blue-400 rounded-full"></span>
+                    Retail POS &amp; Shop Management
+                </div>
+
+                <!-- Headline -->
+                <h1 class="text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-extrabold text-white leading-tight tracking-tight mb-5">
+                    Run your shop.<br>
+                    <span class="text-blue-400">Track every sale.</span>
+                </h1>
+
+                <!-- Sub-headline -->
+                <p class="text-lg text-slate-400 max-w-lg mb-8 leading-relaxed">
+                    MyStore POS gives you a fast billing counter, full inventory control,
+                    staff management, and daily sales reports — all in one place.
+                    No complexity, no fluff.
+                </p>
+
+                <!-- CTAs -->
+                <div class="flex flex-wrap gap-3 mb-8">
+                    <a href="{% url 'accounts:retail_admin_register' %}" class="btn btn-primary btn-lg">
+                        Register your shop
+                    </a>
+                    <a href="{% url 'accounts:retail_admin_login' %}"
+                       class="btn btn-outline btn-lg text-slate-300 border-slate-600 hover:bg-slate-800 hover:border-slate-500">
+                        Sign in
+                    </a>
+                </div>
+
+                <p class="text-sm text-slate-500">Free to get started &mdash; no credit card required.</p>
+            </div>
+
+            <!-- ── Right: POS interface illustration ── -->
+            <div class="hidden lg:block">
+                <!-- Outer browser-chrome wrapper -->
+                <div class="rounded-xl overflow-hidden border border-slate-700/60 shadow-2xl shadow-black/40">
+
+                    <!-- Browser-like top bar -->
+                    <div class="bg-slate-800 px-4 py-2.5 flex items-center gap-2 border-b border-slate-700/60">
+                        <span class="w-3 h-3 rounded-full bg-red-500/70"></span>
+                        <span class="w-3 h-3 rounded-full bg-amber-400/70"></span>
+                        <span class="w-3 h-3 rounded-full bg-green-500/70"></span>
+                        <div class="flex-1 mx-4 bg-slate-700/50 rounded text-xs text-slate-400 px-3 py-1 text-center font-mono">
+                            mystore.app/billing
+                        </div>
+                    </div>
+
+                    <!-- POS layout: left products + right cart -->
+                    <div class="lp-hero-card bg-slate-900 flex text-xs" style="height:380px;">
+
+                        <!-- Product list (left 60%) -->
+                        <div class="w-[60%] border-r border-slate-700/60 flex flex-col overflow-hidden">
+
+                            <!-- Search bar -->
+                            <div class="p-2 border-b border-slate-700/60">
+                                <div class="bg-slate-800 rounded px-3 py-1.5 text-slate-400 flex items-center gap-2">
+                                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/>
+                                    </svg>
+                                    Search product...
+                                </div>
+                            </div>
+
+                            <!-- Products -->
+                            <div class="flex-1 overflow-hidden divide-y divide-slate-700/40">
+                                {% for name, price, stock, s_color in hero_products %}
+                                <div class="lp-hero-card-row flex items-center justify-between px-3 py-2.5 hover:bg-slate-800/60 transition-colors">
+                                    <div>
+                                        <p class="lp-hero-card-text font-medium text-slate-200">{{ name }}</p>
+                                        <p class="lp-hero-card-sub text-slate-500 mt-0.5 {{ s_color }}">{{ stock }}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="lp-hero-card-text font-bold text-slate-100">Rs. {{ price }}</p>
+                                        <button class="text-blue-400 hover:text-blue-300 mt-0.5">+ Add</button>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <!-- Static fallback when no context passed -->
+                                <div class="lp-hero-card-row flex items-center justify-between px-3 py-2.5">
+                                    <div><p class="lp-hero-card-text font-medium text-slate-200">Coca-Cola 500ml</p><p class="text-green-400 mt-0.5">In stock · 48</p></div>
+                                    <div class="text-right"><p class="lp-hero-card-text font-bold text-slate-100">Rs. 80</p><button class="text-blue-400">+ Add</button></div>
+                                </div>
+                                <div class="lp-hero-card-row flex items-center justify-between px-3 py-2.5">
+                                    <div><p class="lp-hero-card-text font-medium text-slate-200">Wai Wai Noodles</p><p class="text-green-400 mt-0.5">In stock · 120</p></div>
+                                    <div class="text-right"><p class="lp-hero-card-text font-bold text-slate-100">Rs. 30</p><button class="text-blue-400">+ Add</button></div>
+                                </div>
+                                <div class="lp-hero-card-row flex items-center justify-between px-3 py-2.5">
+                                    <div><p class="lp-hero-card-text font-medium text-slate-200">Kurkure Masala</p><p class="text-amber-400 mt-0.5">Low stock · 3</p></div>
+                                    <div class="text-right"><p class="lp-hero-card-text font-bold text-slate-100">Rs. 20</p><button class="text-blue-400">+ Add</button></div>
+                                </div>
+                                <div class="lp-hero-card-row flex items-center justify-between px-3 py-2.5">
+                                    <div><p class="lp-hero-card-text font-medium text-slate-200">Lays Classic 26g</p><p class="text-green-400 mt-0.5">In stock · 55</p></div>
+                                    <div class="text-right"><p class="lp-hero-card-text font-bold text-slate-100">Rs. 50</p><button class="text-blue-400">+ Add</button></div>
+                                </div>
+                                <div class="lp-hero-card-row flex items-center justify-between px-3 py-2.5">
+                                    <div><p class="lp-hero-card-text font-medium text-slate-200">Sprite 330ml</p><p class="text-green-400 mt-0.5">In stock · 30</p></div>
+                                    <div class="text-right"><p class="lp-hero-card-text font-bold text-slate-100">Rs. 60</p><button class="text-blue-400">+ Add</button></div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Cart / bill (right 40%) -->
+                        <div class="w-[40%] flex flex-col overflow-hidden">
+
+                            <!-- Cart header -->
+                            <div class="px-3 py-2 border-b border-slate-700/60">
+                                <p class="lp-hero-card-text font-semibold text-slate-200">Current Bill</p>
+                                <p class="lp-hero-card-sub text-slate-500">2 items</p>
+                            </div>
+
+                            <!-- Cart items -->
+                            <div class="flex-1 overflow-hidden divide-y divide-slate-700/40 px-3">
+                                <div class="lp-hero-card-row py-2.5 flex justify-between items-center">
+                                    <div>
+                                        <p class="lp-hero-card-text text-slate-200">Coca-Cola 500ml</p>
+                                        <p class="lp-hero-card-sub text-slate-500">1 × Rs. 80</p>
+                                    </div>
+                                    <p class="lp-hero-card-text font-semibold text-slate-100">Rs. 80</p>
+                                </div>
+                                <div class="lp-hero-card-row py-2.5 flex justify-between items-center">
+                                    <div>
+                                        <p class="lp-hero-card-text text-slate-200">Wai Wai Noodles</p>
+                                        <p class="lp-hero-card-sub text-slate-500">2 × Rs. 30</p>
+                                    </div>
+                                    <p class="lp-hero-card-text font-semibold text-slate-100">Rs. 60</p>
+                                </div>
+                            </div>
+
+                            <!-- Customer -->
+                            <div class="px-3 py-2 border-t border-slate-700/60 space-y-1.5">
+                                <div class="bg-slate-800 rounded px-2 py-1.5 text-slate-400">Ramesh Shrestha</div>
+                                <div class="bg-slate-800 rounded px-2 py-1.5 text-slate-400">98XXXXXXXX</div>
+                            </div>
+
+                            <!-- Total + button -->
+                            <div class="lp-hero-card-footer px-3 py-2.5 border-t border-slate-700/60 bg-slate-950">
+                                <div class="flex justify-between mb-2">
+                                    <span class="lp-hero-card-sub text-slate-400">Total</span>
+                                    <span class="lp-hero-card-text font-bold text-white">Rs. 140</span>
+                                </div>
+                                <div class="bg-green-600 text-white text-center rounded py-1.5 font-semibold cursor-pointer hover:bg-green-500 transition-colors">
+                                    Complete Sale
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating stat badges below the card -->
+                <div class="flex gap-3 mt-4 justify-center">
+                    <div class="bg-slate-800/80 border border-slate-700/50 rounded-lg px-4 py-2 text-center">
+                        <p class="text-sm font-bold text-white">Rs. 24,800</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Today's revenue</p>
+                    </div>
+                    <div class="bg-slate-800/80 border border-slate-700/50 rounded-lg px-4 py-2 text-center">
+                        <p class="text-sm font-bold text-white">134</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Sales today</p>
+                    </div>
+                    <div class="bg-slate-800/80 border border-slate-700/50 rounded-lg px-4 py-2 text-center">
+                        <p class="text-sm font-bold text-amber-400">7</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Low stock</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     STATS STRIP
+═══════════════════════════════════════════ -->
+<section class="bg-slate-900 border-y border-slate-700/60">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10 grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+        <div>
+            <p class="text-3xl font-bold text-white">Fast</p>
+            <p class="text-sm text-slate-400 mt-1">Billing counter</p>
+        </div>
+        <div>
+            <p class="text-3xl font-bold text-white">Real-time</p>
+            <p class="text-sm text-slate-400 mt-1">Stock tracking</p>
+        </div>
+        <div>
+            <p class="text-3xl font-bold text-white">Multi-staff</p>
+            <p class="text-sm text-slate-400 mt-1">Role-based access</p>
+        </div>
+        <div>
+            <p class="text-3xl font-bold text-white">Daily</p>
+            <p class="text-sm text-slate-400 mt-1">Revenue reports</p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FEATURES
+═══════════════════════════════════════════ -->
+<section id="features" class="lp-section-white bg-white py-20 sm:py-24">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+        <div class="mb-12">
+            <h2 class="lp-heading text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">Everything your shop needs</h2>
+            <p class="lp-subtext text-gray-500 mt-3 max-w-lg">Designed for everyday retail — from the billing counter to end-of-day reports.</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <div class="lp-card bg-gray-50 border border-gray-200 rounded-xl p-6">
+                <div class="lp-card-icon-blue w-11 h-11 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7H6a2 2 0 00-2 2v9a2 2 0 002 2h9a2 2 0 002-2v-3M9 7V5a2 2 0 012-2h5l3 3v3M9 7h5m-5 4h4m-4 4h2"/></svg>
+                </div>
+                <h3 class="lp-heading font-semibold text-gray-900 mb-1">Billing Counter</h3>
+                <p class="lp-subtext text-sm text-gray-500 leading-relaxed">Add products by name or barcode, apply discounts, collect cash or Khalti payments, and print invoices in seconds.</p>
+            </div>
+
+            <div class="lp-card bg-gray-50 border border-gray-200 rounded-xl p-6">
+                <div class="lp-card-icon-green w-11 h-11 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>
+                </div>
+                <h3 class="lp-heading font-semibold text-gray-900 mb-1">Inventory Management</h3>
+                <p class="lp-subtext text-sm text-gray-500 leading-relaxed">Organise products by category, set stock quantities, and get low-stock alerts on the dashboard automatically.</p>
+            </div>
+
+            <div class="lp-card bg-gray-50 border border-gray-200 rounded-xl p-6">
+                <div class="lp-card-icon-violet w-11 h-11 bg-violet-100 text-violet-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                </div>
+                <h3 class="lp-heading font-semibold text-gray-900 mb-1">Staff Management</h3>
+                <p class="lp-subtext text-sm text-gray-500 leading-relaxed">Register cashiers, assign roles, and track which staff member processed each sale — without sharing your admin credentials.</p>
+            </div>
+
+            <div class="lp-card bg-gray-50 border border-gray-200 rounded-xl p-6">
+                <div class="lp-card-icon-amber w-11 h-11 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6m3 6V7m3 10v-4M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                </div>
+                <h3 class="lp-heading font-semibold text-gray-900 mb-1">Sales Reports</h3>
+                <p class="lp-subtext text-sm text-gray-500 leading-relaxed">Filter transactions by date, search by customer or invoice, and view daily revenue against your set goal.</p>
+            </div>
+
+            <div class="lp-card bg-gray-50 border border-gray-200 rounded-xl p-6">
+                <div class="lp-card-icon-rose w-11 h-11 bg-rose-100 text-rose-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0a8 8 0 11-16 0 8 8 0 0116 0z"/></svg>
+                </div>
+                <h3 class="lp-heading font-semibold text-gray-900 mb-1">Barcode Scanning</h3>
+                <p class="lp-subtext text-sm text-gray-500 leading-relaxed">Use your device camera or a USB scanner to add products to the cart instantly. Each product gets its own barcode.</p>
+            </div>
+
+            <div class="lp-card bg-gray-50 border border-gray-200 rounded-xl p-6">
+                <div class="lp-card-icon-cyan w-11 h-11 bg-cyan-100 text-cyan-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                </div>
+                <h3 class="lp-heading font-semibold text-gray-900 mb-1">Printable Invoices</h3>
+                <p class="lp-subtext text-sm text-gray-500 leading-relaxed">Every sale generates a clean, print-ready invoice with your shop details, itemised bill, and payment method.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     HOW IT WORKS
+═══════════════════════════════════════════ -->
+<section id="how-it-works" class="lp-section-gray bg-slate-50 py-20 sm:py-24">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="mb-12">
+            <h2 class="lp-heading text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">Up and running in minutes</h2>
+            <p class="lp-subtext text-gray-500 mt-3 max-w-lg">No installation required. Works in any modern browser.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="flex flex-col gap-3">
+                <div class="w-9 h-9 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0">1</div>
+                <h3 class="lp-heading font-semibold text-gray-900">Create your account</h3>
+                <p class="lp-subtext text-sm text-gray-500 leading-relaxed">Register with your email. Takes under a minute.</p>
+            </div>
+            <div class="flex flex-col gap-3">
+                <div class="w-9 h-9 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0">2</div>
+                <h3 class="lp-heading font-semibold text-gray-900">Register your shop</h3>
+                <p class="lp-subtext text-sm text-gray-500 leading-relaxed">Add your shop name, address, logo, and contact details.</p>
+            </div>
+            <div class="flex flex-col gap-3">
+                <div class="w-9 h-9 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0">3</div>
+                <h3 class="lp-heading font-semibold text-gray-900">Add your products</h3>
+                <p class="lp-subtext text-sm text-gray-500 leading-relaxed">Create categories, add items with prices and stock quantities.</p>
+            </div>
+            <div class="flex flex-col gap-3">
+                <div class="w-9 h-9 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0">4</div>
+                <h3 class="lp-heading font-semibold text-gray-900">Start billing</h3>
+                <p class="lp-subtext text-sm text-gray-500 leading-relaxed">Open the billing counter, scan or search, and complete sales.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     DEMO CREDENTIALS SECTION
+═══════════════════════════════════════════ -->
+<section id="demo" class="lp-section-white bg-white py-20 sm:py-24">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="lp-heading text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight mb-4">Try the live demo</h2>
+                <p class="lp-subtext text-gray-500 leading-relaxed mb-6">
+                    A demo account is available to explore the application without registering.
+                    The demo account has staff-level access so you can see the billing counter,
+                    products, and reports in action.
+                </p>
+                <a href="{% url 'accounts:retail_admin_login' %}" class="btn btn-primary">
+                    Open demo
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="bg-slate-900 rounded-xl p-6 text-sm font-mono">
+                <p class="text-slate-400 text-xs uppercase tracking-widest mb-4 font-sans">Demo credentials</p>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                        <span class="text-slate-400">URL</span>
+                        <span class="text-slate-200">{% url 'accounts:retail_admin_login' %}</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                        <span class="text-slate-400">Username</span>
+                        <span class="text-white font-semibold">demo</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400">Password</span>
+                        <span class="text-white font-semibold">tMq9NYER</span>
+                    </div>
+                </div>
+                <p class="text-slate-500 text-xs mt-4 font-sans">
+                    Demo account has read-only staff access. Data may be reset periodically.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FEATURE DETAIL — Billing Counter
+═══════════════════════════════════════════ -->
+<section class="lp-section-gray bg-slate-50 py-20 sm:py-24">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <span class="text-xs font-semibold uppercase tracking-widest text-blue-500">Billing Counter</span>
+                <h2 class="lp-heading text-3xl font-bold text-gray-900 mt-2 mb-4 tracking-tight">Fast checkout,<br>every time</h2>
+                <p class="lp-subtext text-gray-500 leading-relaxed mb-6">
+                    The billing screen is built for speed. Search products by name, scan a barcode,
+                    apply a percentage discount, take cash or digital payment, and complete
+                    the sale — all with keyboard shortcuts so your hands never have to leave the keyboard.
+                </p>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span class="lp-bodytext text-gray-600">Product search and camera barcode scanner</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span class="lp-bodytext text-gray-600">Cash and Khalti payment support</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span class="lp-bodytext text-gray-600">Automatic stock deduction on every sale</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span class="lp-bodytext text-gray-600">Keyboard shortcuts: F9 checkout, Ctrl+S search, Esc clear</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- mock billing UI -->
+            <div class="lp-mock-wrap bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                <div class="bg-slate-900 px-4 py-2 flex items-center justify-between text-xs text-slate-400">
+                    <span>Billing Counter</span>
+                    <span class="font-mono">Cash | F9 → Checkout</span>
+                </div>
+                <div class="lp-mock-divider divide-y divide-gray-100">
+                    <div class="flex items-center justify-between px-4 py-3">
+                        <div><p class="lp-mock-text-main text-sm font-medium text-gray-800">Coca-Cola 500ml</p><p class="text-xs text-green-600">In stock (48)</p></div>
+                        <div class="text-right"><p class="lp-mock-text-main text-sm font-bold text-gray-900">Rs. 80</p><button class="text-xs text-blue-500">Add</button></div>
+                    </div>
+                    <div class="flex items-center justify-between px-4 py-3">
+                        <div><p class="lp-mock-text-main text-sm font-medium text-gray-800">Wai Wai Noodles</p><p class="text-xs text-green-600">In stock (120)</p></div>
+                        <div class="text-right"><p class="lp-mock-text-main text-sm font-bold text-gray-900">Rs. 30</p><button class="text-xs text-blue-500">Add</button></div>
+                    </div>
+                    <div class="flex items-center justify-between px-4 py-3">
+                        <div><p class="lp-mock-text-main text-sm font-medium text-gray-800">Kurkure Masala</p><p class="text-xs text-amber-500">Low stock (3)</p></div>
+                        <div class="text-right"><p class="lp-mock-text-main text-sm font-bold text-gray-900">Rs. 20</p><button class="text-xs text-blue-500">Add</button></div>
+                    </div>
+                    <div class="flex items-center justify-between px-4 py-3">
+                        <div><p class="lp-mock-text-sub text-sm font-medium text-gray-400">Lays Classic</p><p class="text-xs text-red-500">Out of stock</p></div>
+                        <div class="text-right"><p class="lp-mock-text-sub text-sm font-bold text-gray-400">Rs. 50</p><button class="lp-mock-text-sub text-xs text-gray-400 cursor-not-allowed">Unavailable</button></div>
+                    </div>
+                </div>
+                <div class="lp-mock-footer border-t border-gray-200 bg-gray-50 px-4 py-3 flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Total</span>
+                    <span class="lp-mock-text-main font-bold text-gray-900">Rs. 130</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FEATURE DETAIL — Dashboard
+═══════════════════════════════════════════ -->
+<section class="lp-section-white bg-white py-20 sm:py-24">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+            <!-- mock dashboard widget -->
+            <div class="lp-mock-wrap bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm order-last lg:order-first">
+                <div class="lp-mock-divider grid grid-cols-2 divide-x divide-y divide-gray-100">
+                    <div class="lp-mock-cell-bg px-4 py-4">
+                        <p class="lp-mock-text-sub text-xs text-gray-400 uppercase tracking-wide">Revenue</p>
+                        <p class="lp-mock-text-main text-xl font-bold text-gray-900 mt-0.5">Rs. 24,800</p>
+                    </div>
+                    <div class="lp-mock-cell-bg px-4 py-4">
+                        <p class="lp-mock-text-sub text-xs text-gray-400 uppercase tracking-wide">Sales</p>
+                        <p class="lp-mock-text-main text-xl font-bold text-gray-900 mt-0.5">134</p>
+                    </div>
+                    <div class="lp-mock-cell-bg px-4 py-4">
+                        <p class="lp-mock-text-sub text-xs text-gray-400 uppercase tracking-wide">Low Stock</p>
+                        <p class="text-xl font-bold text-amber-500 mt-0.5">7</p>
+                    </div>
+                    <div class="lp-mock-cell-bg px-4 py-4">
+                        <p class="lp-mock-text-sub text-xs text-gray-400 uppercase tracking-wide">Products</p>
+                        <p class="lp-mock-text-main text-xl font-bold text-gray-900 mt-0.5">63</p>
+                    </div>
+                </div>
+                <div class="lp-mock-cell-bg lp-mock-divider border-t border-gray-100 px-4 py-4">
+                    <div class="flex justify-between text-xs lp-mock-text-sub text-gray-500 mb-2">
+                        <span>Today's goal</span><span>Rs. 1,840 / 5,000</span>
+                    </div>
+                    <div class="lp-track-bg w-full bg-gray-100 rounded-full h-2">
+                        <div class="bg-green-500 h-2 rounded-full" style="width:37%"></div>
+                    </div>
+                </div>
+                <div class="lp-mock-divider border-t border-gray-100 divide-y divide-gray-100">
+                    <div class="lp-mock-cell-bg flex justify-between items-center px-4 py-2.5 text-sm">
+                        <div>
+                            <p class="lp-mock-text-main font-medium text-gray-800">INV-0042</p>
+                            <p class="lp-mock-text-sub text-xs text-gray-400">Aarav Sharma &middot; Cash</p>
+                        </div>
+                        <p class="font-semibold text-green-500">Rs. 430</p>
+                    </div>
+                    <div class="lp-mock-cell-bg flex justify-between items-center px-4 py-2.5 text-sm">
+                        <div>
+                            <p class="lp-mock-text-main font-medium text-gray-800">INV-0041</p>
+                            <p class="lp-mock-text-sub text-xs text-gray-400">Priya Thapa &middot; Khalti</p>
+                        </div>
+                        <p class="font-semibold text-green-500">Rs. 210</p>
+                    </div>
+                    <div class="lp-mock-cell-bg flex justify-between items-center px-4 py-2.5 text-sm">
+                        <div>
+                            <p class="lp-mock-text-main font-medium text-gray-800">INV-0040</p>
+                            <p class="lp-mock-text-sub text-xs text-gray-400">Bikash Rai &middot; Cash</p>
+                        </div>
+                        <p class="font-semibold text-green-500">Rs. 85</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <span class="text-xs font-semibold uppercase tracking-widest text-blue-500">Dashboard</span>
+                <h2 class="lp-heading text-3xl font-bold text-gray-900 mt-2 mb-4 tracking-tight">Your business,<br>at a glance</h2>
+                <p class="lp-subtext text-gray-500 leading-relaxed mb-6">
+                    The dashboard shows what matters as soon as you log in —
+                    total revenue, sales count, low-stock alerts, and recent
+                    transactions. Set a daily revenue goal and track progress
+                    through the day.
+                </p>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span class="lp-bodytext text-gray-600">Configurable daily revenue goal</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span class="lp-bodytext text-gray-600">Top selling products and biggest sales today</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span class="lp-bodytext text-gray-600">Live low-stock warnings</span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CTA BOTTOM
+═══════════════════════════════════════════ -->
+<section class="bg-slate-900 py-20 sm:py-24">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+        <h2 class="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
+            Ready to get started?
+        </h2>
+        <p class="text-slate-400 max-w-md mx-auto mb-8">
+            Create your account, register your shop, and make your first sale today.
+        </p>
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="{% url 'accounts:retail_admin_register' %}"
+               class="btn btn-primary btn-lg">
+                Register for free
+            </a>
+            <a href="{% url 'accounts:retail_admin_login' %}"
+               class="btn btn-outline btn-lg text-slate-300 border-slate-600 hover:bg-slate-800 hover:border-slate-500">
+                Sign in
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════ -->
+<footer class="bg-slate-950 border-t border-slate-800 py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
+        <div class="flex items-center gap-2 font-semibold text-slate-300">
+            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 19a1 1 0 100 2 1 1 0 000-2zm8 0a1 1 0 100 2 1 1 0 000-2z"/>
+            </svg>
+            MyStore POS
+        </div>
+        <p>Built with Django &amp; Tailwind CSS.</p>
+        <div class="flex gap-4">
+            <a href="{% url 'accounts:retail_admin_login' %}" class="hover:text-slate-300 transition-colors">Sign in</a>
+            <a href="{% url 'accounts:retail_admin_register' %}" class="hover:text-slate-300 transition-colors">Register</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+(function() {
+    var btn     = document.getElementById('themeToggleBtn');
+    var iconSun = document.getElementById('icon-sun');
+    var iconMoon= document.getElementById('icon-moon');
+    var html    = document.documentElement;
+
+    function applyTheme(theme) {
+        html.setAttribute('data-theme', theme);
+        if (theme === 'dark') {
+            html.classList.add('dark');
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        }
+    }
+
+    /* Sync icon with whatever the inline script already applied */
+    applyTheme(localStorage.getItem('theme') || 'light');
+
+    btn.addEventListener('click', function() {
+        var next = (localStorage.getItem('theme') || 'light') === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('theme', next);
+        applyTheme(next);
+    });
+})();
+</script>
+
+</body>
+</html>

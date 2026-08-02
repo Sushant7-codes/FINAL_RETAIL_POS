@@ -2,307 +2,206 @@
 {% load form_extras %}
 {% load humanize %}
 
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<style>
-    body {
-        padding-top: 80px; /* Account for fixed header height */
-    }
+<main class="p-4 sm:p-6 max-w-7xl mx-auto">
 
-    header {
-        z-index: 9999 !important;
-        background: rgba(15, 23, 42, 0.95) !important;
-        backdrop-filter: blur(20px) !important;
-        -webkit-backdrop-filter: blur(20px) !important;
-    }
+{% if has_shop %}
 
-    main {
-        position: relative;
-        z-index: 1;
-    }
-</style>
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Dashboard</h1>
+    <span class="text-sm text-gray-500 dark:text-gray-400" id="current-date"></span>
+</div>
 
-<main class="flex-grow p-4 sm:p-6 overflow-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-
-    {% if has_shop %}
-    <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-800 dark:text-gray-100">Dashboard</h1>
-
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10">
-        <!-- Today's Revenue -->
-        <div class="group card p-5 rounded-xl shadow-lg border-l-8 border-green-500 transition-transform transform hover:scale-105 hover:shadow-2xl bg-white dark:bg-gray-800">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">Total Revenue</h2>
-                    <p class="text-2xl sm:text-3xl font-bold text-green-600">Rs. {{ total_revenue|intcomma }}</p>
-                    <a
-                        href="{% url 'reports:sales_analytics' %}"
-                        class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-primary text-sm mt-2"
-                    >
-                        View Analytics →
-                    </a>
-                </div>
-                <div class="text-3xl sm:text-4xl text-green-400">📈</div>
-            </div>
-        </div>
-
-        <!-- Total Orders -->
-        <div class="group card p-5 rounded-xl shadow-lg border-l-8 border-blue-500 transition-transform transform hover:scale-105 hover:shadow-2xl bg-white dark:bg-gray-800">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">Total Sales</h2>
-                    <p class="text-2xl sm:text-3xl font-bold text-blue-600">{{ total_sales }}</p>
-                    <a
-                        href="{% url 'reports:sales_analytics' %}"
-                        class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-primary text-sm mt-2"
-                    >
-                        View Analytics →
-                    </a>
-                </div>
-                <div class="text-3xl sm:text-4xl text-blue-400">🛒</div>
-            </div>
-        </div>
-
-        <!-- Low Stock Items -->
-        <div class="card p-5 rounded-xl shadow-lg border-l-8 border-orange-500 transition-transform transform hover:scale-105 hover:shadow-2xl bg-white dark:bg-gray-800">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">Low Stock Items</h2>
-                    <p class="text-2xl sm:text-3xl font-bold text-orange-600">{{ low_stock }}</p>
-                </div>
-                <div class="text-3xl sm:text-4xl text-orange-400">📦</div>
-            </div>
-        </div>
-
-        <!-- Total Products -->
-        <div class="card p-5 rounded-xl shadow-lg border-l-8 border-purple-500 transition-transform transform hover:scale-105 hover:shadow-2xl bg-white dark:bg-gray-800">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">Total Products</h2>
-                    <p class="text-2xl sm:text-3xl font-bold text-purple-600">{{ total_products }}</p>
-                </div>
-                <div class="text-3xl sm:text-4xl text-purple-400">🏪</div>
-            </div>
-        </div>
+<!-- Summary Stats -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Revenue</p>
+        <p class="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">Rs. {{ total_revenue|intcomma }}</p>
+        <a href="{% url 'reports:sales_analytics' %}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline mt-1 inline-block">View analytics</a>
     </div>
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Sales</p>
+        <p class="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">{{ total_sales }}</p>
+        <a href="{% url 'reports:reports' %}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline mt-1 inline-block">View all</a>
+    </div>
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Low Stock Items</p>
+        <p class="text-2xl font-bold {% if low_stock > 0 %}text-amber-600{% else %}text-gray-900 dark:text-gray-100{% endif %} mt-1">{{ low_stock }}</p>
+        <a href="{% url 'shop:item_list' %}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline mt-1 inline-block">Manage products</a>
+    </div>
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Products</p>
+        <p class="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">{{ total_products }}</p>
+        <a href="{% url 'shop:item_list' %}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline mt-1 inline-block">View all</a>
+    </div>
+</div>
 
-    <div class="card p-6 rounded-xl shadow-lg bg-white dark:bg-gray-800 mb-8">      
-        <div class="flex justify-between items-center mb-3">
+<!-- Today's Revenue Goal -->
+<div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-6">
+    <div class="flex items-center justify-between mb-3">
+        <div>
+            <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Today's Revenue Goal</h2>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                Rs. {{ today_revenue|intcomma }} of Rs. {{ daily_goal|intcomma }}
+            </p>
+        </div>
+        {% if user.role == "shop_admin" %}
+        <button class="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 underline" onclick="goalModal.showModal()">
+            Edit goal
+        </button>
+        {% endif %}
+    </div>
+    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+        <div class="bg-green-500 h-2 rounded-full transition-all" style="width: {{ goal_percent|floatformat:0 }}%"></div>
+    </div>
+    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+        {% if goal_percent >= 100 %}
+            Goal reached for today.
+        {% else %}
+            Rs. {{ remaining_goal|intcomma }} remaining to reach today's goal.
+        {% endif %}
+    </p>
+</div>
 
-            <h2 class="text-xl font-semibold">
-                🎯 Today's Revenue Goal
-            </h2>
-        
-            {% if user.role == "shop_admin" %}
-            <button
-                class="btn btn-xs btn-outline"
-                onclick="goalModal.showModal()"
-            >
-                ✏ Edit
-            </button>
+<div class="grid lg:grid-cols-2 gap-6 mb-6">
+
+    <!-- Top Sales Today -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Biggest Sales Today</h2>
+        </div>
+        <div class="divide-y divide-gray-100 dark:divide-gray-700">
+            {% if top_sales_today %}
+                {% for sale in top_sales_today %}
+                <div class="flex justify-between items-center px-4 py-3">
+                    <div>
+                        <p class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ sale.customer_name }}</p>
+                        <p class="text-xs text-gray-400">{{ sale.invoice_number }}</p>
+                    </div>
+                    <p class="text-sm font-semibold text-green-600 dark:text-green-400">Rs. {{ sale.grand_total|intcomma }}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="px-4 py-6 text-center text-sm text-gray-400">No sales today.</div>
             {% endif %}
-        
-        </div>     
-        <progress
-            class="progress progress-success w-full h-4"
-            value="{{ goal_percent }}"
-            max="100">
-        </progress>     
-        <div class="flex justify-between mt-3 text-sm">     
-            <span class="font-semibold">
-                Rs. {{ today_revenue|intcomma }}
-            </span>     
-            <span class="text-gray-500">
-                Goal: Rs. {{ daily_goal|intcomma }}
-            </span>     
-        </div>      
-        <p class="mt-4 text-gray-600 dark:text-gray-300">       
-            {% if goal_percent >= 100 %}        
-                🎉 Congratulations! Today's goal has been achieved.     
-            {% else %}      
-                Remaining:
-                <span class="font-bold text-error">
-                    Rs. {{ remaining_goal|intcomma }}
-                </span>     
-            {% endif %}     
-        </p>     
-    </div>
-    </div>
-
-    <div class="card bg-base-100 shadow-xl">    
-        <div class="card-body">     
-            <h2 class="card-title text-xl mb-4">
-                🏆 Biggest Sales Today
-            </h2>       
-            {% if top_sales_today %}        
-                {% for sale in top_sales_today %}       
-                    <div
-                        class="flex justify-between items-center p-4 rounded-xl mb-3        
-                        {% if forloop.counter == 1 %}
-                            bg-warning/20 border-l-4 border-warning
-                        {% elif forloop.counter == 2 %}
-                            bg-base-200 border-l-4 border-gray-400
-                        {% else %}
-                            bg-orange-100 dark:bg-orange-900/20 border-l-4 border-orange-500
-                        {% endif %}
-                    ">      
-                        <div>       
-                            <div class="flex items-center gap-2">       
-                                {% if forloop.counter == 1 %}
-                                    🥇
-                                {% elif forloop.counter == 2 %}
-                                    🥈
-                                {% else %}
-                                    🥉
-                                {% endif %}     
-                                <span class="font-bold text-lg">        
-                                    {{ sale.customer_name }}        
-                                </span>     
-                            </div>      
-                            <p class="text-sm opacity-70">      
-                                {{ sale.invoice_number }}       
-                            </p>        
-                        </div>      
-                        <div class="text-right">        
-                            <p class="font-bold text-xl text-success">      
-                                Rs. {{ sale.grand_total|intcomma }}     
-                            </p>        
-                        </div>      
-                    </div>      
-                {% endfor %}        
-            {% else %}      
-                <div class="text-center py-8 opacity-70">       
-                    No sales made today.        
-                </div>      
-            {% endif %}     
         </div>
     </div>
 
-    <div class="card bg-base-100 shadow-xl mt-5">        
-        <div class="card-body">     
-            <h2 class="card-title text-xl mb-4">
-                📦 Top Selling Products
-            </h2>       
-            {% if top_products %}       
-                {% for product in top_products %}       
-                    <div class="flex justify-between items-center py-3 border-b last:border-b-0">       
-                        <div class="flex items-center gap-3">       
-                            <div class="w-8 text-center text-xl">       
-                                {% if forloop.counter == 1 %}
-                                    🥇
-                                {% elif forloop.counter == 2 %}
-                                    🥈
-                                {% elif forloop.counter == 3 %}
-                                    🥉
-                                {% else %}
-                                    {{ forloop.counter }}
-                                {% endif %}     
-                            </div>      
-                            <div>       
-                                <p class="font-semibold">       
-                                    {{ product.price__name }}       
-                                </p>        
-                                <p class="text-xs opacity-60">      
-                                    Rank #{{ forloop.counter }}     
-                                </p>        
-                            </div>      
-                        </div>      
-                        <div>       
-                            <span class="badge badge-primary badge-lg">     
-                                {{ product.total_sold }} Sold       
-                            </span>     
-                        </div>      
-                    </div>      
-                {% endfor %}        
-            {% else %}      
-                <div class="text-center py-8 opacity-70">       
-                    No products sold yet.       
-                </div>      
-            {% endif %}     
+    <!-- Top Selling Products -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Top Selling Products</h2>
+        </div>
+        <div class="divide-y divide-gray-100 dark:divide-gray-700">
+            {% if top_products %}
+                {% for product in top_products %}
+                <div class="flex justify-between items-center px-4 py-3">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs text-gray-400 w-5 text-right">{{ forloop.counter }}</span>
+                        <p class="text-sm text-gray-800 dark:text-gray-200">{{ product.price__name }}</p>
+                    </div>
+                    <span class="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded">
+                        {{ product.total_sold }} sold
+                    </span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="px-4 py-6 text-center text-sm text-gray-400">No products sold yet.</div>
+            {% endif %}
         </div>
     </div>
 
-    <div class="card bg-base-100 shadow-xl mt-5">        
-        <div class="card-body">     
-            <h2 class="card-title text-xl mb-4">
-                🧾 Recent Transactions
-            </h2>       
-            {% if recent_transactions %}        
-                {% for sale in recent_transactions %}       
-                    <div class="flex justify-between items-center py-4 border-b last:border-b-0">       
-                        <div>       
-                            <p class="font-bold">       
-                                {{ sale.invoice_number }}       
-                            </p>        
-                            <p class="text-sm">     
-                                {{ sale.customer_name }}        
-                            </p>        
-                            <p class="text-xs opacity-60">      
-                                {{ sale.created_by.username }}      
-                                •       
-                                {{ sale.get_payment_method_display }}       
-                            </p>        
-                        </div>      
-                        <div class="text-right">        
-                            <p class="font-bold text-success">      
-                                Rs. {{ sale.grand_total|intcomma }}     
-                            </p>        
-                            <p class="text-xs opacity-60">      
-                                {{ sale.created_at|timesince }} ago     
-                            </p>        
-                        </div>      
-                    </div>      
-                {% endfor %}        
-            {% else %}      
-                <div class="text-center py-8 opacity-70">       
-                    No transactions found.      
-                </div>      
-            {% endif %}     
-        </div>
+</div>
+
+<!-- Recent Transactions -->
+<div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+    <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Recent Transactions</h2>
+        <a href="{% url 'reports:reports' %}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">View all</a>
     </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b border-gray-100 dark:border-gray-700">
+                    <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Invoice</th>
+                    <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Customer</th>
+                    <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide hidden sm:table-cell">Cashier</th>
+                    <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide hidden md:table-cell">Payment</th>
+                    <th class="text-right px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Amount</th>
+                    <th class="text-right px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide hidden sm:table-cell">When</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                {% if recent_transactions %}
+                    {% for sale in recent_transactions %}
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                        <td class="px-4 py-2.5 font-medium text-gray-800 dark:text-gray-200">{{ sale.invoice_number }}</td>
+                        <td class="px-4 py-2.5 text-gray-700 dark:text-gray-300">{{ sale.customer_name }}</td>
+                        <td class="px-4 py-2.5 text-gray-500 dark:text-gray-400 hidden sm:table-cell">{{ sale.created_by.username }}</td>
+                        <td class="px-4 py-2.5 text-gray-500 dark:text-gray-400 hidden md:table-cell">{{ sale.get_payment_method_display }}</td>
+                        <td class="px-4 py-2.5 text-right font-semibold text-green-600 dark:text-green-400">Rs. {{ sale.grand_total|intcomma }}</td>
+                        <td class="px-4 py-2.5 text-right text-gray-400 text-xs hidden sm:table-cell">{{ sale.created_at|timesince }} ago</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="6" class="px-4 py-6 text-center text-gray-400">No transactions found.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% else %}
+
+<!-- No shop yet — show messages + registration form -->
+{% if messages %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 pt-6 space-y-2">
+    {% for message in messages %}
+    <div class="flex items-start gap-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-4 py-3 text-sm
+                dark:bg-amber-900/20 dark:border-amber-700 dark:text-amber-300"
+         role="alert">
+        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        </svg>
+        <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% include 'shop/registration-form.html' with form=form %}
+{% endif %}
+
 </main>
 
+<!-- Goal Modal -->
 <dialog id="goalModal" class="modal">
-    <div class="modal-box"> 
-        <h3 class="font-bold text-lg">
-            Update Daily Revenue Goal
-        </h3>   
-        <input
-            id="goal-input"
-            type="number"
-            class="input input-bordered w-full mt-4"
-            value="{{ daily_goal }}"
-        >   
-        <div class="modal-action">  
-            <button
-                class="btn btn-primary"
-                onclick="saveGoal()"
-            >
-                Save
-            </button>   
-            <form method="dialog">
-                <button class="btn">
-                    Cancel
-                </button>
-            </form> 
-        </div>  
+    <div class="modal-box max-w-sm">
+        <h3 class="font-semibold text-base mb-4">Update Daily Revenue Goal</h3>
+        <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Goal Amount (Rs.)</label>
+        <input id="goal-input" type="number" class="input input-bordered w-full" value="{{ daily_goal }}">
+        <div class="modal-action">
+            <button class="btn btn-primary btn-sm" onclick="saveGoal()">Save</button>
+            <form method="dialog"><button class="btn btn-ghost btn-sm">Cancel</button></form>
+        </div>
     </div>
 </dialog>
 
 <script>
-function getCookie(name) {
+document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
 
+function getCookie(name) {
     let cookieValue = null;
-    if (document.cookie && document.cookie !== "") {
-        const cookies = document.cookie.split(";");
-        for (let cookie of cookies) {
+    if (document.cookie && document.cookie !== '') {
+        for (let cookie of document.cookie.split(';')) {
             cookie = cookie.trim();
-            if (cookie.startsWith(name + "=")) {
-                cookieValue = decodeURIComponent(
-                    cookie.substring(name.length + 1)
-                );
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
             }
         }
@@ -311,28 +210,14 @@ function getCookie(name) {
 }
 
 async function saveGoal() {
-    const goal =
-        document.getElementById("goal-input").value;    
-    const response = await fetch(   
-        "{% url 'app:update_daily_goal' %}",    
-        {   
-            method: "POST", 
-            headers: {  
-                "Content-Type": "application/json", 
-                "X-CSRFToken": getCookie("csrftoken")   
-            },  
-            body: JSON.stringify({  
-                goal: goal  
-            })  
-        }   
-    );  
-    const result = await response.json();   
-    if(result.success){ 
-        location.reload();  
-    }
+    const goal = document.getElementById('goal-input').value;
+    const response = await fetch("{% url 'app:update_daily_goal' %}", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+        body: JSON.stringify({ goal })
+    });
+    const result = await response.json();
+    if (result.success) { location.reload(); }
 }
 </script>
-{% else %}
-{% include 'shop/registration-form.html' with form=form %}
-{% endif %}
 {% endblock content %}

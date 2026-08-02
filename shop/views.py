@@ -22,6 +22,7 @@ from shop.forms import(
     StaffUpdateForm,
 )
 from shop.filters import StaffFilter
+from common.decorators import shop_required
 
 from django.conf import settings
 from django.core.paginator import Paginator
@@ -161,6 +162,8 @@ def shop_update(request):
     }
     return render(request, "shop/update-shop-info.html", context)
 
+@login_required
+@shop_required
 def item_list(request):
     form=ItemForm(request.POST,request=request)
     if form.is_valid():
@@ -200,6 +203,8 @@ def item_list(request):
     }
     return render(request, "shop/item-create-form.html", context)
 
+@login_required
+@shop_required
 def item_list_delete(request,pk):
     
     try:
@@ -214,6 +219,8 @@ def item_list_delete(request,pk):
             {"success":True,"message":"Item deleted successfully !"}
         )
         
+@login_required
+@shop_required
 def item_update(request,pk):
     
     try:
@@ -238,6 +245,8 @@ def item_update(request,pk):
         context={"form":form,"item":item}
         return render(request, "shop/item-update-form.html", context)
     
+@login_required
+@shop_required
 def price(request):
     
     if request.method == "POST":
@@ -284,6 +293,8 @@ def price(request):
     
     return render(request, "shop/price-create.html",context)
 
+@login_required
+@shop_required
 def price_delete(request,pk):
     
     try:
@@ -298,6 +309,8 @@ def price_delete(request,pk):
             {"success":True,"message":"Price deleted successfully !"}
         )
 
+@login_required
+@shop_required
 def price_update(request,pk):
     
     try:
@@ -325,6 +338,8 @@ def price_update(request,pk):
         context={"form":form,}
         return render(request, "shop/price-update.html", context)
 
+@login_required
+@shop_required
 def staffs(request):
     # Only Shop Admin can register new staff
     if request.method == "POST":
